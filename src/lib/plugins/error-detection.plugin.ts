@@ -1,8 +1,8 @@
-import { GitError } from '../errors/git-error';
-import { GitExecutorResult, SimpleGitPluginConfig } from '../types';
-import { SimpleGitPlugin } from './simple-git-plugin';
+import { FossilError } from '../errors/fossil-error';
+import { FossilExecutorResult, SimpleFossilPluginConfig } from '../types';
+import { SimpleFossilPlugin } from './simple-fossil-plugin';
 
-type TaskResult = Omit<GitExecutorResult, 'rejection'>;
+type TaskResult = Omit<FossilExecutorResult, 'rejection'>;
 
 function isTaskError (result: TaskResult) {
    return !!(result.exitCode && result.stdErr.length);
@@ -23,7 +23,7 @@ export function errorDetectionHandler (overwrite = false, isError = isTaskError,
    };
 }
 
-export function errorDetectionPlugin(config: SimpleGitPluginConfig['errors']): SimpleGitPlugin<'task.error'> {
+export function errorDetectionPlugin(config: SimpleFossilPluginConfig['errors']): SimpleFossilPlugin<'task.error'> {
 
    return {
       type: 'task.error',
@@ -35,7 +35,7 @@ export function errorDetectionPlugin(config: SimpleGitPluginConfig['errors']): S
          });
 
          if (Buffer.isBuffer(error)) {
-            return {error: new GitError(undefined, error.toString('utf-8'))};
+            return {error: new FossilError(undefined, error.toString('utf-8'))};
          }
 
          return {

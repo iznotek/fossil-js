@@ -1,7 +1,7 @@
-import { SimpleGitTask } from '../types';
+import { SimpleFossilTask } from '../types';
 
 /**
- * The `GitError` is thrown when the underlying `git` process throws a
+ * The `FossilError` is thrown when the underlying `git` process throws a
  * fatal exception (eg an `ENOENT` exception when attempting to use a
  * non-writable directory as the root for your repo), and acts as the
  * base class for more specific errors thrown by the parsing of the
@@ -14,21 +14,21 @@ import { SimpleGitTask } from '../types';
  * running is to catch them individually:
  *
  * ```typescript
- import { gitP, SimpleGit, GitError, PullResult } from 'simple-git';
+ import { fossilP, SimpleFossil, FossilError, PullResult } from 'simple-fossil';
 
- function catchTask (e: GitError) {
+ function catchTask (e: FossilError) {
    return e.
  }
 
- const git = gitP(repoWorkingDir);
- const pulled: PullResult | GitError = await git.pull().catch(catchTask);
- const pushed: string | GitError = await git.pushTags().catch(catchTask);
+ const git = fossilP(repoWorkingDir);
+ const pulled: PullResult | FossilError = await fossil.pull().catch(catchTask);
+ const pushed: string | FossilError = await fossil.pushTags().catch(catchTask);
  ```
  */
-export class GitError extends Error {
+export class FossilError extends Error {
 
    constructor (
-      public task?: SimpleGitTask<any>,
+      public task?: SimpleFossilTask<any>,
       message?: string,
    ) {
       super(message);

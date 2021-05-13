@@ -3,15 +3,15 @@ import {
    diffSummaryMultiFile,
    diffSummarySingleFile,
    like,
-   newSimpleGit,
-   newSimpleGitP, wait
+   newSimpleFossil,
+   newSimpleFossilP, wait
 } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { SimpleFossil } from '../../typings';
 import { parseDiffResult } from '../../src/lib/parsers/parse-diff-summary';
 
 describe('diff', () => {
 
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
    describe('parsing', () => {
 
@@ -55,7 +55,7 @@ describe('diff', () => {
 
       it('multiple text files', () => {
          const actual = parseDiffResult(diffSummaryMultiFile(
-            {fileName: 'src/git.js', insertions: 2},
+            {fileName: 'src/fossil.js', insertions: 2},
             {fileName: 'test/testCommands.js', deletions: 2, insertions: 1},
          ).stdOut);
 
@@ -65,7 +65,7 @@ describe('diff', () => {
             deletions: 2,
             files: [
                {
-                  file: 'src/git.js',
+                  file: 'src/fossil.js',
                   changes: 2,
                   insertions: 2,
                   deletions: 0,
@@ -124,10 +124,10 @@ describe('diff', () => {
 
    describe('usage:promise', () => {
 
-      beforeEach(() => git = newSimpleGitP());
+      beforeEach(() => fossil = newSimpleFossilP());
 
       it('fetches a specific diff', async () => {
-         const diff = git.diff(['HEAD', 'FETCH_HEAD']);
+         const diff = fossil.diff(['HEAD', 'FETCH_HEAD']);
          closeWithSuccess('-- diff data --');
 
          expect(await diff).toBe('-- diff data --');
@@ -135,7 +135,7 @@ describe('diff', () => {
       });
 
       it('fetches a specific diff summary', async () => {
-         const diff = git.diffSummary(['HEAD', 'FETCH_HEAD']);
+         const diff = fossil.diffSummary(['HEAD', 'FETCH_HEAD']);
          closeWithSuccess(`
  b | 1 +
  1 file changed, 1 insertion(+)
@@ -152,24 +152,24 @@ describe('diff', () => {
 
    describe('usage', () => {
 
-      beforeEach(() => git = newSimpleGit());
+      beforeEach(() => fossil = newSimpleFossil());
 
       it('diff - no options', async () => {
-         const queue = git.diff();
+         const queue = fossil.diff();
          await closeWithSuccess('~~ data ~~');
          expect(await queue).toBe('~~ data ~~');
          assertExecutedCommands('diff');
       });
 
       it('diff - options array', async () => {
-         const queue = git.diff(['FETCH', 'FETCH_HEAD']);
+         const queue = fossil.diff(['FETCH', 'FETCH_HEAD']);
          await closeWithSuccess('~~ data ~~');
          expect(await queue).toBe('~~ data ~~');
          assertExecutedCommands('diff', 'FETCH', 'FETCH_HEAD');
       });
 
       it('diff - options object', async () => {
-         const queue = git.diff({a: null});
+         const queue = fossil.diff({a: null});
          await closeWithSuccess('~~ data ~~');
          expect(await queue).toBe('~~ data ~~');
          assertExecutedCommands('diff', 'a');
@@ -177,7 +177,7 @@ describe('diff', () => {
 
       it('diff - options with callback', async () => {
          const later = jest.fn();
-         git.diff({a: null}, later);
+         fossil.diff({a: null}, later);
          closeWithSuccess('~~ data ~~');
          await wait();
 
@@ -186,14 +186,14 @@ describe('diff', () => {
 
       it('trailing function handler receives result', async () => {
          const later = jest.fn();
-         const queue = git.diffSummary(later);
+         const queue = fossil.diffSummary(later);
          await closeWithSuccess(diffSummarySingleFile().stdOut);
 
          expect(later).toHaveBeenCalledWith(null, await queue);
       });
 
       it('diffSummary - no options', async () => {
-         const queue = git.diffSummary();
+         const queue = fossil.diffSummary();
          await closeWithSuccess(diffSummarySingleFile(1, 2, 'package.json').stdOut);
 
          expect(await queue).toEqual(like({
@@ -214,19 +214,19 @@ describe('diff', () => {
       });
 
       it('diffSummary - with options', async () => {
-         git.diffSummary(['opt-a', 'opt-b'], jest.fn());
+         fossil.diffSummary(['opt-a', 'opt-b'], jest.fn());
          await closeWithSuccess();
          assertExecutedCommands('diff', '--stat=4096', 'opt-a', 'opt-b');
       });
 
       it('diffSummary - with options object', async () => {
-         git.diffSummary({'HEAD': null, 'FETCH_HEAD': null}, jest.fn());
+         fossil.diffSummary({'HEAD': null, 'FETCH_HEAD': null}, jest.fn());
          await closeWithSuccess();
          assertExecutedCommands('diff', '--stat=4096', 'HEAD', 'FETCH_HEAD');
       });
 
       it('diffSummary - single option', async () => {
-         git.diffSummary('opt-a' as any, jest.fn());
+         fossil.diffSummary('opt-a' as any, jest.fn());
          await closeWithSuccess(diffSummarySingleFile().stdOut);
          assertExecutedCommands('diff', '--stat=4096', 'opt-a');
       });

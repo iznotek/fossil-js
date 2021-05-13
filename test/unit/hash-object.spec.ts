@@ -1,13 +1,13 @@
-import { SimpleGit } from 'typings';
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
+import { SimpleFossil } from 'typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
 
 describe('hash-object', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
-   beforeEach(() => git = newSimpleGit());
+   beforeEach(() => fossil = newSimpleFossil());
 
    it('trims the output', async () => {
-     const task = git.hashObject('index.js');
+     const task = fossil.hashObject('index.js');
      await closeWithSuccess(`
 3b18e512dba79e4c8300dd08aeb37f8e728b8dad
      `);
@@ -17,7 +17,7 @@ describe('hash-object', () => {
    });
 
    it('optionally writes the result', async () => {
-     git.hashObject('index.js', true);
+     fossil.hashObject('index.js', true);
      await closeWithSuccess();
      assertExecutedCommands('hash-object', 'index.js', '-w');
    });

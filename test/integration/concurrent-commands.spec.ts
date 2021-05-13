@@ -1,13 +1,13 @@
-import { createTestContext, newSimpleGit, setUpFilesAdded, setUpInit, SimpleGitTestContext } from '../__fixtures__';
+import { createTestContext, newSimpleFossil, setUpFilesAdded, setUpInit, SimpleFossilTestContext } from '../__fixtures__';
 
 describe('concurrent commands', () => {
 
-   let contexts: { first: SimpleGitTestContext, second: SimpleGitTestContext };
+   let contexts: { first: SimpleFossilTestContext, second: SimpleFossilTestContext };
 
-   async function configure(context: SimpleGitTestContext, name: string) {
+   async function configure(context: SimpleFossilTestContext, name: string) {
       await setUpInit(context);
       await setUpFilesAdded(context, [name]);
-      await context.git.raw('checkout', '-b', name);
+      await context.fossil.raw('checkout', '-b', name);
       return context;
    }
 
@@ -31,7 +31,7 @@ describe('concurrent commands', () => {
 
    function currentBranchForDirectory(dir: keyof typeof contexts) {
       const context = contexts[dir];
-      return newSimpleGit(context.root).branchLocal()
+      return newSimpleFossil(context.root).branchLocal()
          .then((result) => result.current);
    }
 

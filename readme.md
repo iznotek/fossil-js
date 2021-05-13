@@ -1,5 +1,5 @@
-# Simple Git
-[![NPM version](https://img.shields.io/npm/v/simple-git.svg)](https://www.npmjs.com/package/simple-git)
+# Simple Fossil
+[![NPM version](https://img.shields.io/npm/v/simple-fossil.svg)](https://www.npmjs.com/package/simple-fossil)
  [![Build Status](https://travis-ci.org/steveukx/git-js.svg?branch=master)](https://travis-ci.org/steveukx/git-js)
 
 A lightweight interface for running `git` commands in any [node.js](https://nodejs.org) application.
@@ -8,8 +8,8 @@ A lightweight interface for running `git` commands in any [node.js](https://node
 
 Use your favourite package manager:
 
-- [npm](https://npmjs.org): `npm install simple-git`
-- [yarn](https://yarnpkg.com/): `yarn add simple-git`
+- [npm](https://npmjs.org): `npm install simple-fossil`
+- [yarn](https://yarnpkg.com/): `yarn add simple-fossil`
 
 # System Dependencies
 
@@ -21,60 +21,60 @@ Include into your JavaScript app using:
 
 ```js
 // require the library, main export is a function
-const simpleGit = require('simple-git');
-const git = simpleGit();
+const simpleFossil = require('simple-fossil');
+const git = simpleFossil();
 ```
 
 Include in a TypeScript app using:
 
 ```typescript
-// Import `SimpleGit` types and the default function exported from `simple-git`
-import simpleGit, {SimpleGit} from 'simple-git';
-const git: SimpleGit = simpleGit();
+// Import `SimpleFossil` types and the default function exported from `simple-fossil`
+import simpleFossil, {SimpleFossil} from 'simple-fossil';
+const git: SimpleFossil = simpleFossil();
 
-// prior to v2.6.0 required importing from `simple-git/promise`
+// prior to v2.6.0 required importing from `simple-fossil/promise`
 // this import is still available but is now deprecated
-import gitP, {SimpleGit} from 'simple-git/promise';
-const git: SimpleGit = gitP();
+import fossilP, {SimpleFossil} from 'simple-fossil/promise';
+const git: SimpleFossil = fossilP();
 ```
 
 ## Configuration
 
-Configure each `simple-git` instance with a properties object passed to the main `simpleGit` function:
+Configure each `simple-fossil` instance with a properties object passed to the main `simpleFossil` function:
 
 ```typescript
-import simpleGit, { SimpleGit, SimpleGitOptions } from 'simple-git';
+import simpleFossil, { SimpleFossil, SimpleFossilOptions } from 'simple-fossil';
 
-const options: Partial<SimpleGitOptions> = {
+const options: Partial<SimpleFossilOptions> = {
    baseDir: process.cwd(),
    binary: 'git',
    maxConcurrentProcesses: 6,
 };
 
 // when setting all options in a single object
-const git: SimpleGit = simpleGit(options);
+const git: SimpleFossil = simpleFossil(options);
 
 // or split out the baseDir, supported for backward compatibility
-const git: SimpleGit = simpleGit('/some/path', { binary: 'git' });
+const git: SimpleFossil = simpleFossil('/some/path', { binary: 'git' });
 ```
 
 The first argument can be either a string (representing the working directory for `git` commands to run in),
-`SimpleGitOptions` object or `undefined`, the second parameter is an optional `SimpleGitOptions` object.
+`SimpleFossilOptions` object or `undefined`, the second parameter is an optional `SimpleFossilOptions` object.
 
 All configuration properties are optional, the default values are shown in the example above.
 
 ## Per-command Configuration
 
-To prefix the commands run by `simple-git` with custom configuration not saved in the git config (ie: using the
+To prefix the commands run by `simple-fossil` with custom configuration not saved in the git config (ie: using the
 `-c` command) supply a `config` option to the instance builder:
 
 ```typescript
 // configure the instance with a custom configuration property
-const git: SimpleGit = simpleGit('/some/path', { config: ['http.proxy=someproxy'] });
+const git: SimpleFossil = simpleFossil('/some/path', { config: ['http.proxy=someproxy'] });
 
 // any command executed will be prefixed with this config
 // runs: git -c http.proxy=someproxy pull
-await git.pull();
+await fossil.pull();
 ```
 
 ## Configuring Plugins
@@ -90,20 +90,20 @@ await git.pull();
 
 ## Using task promises
 
-Each task in the API returns the `simpleGit` instance for chaining together multiple tasks, and each
+Each task in the API returns the `simpleFossil` instance for chaining together multiple tasks, and each
 step in the chain is also a `Promise` that can be `await` ed in an `async` function or returned in a
 `Promise` chain.
 
 ```javascript
-const simpleGit = require('simple-git');
-const git = simpleGit();
+const simpleFossil = require('simple-fossil');
+const git = simpleFossil();
 
 // chain together tasks to await final result
-await git.init().addRemote('origin', '...remote.git');
+await fossil.init().addRemote('origin', '...remote.git');
 
 // or await each step individually
-await git.init();
-await git.addRemote('origin', '...remote.git')
+await fossil.init();
+await fossil.addRemote('origin', '...remote.git')
 ``` 
 
 ## Catching errors in async code
@@ -111,10 +111,10 @@ await git.addRemote('origin', '...remote.git')
 To catch errors in async code, either wrap the whole chain in a try/catch:
 
 ```javascript
-const git = simpleGit()
+const git = simpleFossil()
 try {
-    await git.init();
-    await git.addRemote(name, repoUrl);
+    await fossil.init();
+    await fossil.addRemote(name, repoUrl);
 }
 catch (e) { /* handle all errors here */ }
 ```
@@ -123,10 +123,10 @@ or catch individual steps to permit the main chain to carry on executing rather 
 jumping to the final `catch` on the first error:
 
 ```javascript
-const git = simpleGit()
+const git = simpleFossil()
 try {
-    await git.init().catch(ignoreError);
-    await git.addRemote(name, repoUrl);
+    await fossil.init().catch(ignoreError);
+    await fossil.addRemote(name, repoUrl);
 }
 catch (e) { /* handle all errors here */ }
 
@@ -138,9 +138,9 @@ function ignoreError () {}
 In addition to returning promise method can be called with a trailing callback argument to handle the result of the task 
 
 ```javascript
-const simpleGit = require('simple-git');
-const git = simpleGit();
-git.init(onInit).addRemote('origin', 'git@github.com:steveukx/git-js.git', onRemoteAdd);
+const simpleFossil = require('simple-fossil');
+const git = simpleFossil();
+fossil.init(onInit).addRemote('origin', 'git@github.com:steveukx/git-js.git', onRemoteAdd);
 
 function onInit (err, initResult) { }
 function onRemoteAdd (err, addRemoteResult) { }
@@ -154,7 +154,7 @@ If any of the steps in the chain result in an error, all pending steps will be c
 Whether using a trailing callback or a Promise, tasks either return the raw `string` or `Buffer` response from the
 `git` binary, or where possible a parsed interpretation of the response.
 
-For type details of the response for each of the tasks, please see the [TypeScript definitions](./typings/simple-git.d.ts).  
+For type details of the response for each of the tasks, please see the [TypeScript definitions](./typings/simple-fossil.d.ts).  
 
 
 # API
@@ -169,7 +169,7 @@ For type details of the response for each of the tasks, please see the [TypeScri
 | `.clearQueue()` | immediately clears the queue of pending tasks (note: any command currently in progress will still call its completion callback) |
 | `.commit(message, handlerFn)` | commits changes in the current working directory with the supplied message where the message can be either a single string or array of strings to be passed as separate arguments (the `git` command line interface converts these to be separated by double line breaks) |
 | `.commit(message, [fileA, ...], options, handlerFn)` | commits changes on the named files with the supplied message, when supplied, the optional options object can contain any other parameters to pass to the commit command, setting the value of the property to be a string will add `name=value` to the command string, setting any other type of value will result in just the key from the object being passed (ie: just `name`), an example of setting the author is below |
-| `.customBinary(gitPath)` | sets the command to use to reference git, allows for using a git binary not available on the path environment variable |
+| `.customBinary(fossilPath)` | sets the command to use to reference git, allows for using a git binary not available on the path environment variable |
 | `.diff(options, handlerFn)` | get the diff of the current repo compared to the last commit with a set of options supplied as a string |
 | `.diff(handlerFn)` | get the diff for all file in the current repo compared to the last commit |
 | `.diffSummary(handlerFn)` | gets a summary of the diff for files in the repo, uses the `git diff --stat` format to calculate changes. Handler is called with a nullable error object and an instance of the [DiffSummary](src/lib/responses/DiffSummary.js) |
@@ -283,7 +283,7 @@ For type details of the response for each of the tasks, please see the [TypeScri
 ## git push
 
 - `.push([options])` pushes to a named remote/branch using any supported [options](#how-to-specify-options)
-   from the [git push](https://git-scm.com/docs/git-push) command. Note that `simple-git` enforces the use of
+   from the [git push](https://git-scm.com/docs/git-push) command. Note that `simple-fossil` enforces the use of
    `--verbose --porcelain` options in order to parse the response. You don't need to supply these options.
 
 - `.push(remote, branch[, options])` pushes to a named remote/branch, supports additional
@@ -295,7 +295,7 @@ For type details of the response for each of the tasks, please see the [TypeScri
 
 - `.addRemote(name, repo, [options])` adds a new named remote to be tracked as `name` at the path `repo`, optionally with any supported [options](#how-to-specify-options) for the [git add](https://git-scm.com/docs/git-remote#Documentation/git-remote.txt-emaddem) call.
 - `.getRemotes([verbose])` gets a list of the named remotes, supply the optional `verbose` option as `true` to include the URLs and purpose of each ref
-- `.listRemote([options])` lists remote repositories - there are so many optional arguments in the underlying  `git ls-remote` call, just supply any you want to use as the optional [options](#how-to-specify-options) eg: `git.listRemote(['--heads', '--tags'], console.log)`
+- `.listRemote([options])` lists remote repositories - there are so many optional arguments in the underlying  `git ls-remote` call, just supply any you want to use as the optional [options](#how-to-specify-options) eg: `fossil.listRemote(['--heads', '--tags'], console.log)`
 - `.remote([options])` runs a `git remote` command with any number of [options](#how-to-specify-options)
 - `.removeRemote(name)` removes the named remote
 
@@ -359,7 +359,7 @@ in the same way as when an object is used:
 
 ```javascript
 // 
-git.pull('origin', 'master', ['--no-rebase'])
+fossil.pull('origin', 'master', ['--no-rebase'])
 ```
 
 # Release History
@@ -393,54 +393,54 @@ When upgrading to release 2.x from 1.x, see the [changelog](./CHANGELOG.md) for 
   [debug logging guide](docs/DEBUG-LOGGING-GUIDE.md) for further details.
 
 - 2.6.0 introduced `.then` and `.catch` as a way to chain a promise onto the current step of the chain.
-Importing from `simple-git/promise` instead of just `simple-git` is no longer required and is actively discouraged.
+Importing from `simple-fossil/promise` instead of just `simple-fossil` is no longer required and is actively discouraged.
 
 For the full history see the [changelog](./CHANGELOG.md);  
 
 # Concurrent / Parallel Requests
 
-When the methods of `simple-git` are chained together, they create an execution chain that will run in series,
+When the methods of `simple-fossil` are chained together, they create an execution chain that will run in series,
 useful for when the tasks themselves are order-dependent, eg:
 
 ```typescript
-const git = simpleGit();
-git.init().addRemote('origin', 'https://some-repo.git').fetch();
+const git = simpleFossil();
+fossil.init().addRemote('origin', 'https://some-repo.git').fetch();
 ```
 
 Each task requires that the one before it has been run successfully before it is called, any errors in a
 step of the chain should prevent later steps from being attempted.
 
-When the methods of `simple-git` are called on the root instance (ie: `git = simpleGit()`) rather than chained
+When the methods of `simple-fossil` are called on the root instance (ie: `git = simpleFossil()`) rather than chained
 off another task, it starts a new chain and will not be affected failures in tasks already being run. Useful
 for when the tasks are independent of each other, eg:
 
 ```typescript
-const git = simpleGit();
+const git = simpleFossil();
 const results = await Promise.all([
-    git.raw('rev-parse', '--show-cdup').catch(swallow),
-    git.raw('rev-parse', '--show-prefix').catch(swallow),
+    fossil.raw('rev-parse', '--show-cdup').catch(swallow),
+    fossil.raw('rev-parse', '--show-prefix').catch(swallow),
 ]);
 function swallow (err) { return null }
 ```
 
-Each `simple-git` instance limits the number of spawned child processes that can be run simultaneously and
+Each `simple-fossil` instance limits the number of spawned child processes that can be run simultaneously and
 manages the queue of pending tasks for you. Configure this value by passing an options object to the
-`simpleGit` function, eg:
+`simpleFossil` function, eg:
 
 ```typescript
-const git = simpleGit({ maxConcurrentProcesses: 10 });
+const git = simpleFossil({ maxConcurrentProcesses: 10 });
 ```  
 
 Treating tasks called on the root instance as the start of separate chains is a change to the behaviour of
- `simple-git` and was added in version `2.11.0`.
+ `simple-fossil` and was added in version `2.11.0`.
 
 # Complex Requests
 
 When no suitable wrapper exists in the interface for creating a request, it is possible to run a command directly
-using `git.raw([...], handler)`. The array of commands are passed directly to the `git` binary:
+using `fossil.raw([...], handler)`. The array of commands are passed directly to the `git` binary:
 
 ```js
-const git = require('simple-git');
+const git = require('simple-fossil');
 const path = '/path/to/repo';
 const commands = [ 'config', '--global', 'advice.pushNonFastForward', 'false' ];
 
@@ -465,7 +465,7 @@ const USER = 'something';
 const PASS = 'somewhere';
 const REPO = 'github.com/username/private-repo';
 
-const git = require('simple-git');
+const git = require('simple-fossil');
 const remote = `https://${USER}:${PASS}@${REPO}`;
 
 git().silent(true)
@@ -479,13 +479,13 @@ Be sure to enable silent mode to prevent fatal errors from being logged to stdou
 
 # Environment Variables
 
-Pass one or more environment variables to the child processes spawned by `simple-git` with the `.env` method which
+Pass one or more environment variables to the child processes spawned by `simple-fossil` with the `.env` method which
 supports passing either an object of name=value pairs or setting a single variable at a time:
 
 ```js
 const GIT_SSH_COMMAND = "ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no";
 
-const git = require('simple-git');
+const git = require('simple-fossil');
 
 git()
   .env('GIT_SSH_COMMAND', GIT_SSH_COMMAND)
@@ -507,15 +507,15 @@ added.
 To import with TypeScript:
 
 ```typescript
-import simpleGit, { SimpleGit, StatusResult } from 'simple-git';
+import simpleFossil, { SimpleFossil, StatusResult } from 'simple-fossil';
 
-const git: SimpleGit = simpleGit();
-const status: StatusResult = await git.status();
+const git: SimpleFossil = simpleFossil();
+const status: StatusResult = await fossil.status();
 ```
 
 # Promise and async compatible
 
-For each task run, the return is the same `SimpleGit` instance for ease of building
+For each task run, the return is the same `SimpleFossil` instance for ease of building
 a series of tasks that all run sequentially and are treated as atomic (ie: if any
 step fails, the later tasks are not attempted).
 
@@ -523,28 +523,28 @@ To work with promises (either directly or as part of async/await), simply call t
 function as before:
 
 ```js
-const simpleGit = require('simple-git');
-const git = simpleGit();
+const simpleFossil = require('simple-fossil');
+const git = simpleFossil();
 
 // async / await
-const status = await git.status();
+const status = await fossil.status();
 
 // promise
-git.status().then(result => {...});
+fossil.status().then(result => {...});
 ```
 
 # Exception Handling
 
 When the `git` process exits with a non-zero status (or in some cases like `merge` the git
 process exits with a successful zero code but there are conflicts in the merge) the task
-will reject with a `GitError` when there is no available parser to handle the error or a
-`GitResponseError` for when there is.
+will reject with a `FossilError` when there is no available parser to handle the error or a
+`FossilResponseError` for when there is.
 
 See the `err` property of the callback:
 
 ```javascript
-git.merge((err, mergeSummary) => {
-   if (err.git) {
+fossil.merge((err, mergeSummary) => {
+   if (err.fossil) {
       mergeSummary = err.git; // the failed mergeSummary
    }
 })
@@ -554,7 +554,7 @@ Catch errors with try/catch in async code:
 
 ```javascript
 try {
-  const mergeSummary = await git.merge();
+  const mergeSummary = await fossil.merge();
   console.log(`Merged ${ mergeSummary.merges.length } files`);
 }
 catch (err) {
@@ -562,16 +562,16 @@ catch (err) {
   // err.stack - some stack trace detail
   // err.git - where a parser was able to run, this is the parsed content
 
-  console.error(`Merge resulted in ${ err.git.conflicts.length } conflicts`);
+  console.error(`Merge resulted in ${ err.fossil.conflicts.length } conflicts`);
 }
 ```
 
 Catch errors with a `.catch` on the promise:
 
 ```javascript
-const mergeSummary = await git.merge()
+const mergeSummary = await fossil.merge()
    .catch(err => {
-      if (err.git) { return err.git; } // the unsuccessful mergeSummary
+      if (err.fossil) { return err.git; } // the unsuccessful mergeSummary
       throw err;                       // some other error, so throw
    });
 
@@ -583,16 +583,16 @@ if (mergeSummary.failed) {
 With typed errors available in TypeScript
 
 ```typescript
-import simpleGit, { MergeSummary, GitResponseError } from 'simple-git';
+import simpleFossil, { MergeSummary, FossilResponseError } from 'simple-fossil';
 try {
-  const mergeSummary = await simpleGit().merge();
+  const mergeSummary = await simpleFossil().merge();
   console.log(`Merged ${ mergeSummary.merges.length } files`);
 }
 catch (err) {
   // err.message - the string summary of the error
   // err.stack - some stack trace detail
   // err.git - where a parser was able to run, this is the parsed content
-  const mergeSummary: MergeSummary = (err as GitResponseError<MergeSummary>).git;
+  const mergeSummary: MergeSummary = (err as FossilResponseError<MergeSummary>).git;
   const conflicts = mergeSummary?.conflicts || [];
   
   console.error(`Merge resulted in ${ conflicts.length } conflicts`);
@@ -620,12 +620,12 @@ There are a few potential reasons:
 - `git` isn't available as a binary for the user running the main `node` process, custom paths to the binary can be used
   with the `.customBinary(...)` api option.
 
-- the working directory passed in to the main `simple-git` function isn't accessible, check it is read/write accessible
+- the working directory passed in to the main `simple-fossil` function isn't accessible, check it is read/write accessible
   by the user running the `node` process. This library uses
   [@kwsites/file-exists](https://www.npmjs.com/package/@kwsites/file-exists) to validate the working directory exists,
   to output its logs add `@kwsites/file-exists` to your `DEBUG` environment variable. eg:
   
-  `DEBUG=@kwsites/file-exists,simple-git node ./your-app.js`
+  `DEBUG=@kwsites/file-exists,simple-fossil node ./your-app.js`
 
 ### Log format fails
 
@@ -639,13 +639,13 @@ For more details of the supported tokens, please see the
 
 ### Log response properties are out of order
 
-The properties of `git.log` are fetched using the character sequence ` ò ` as a delimiter. If your commit messages
-use this sequence, supply a custom `splitter` in the options, for example: `git.log({ splitter: '💻' })`
+The properties of `fossil.log` are fetched using the character sequence ` ò ` as a delimiter. If your commit messages
+use this sequence, supply a custom `splitter` in the options, for example: `fossil.log({ splitter: '💻' })`
 
 ### Pull / Diff / Merge summary responses don't recognise any files
 
-- Enable verbose logs with the environment variable `DEBUG=simple-git:task:*,simple-git:output:*`
-- Check the output (for example: `simple-git:output:diff:1 [stdOut]  1 file changed, 1 insertion(+)`)
+- Enable verbose logs with the environment variable `DEBUG=simple-fossil:task:*,simple-fossil:output:*`
+- Check the output (for example: `simple-fossil:output:diff:1 [stdOut]  1 file changed, 1 insertion(+)`)
 - Check the `stdOut` output is the same as you would expect to see when running the command directly in terminal
 - Check the language used in the response is english locale
 
@@ -654,7 +654,7 @@ In some cases `git` will show progress messages or additional detail on error st
 
 ### Legacy Node Versions
 
-From `v3.x`, `simple-git` will drop support for `node.js` version 10 or below, to use in a lower version of
+From `v3.x`, `simple-fossil` will drop support for `node.js` version 10 or below, to use in a lower version of
 node will result in errors such as:
 
 - `Object.fromEntries is not a function`
@@ -669,21 +669,21 @@ polyfills from `core-js` - see [Legacy Node Versions](./docs/LEGACY_NODE_VERSION
 
 ### using a pathspec to limit the scope of the task
 
-If the `simple-git` api doesn't explicitly limit the scope of the task being run (ie: `git.add()` requires the files to
-be added, but `git.status()` will run against the entire repo), add a `pathspec` to the command using trailing options:
+If the `simple-fossil` api doesn't explicitly limit the scope of the task being run (ie: `fossil.add()` requires the files to
+be added, but `fossil.status()` will run against the entire repo), add a `pathspec` to the command using trailing options:
 
 ```typescript
-const git = simpleGit();
-const wholeRepoStatus = await git.status();
-const subDirStatusUsingOptArray = await git.status(['--', 'sub-dir']);
-const subDirStatusUsingOptObject = await git.status({'--': null, 'sub-dir': null});
+const git = simpleFossil();
+const wholeRepoStatus = await fossil.status();
+const subDirStatusUsingOptArray = await fossil.status(['--', 'sub-dir']);
+const subDirStatusUsingOptObject = await fossil.status({'--': null, 'sub-dir': null});
 ``` 
 
 ### async await
 
 ```javascript
 async function status (workingDir) {
-   const git = require('simple-git');
+   const git = require('simple-fossil');
    
    let statusSummary = null;
    try {
@@ -703,28 +703,28 @@ status(__dirname + '/some-repo').then(status => console.log(status));
 ### Initialise a git repo if necessary
 
 ```javascript
-const simpleGit = require('simple-git');
-const git = simpleGit(__dirname);
+const simpleFossil = require('simple-fossil');
+const git = simpleFossil(__dirname);
 
-git.checkIsRepo()
+fossil.checkIsRepo()
    .then(isRepo => !isRepo && initialiseRepo(git))
-   .then(() => git.fetch());
+   .then(() => fossil.fetch());
 
 function initialiseRepo (git) {
-   return git.init()
-      .then(() => git.addRemote('origin', 'https://some.git.repo'))
+   return fossil.init()
+      .then(() => fossil.addRemote('origin', 'https://some.fossil.repo'))
 }
 ```
 
 ### Update repo and get a list of tags
 
 ```javascript
-require('simple-git')(__dirname + '/some-repo')
+require('simple-fossil')(__dirname + '/some-repo')
    .pull()
    .tags((err, tags) => console.log("Latest available tag: %s", tags.latest));
 
 // update repo and when there are changes, restart the app
-require('simple-git')()
+require('simple-fossil')()
    .pull((err, update) => {
       if(update && update.summary.changes) {
          require('child_process').exec('npm restart');
@@ -735,7 +735,7 @@ require('simple-git')()
 ### Starting a new repo
 
 ```javascript
-require('simple-git')()
+require('simple-fossil')()
    .init()
    .add('./*')
    .commit("first commit!")
@@ -746,7 +746,7 @@ require('simple-git')()
 ### push with `-u`
 
 ```js
-require('simple-git')()
+require('simple-fossil')()
    .add('./*')
    .commit("first commit!")
    .addRemote('origin', 'some-repo-url')
@@ -756,7 +756,7 @@ require('simple-git')()
 ### Piping to the console for long running tasks
 
 ```js
-require('simple-git')()
+require('simple-fossil')()
    .outputHandler((bin, stdout, stderr, args) => {
       stdout.pipe(process.stdout);
       stderr.pipe(process.stderr);
@@ -773,7 +773,7 @@ require('simple-git')()
 ### Update repo and print messages when there are changes, restart the app
 
 ```javascript
-require('simple-git')()
+require('simple-fossil')()
    .exec(() => console.log('Starting pull...'))
    .pull((err, update) => {
      if(update && update.summary.changes) {
@@ -786,7 +786,7 @@ require('simple-git')()
 ### Get a full commits list, and then only between 0.11.0 and 0.12.0 tags
 
 ```javascript
-require('simple-git')()
+require('simple-fossil')()
    .log((err, log) => console.log(log))
    .log('0.11.0', '0.12.0', (err, log) => console.log(log));
 ```
@@ -794,7 +794,7 @@ require('simple-git')()
 ### Set the local configuration for author, then author for an individual commit
 
 ```javascript
-require('simple-git')()
+require('simple-fossil')()
    .addConfig('user.name', 'Some One')
    .addConfig('user.email', 'some@one.com')
    .commit('committed as "Some One"', 'file-one')
@@ -804,7 +804,7 @@ require('simple-git')()
 ### Get remote repositories
 
 ```javascript
-require('simple-git')()
+require('simple-fossil')()
    .listRemote(['--get-url'], (err, data) => {
       if (!err) {
          console.log('Remote url for repository at ' + __dirname + ':');

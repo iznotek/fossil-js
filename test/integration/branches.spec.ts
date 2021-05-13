@@ -1,35 +1,35 @@
 import { promiseResult } from '@kwsites/promise-result';
 import {
-   assertGitError,
+   assertFossilError,
    createTestContext,
    like,
-   newSimpleGit,
+   newSimpleFossil,
    setUpInit,
-   SimpleGitTestContext
+   SimpleFossilTestContext
 } from '../__fixtures__';
 
 describe('branches', () => {
 
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => context = await createTestContext());
    beforeEach(async () => {
-      const {file, git} = context;
+      const {file, fossil} = context;
       await setUpInit(context);
       await file('in-master');
-      await git.raw('add', 'in-master');
-      await git.raw('commit', '-m', 'master commit');
-      await git.raw('branch', '-c', 'master', 'alpha');
-      await git.raw('checkout', '-b', 'beta');
+      await fossil.raw('add', 'in-master');
+      await fossil.raw('commit', '-m', 'master commit');
+      await fossil.raw('branch', '-c', 'master', 'alpha');
+      await fossil.raw('checkout', '-b', 'beta');
       await file('in-beta');
-      await git.raw('add', 'in-beta');
-      await git.raw('commit', '-m', 'beta commit');
-      await git.raw('checkout', 'master');
+      await fossil.raw('add', 'in-beta');
+      await fossil.raw('commit', '-m', 'beta commit');
+      await fossil.raw('checkout', 'master');
    });
 
    it('reports the current branch detail', async () => {
-      const git = newSimpleGit(context.root);
-      let actual = await git.branch();
+      const fossil = newSimpleFossil(context.root);
+      let actual = await fossil.branch();
       expect(actual).toEqual(like({
          all: ['alpha', 'beta', 'master'],
          current: 'master',
@@ -40,15 +40,15 @@ describe('branches', () => {
 
    it('rejects non-force deleting unmerged branches', async () => {
       const branchDeletion = await promiseResult(
-         newSimpleGit(context.root).deleteLocalBranch('beta')
+         newSimpleFossil(context.root).deleteLocalBranch('beta')
       );
 
-      assertGitError(branchDeletion.result, /git branch -D/);
+      assertFossilError(branchDeletion.result, /git branch -D/);
       expect(branchDeletion.success).toBe(false);
    });
 
    it(`force delete branch using the generic 'branch'`, async () => {
-      const deletion = await newSimpleGit(context.root).branch(['-D', 'beta']);
+      const deletion = await newSimpleFossil(context.root).branch(['-D', 'beta']);
       expect(deletion).toEqual(like({
          success: true,
          branch: 'beta',
@@ -56,7 +56,7 @@ describe('branches', () => {
    });
 
    it('force deletes multiple branches', async () => {
-      const deletion = await newSimpleGit(context.root).deleteLocalBranches(['beta', 'alpha'], true);
+      const deletion = await newSimpleFossil(context.root).deleteLocalBranches(['beta', 'alpha'], true);
       expect(deletion).toEqual(like({
          success: true,
       }));
@@ -65,7 +65,7 @@ describe('branches', () => {
    });
 
    it('deletes multiple branches', async () => {
-      const deletion = await newSimpleGit(context.root).deleteLocalBranches(['alpha', 'beta']);
+      const deletion = await newSimpleFossil(context.root).deleteLocalBranches(['alpha', 'beta']);
 
       expect(deletion).toEqual(like({
          success: false,

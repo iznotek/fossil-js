@@ -1,16 +1,16 @@
 import { promiseError } from '@kwsites/promise-result';
 import {
    assertExecutedCommands,
-   assertGitError,
+   assertFossilError,
    assertNoExecutedTasks,
    assertTheBuffer,
    closeWithSuccess,
-   newSimpleGit
+   newSimpleFossil
 } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { SimpleFossil } from '../../typings';
 
 describe('catFile', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    const stdOut = `
          100644 blob bb8fa279535700c922d3f1ffce064cb5d40f793d    .gitignore
          100644 blob 38e7c92830db7dc85d7911d53f7478d9311f4c81    .npmignore
@@ -19,18 +19,18 @@ describe('catFile', () => {
          040000 tree b0a0e1d44895fa659bd62e7d94187adbdf5ba541    src
    `;
 
-   beforeEach(() => git = newSimpleGit());
+   beforeEach(() => fossil = newSimpleFossil());
 
    it('refuses to process a string argument', async () => {
-      const error = await promiseError(git.catFile('foo' as any));
+      const error = await promiseError(fossil.catFile('foo' as any));
 
-      assertGitError(error, 'Git.catFile: options must be supplied as an array of strings');
+      assertFossilError(error, 'Fossil.catFile: options must be supplied as an array of strings');
       assertNoExecutedTasks();
    });
 
    it('displays tree for initial commit hash', async () => {
       const later = jest.fn();
-      const queue = git.catFile(['-p', '366e4409'], later);
+      const queue = fossil.catFile(['-p', '366e4409'], later);
       await closeWithSuccess(stdOut);
 
       assertExecutedCommands('cat-file', '-p', '366e4409');
@@ -40,7 +40,7 @@ describe('catFile', () => {
    it('displays valid usage when no arguments passed', async () => {
       const message = 'Please pass in a valid (tree/commit/object) hash';
       const later = jest.fn();
-      const queue = git.catFile(later);
+      const queue = fossil.catFile(later);
 
       closeWithSuccess(message);
       expect(await queue).toBe(message);
@@ -50,7 +50,7 @@ describe('catFile', () => {
 
    it('optionally returns a buffer of raw data', async () => {
       const later = jest.fn();
-      const queue = git.binaryCatFile(['-p', 'HEAD:some-image.gif'], later);
+      const queue = fossil.binaryCatFile(['-p', 'HEAD:some-image.gif'], later);
       closeWithSuccess('foo');
 
       assertTheBuffer(await queue, 'foo');

@@ -1,10 +1,10 @@
-import { createTestContext, newSimpleGit, setUpInit, SimpleGitTestContext } from '../__fixtures__';
+import { createTestContext, newSimpleFossil, setUpInit, SimpleFossilTestContext } from '../__fixtures__';
 
 import { InitSummary } from '../../src/lib/responses/InitSummary';
 import { StatusSummary } from '../../src/lib/responses/StatusSummary';
 
 describe('promise', () => {
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => context = await createTestContext());
    beforeEach(async () => {
@@ -13,15 +13,15 @@ describe('promise', () => {
    });
 
    it('rejects failures whether using async or promises', async () => {
-      const git = newSimpleGit(context.root);
+      const fossil = newSimpleFossil(context.root);
 
       function runUsingThen(cmd: string) {
-         return git.raw(cmd).then(() => true, () => false);
+         return fossil.raw(cmd).then(() => true, () => false);
       }
 
       async function runUsingAwait(cmd: string) {
          try {
-            await git.raw(cmd);
+            await fossil.raw(cmd);
             return true;
          } catch {
             return false;
@@ -41,12 +41,12 @@ describe('promise', () => {
          initNested: jest.fn(),
          status: jest.fn(),
       };
-      const git = newSimpleGit(context.root);
+      const fossil = newSimpleFossil(context.root);
 
-      expect(git).not.toHaveProperty('then');
-      expect(git).not.toHaveProperty('catch');
+      expect(fossil).not.toHaveProperty('then');
+      expect(fossil).not.toHaveProperty('catch');
 
-      init = git.init();
+      init = fossil.init();
       status = init.status();
 
       assertArePromises(init, status);

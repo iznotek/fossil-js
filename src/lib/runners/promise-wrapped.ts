@@ -1,8 +1,8 @@
-import { SimpleGit, SimpleGitOptions } from '../../../typings';
+import { SimpleFossil, SimpleFossilOptions } from '../../../typings';
 
-import { GitResponseError } from '../errors/git-response-error';
-import { gitInstanceFactory } from '../git-factory';
-import { SimpleGitTaskCallback } from '../types';
+import { FossilResponseError } from '../errors/fossil-response-error';
+import { gitInstanceFactory } from '../fossil-factory';
+import { SimpleFossilTaskCallback } from '../types';
 
 const functionNamesBuilderApi = [
    'customBinary', 'env', 'outputHandler', 'silent',
@@ -69,7 +69,7 @@ const functionNamesPromiseApi = [
    'updateServerInfo'
 ];
 
-export function gitP(...args: [] | [string] | [Partial<SimpleGitOptions>] | [string, Partial<SimpleGitOptions>]): SimpleGit {
+export function fossilP(...args: [] | [string] | [Partial<SimpleFossilOptions>] | [string, Partial<SimpleFossilOptions>]): SimpleFossil {
 
    let git: any;
 
@@ -104,7 +104,7 @@ export function gitP(...args: [] | [string] | [Partial<SimpleGitOptions>] | [str
       return api;
    }, {});
 
-   return promiseApi as SimpleGit;
+   return promiseApi as SimpleFossil;
 
    function asyncWrapper(fn: string, git: any): (...args: any[]) => Promise<any> {
       return function (...args: any[]) {
@@ -116,7 +116,7 @@ export function gitP(...args: [] | [string] | [Partial<SimpleGitOptions>] | [str
 
          return chain.then(function () {
             return new Promise(function (resolve, reject) {
-               const callback: SimpleGitTaskCallback = (err: Error | null, result?: any) => {
+               const callback: SimpleFossilTaskCallback = (err: Error | null, result?: any) => {
                   if (err) {
                      return reject(toError(err));
                   }
@@ -131,7 +131,7 @@ export function gitP(...args: [] | [string] | [Partial<SimpleGitOptions>] | [str
       };
    }
 
-   function syncWrapper(fn: string, git: any, api: SimpleGit) {
+   function syncWrapper(fn: string, git: any, api: SimpleFossil) {
       return (...args: any[]) => {
          git[fn](...args);
 
@@ -150,5 +150,5 @@ function toError(error: Error | string | any): Error {
       return new Error(error);
    }
 
-   return new GitResponseError(error);
+   return new FossilResponseError(error);
 }

@@ -1,32 +1,32 @@
-import simpleGit, {
+import simpleFossil, {
    CleanOptions,
    CleanSummary,
-   GitResponseError,
+   FossilResponseError,
    MergeSummary,
-   SimpleGit,
+   SimpleFossil,
    TaskConfigurationError
-} from 'simple-git';
+} from 'simple-fossil';
 import {
    createSingleConflict,
    createTestContext,
    setUpConflicted,
    setUpInit,
-   SimpleGitTestContext
+   SimpleFossilTestContext
 } from '../__fixtures__';
 
 describe('TS consume root export', () => {
 
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => context = await createTestContext());
    beforeEach(() => setUpInit(context));
 
    it('log types', () => {
-      expect(simpleGit().log<{ message: string }>({n: 10, format: {message: 'something'}})).not.toBeFalsy();
+      expect(simpleFossil().log<{ message: string }>({n: 10, format: {message: 'something'}})).not.toBeFalsy();
    });
 
    it('imports', () => {
-      expect(typeof simpleGit).toBe('function');
+      expect(typeof simpleFossil).toBe('function');
       expect(CleanOptions).toEqual(expect.objectContaining({
          'FORCE': 'f',
       }));
@@ -34,14 +34,14 @@ describe('TS consume root export', () => {
 
    it('finds types, enums and errors', async () => {
       await setUpInit(context);
-      const git: SimpleGit = simpleGit(context.root);
+      const fossil: SimpleFossil = simpleFossil(context.root);
       await context.file('file.txt', 'content');
 
-      const error: TaskConfigurationError | CleanSummary = await git.clean(CleanOptions.DRY_RUN, ['--interactive'])
+      const error: TaskConfigurationError | CleanSummary = await fossil.clean(CleanOptions.DRY_RUN, ['--interactive'])
          .catch((e: TaskConfigurationError) => e);
       expect(error).toBeInstanceOf(Error);
 
-      const clean: CleanSummary = await git.clean(CleanOptions.FORCE);
+      const clean: CleanSummary = await fossil.clean(CleanOptions.FORCE);
       expect(clean).toEqual(expect.objectContaining({
          dryRun: false,
          files: ['file.txt'],
@@ -49,17 +49,17 @@ describe('TS consume root export', () => {
    });
 
    it('handles exceptions', async () => {
-      const git: SimpleGit = simpleGit(context.root);
+      const fossil: SimpleFossil = simpleFossil(context.root);
 
       await setUpConflicted(context);
       const branchName = await createSingleConflict(context);
       let wasError = false;
 
-      const mergeSummary: MergeSummary = await git.merge([branchName])
-         .catch((e: Error | GitResponseError<MergeSummary>) => {
-            if (e instanceof GitResponseError) {
+      const mergeSummary: MergeSummary = await fossil.merge([branchName])
+         .catch((e: Error | FossilResponseError<MergeSummary>) => {
+            if (e instanceof FossilResponseError) {
                wasError = true;
-               return e.git;
+               return e.fossil;
             }
 
             throw e;

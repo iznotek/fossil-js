@@ -1,6 +1,6 @@
 import { BranchMultiDeleteResult, BranchSingleDeleteResult, BranchSummary } from '../../../typings';
 import { StringTask } from '../types';
-import { GitResponseError } from '../errors/git-response-error';
+import { FossilResponseError } from '../errors/fossil-response-error';
 import { hasBranchDeletionError, parseBranchDeletions } from '../parsers/parse-branch-delete';
 import { parseBranchSummary } from '../parsers/parse-branch';
 import { bufferToString } from '../utils';
@@ -74,7 +74,7 @@ export function deleteBranchTask(branch: string, forceDelete = false): StringTas
             return fail(error);
          }
 
-         throw new GitResponseError(
+         throw new FossilResponseError(
             task.parser(bufferToString(stdOut), bufferToString(stdErr)),
             String(error)
          );

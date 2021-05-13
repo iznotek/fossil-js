@@ -1,28 +1,28 @@
-import { SimpleGit } from 'typings';
-import { autoMergeConflict, autoMergeResponse, closeWithSuccess, newSimpleGit, wait } from './__fixtures__';
+import { SimpleFossil } from 'typings';
+import { autoMergeConflict, autoMergeResponse, closeWithSuccess, newSimpleFossil, wait } from './__fixtures__';
 
-import { GitResponseError } from '../..';
+import { FossilResponseError } from '../..';
 import { createInstanceConfig } from '../../src/lib/utils';
 
 describe('git', () => {
 
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
    describe('deprecations', () => {
 
-      it('direct access to properties of custom error on GitResponseError', async () => {
-         let callbackErr: GitResponseError | undefined;
-         let promiseErr: GitResponseError | undefined;
+      it('direct access to properties of custom error on FossilResponseError', async () => {
+         let callbackErr: FossilResponseError | undefined;
+         let promiseErr: FossilResponseError | undefined;
 
-         git = newSimpleGit();
-         git.merge(['a', 'b'], (err: null | Error) => callbackErr = (err as GitResponseError))
+         fossil = newSimpleFossil();
+         fossil.merge(['a', 'b'], (err: null | Error) => callbackErr = (err as FossilResponseError))
             .catch(err => promiseErr = err);
 
          await closeWithSuccess(autoMergeResponse(autoMergeConflict));
          await wait();
 
-         expect(promiseErr).toBeInstanceOf(GitResponseError);
-         expect(callbackErr).toBeInstanceOf(GitResponseError);
+         expect(promiseErr).toBeInstanceOf(FossilResponseError);
+         expect(callbackErr).toBeInstanceOf(FossilResponseError);
          expect(callbackErr).not.toBe(promiseErr);
 
          const warning = jest.spyOn(console, 'warn');
@@ -32,10 +32,10 @@ describe('git', () => {
          expect(warning).toHaveBeenCalledTimes(1);
 
          // but gives a pointer to the real value
-         expect(conflicts).toBe(promiseErr?.git.conflicts);
+         expect(conflicts).toBe(promiseErr?.fossil.conflicts);
 
          // subsequent access of properties
-         expect((callbackErr as any).merges).toBe(promiseErr?.git.merges);
+         expect((callbackErr as any).merges).toBe(promiseErr?.fossil.merges);
 
          // do not show additional warnings in the console
          expect(warning).toHaveBeenCalledTimes(1);
@@ -74,27 +74,27 @@ describe('git', () => {
 
    });
 
-   describe('simpleGit', () => {
+   describe('simpleFossil', () => {
 
-      const simpleGit = require('../..');
+      const simpleFossil = require('../..');
       const {$fails, $reset} = require('@kwsites/file-exists');
 
       afterEach(() => $reset());
 
       it('can be created using the default export', () => {
-         expect(simpleGit.__esModule).toBe(true);
-         expect(simpleGit.default).toEqual(simpleGit);
+         expect(simpleFossil.__esModule).toBe(true);
+         expect(simpleFossil.default).toEqual(simpleFossil);
 
-         expect(() => simpleGit.default()).not.toThrow();
+         expect(() => simpleFossil.default()).not.toThrow();
       });
 
       it('throws when created with a non-existent directory', () => {
          $fails();
-         expect(() => simpleGit('/tmp/foo-bar-baz')).toThrow();
+         expect(() => simpleFossil('/tmp/foo-bar-baz')).toThrow();
       });
 
       it('works with valid directories', () => {
-         expect(() => simpleGit(__dirname)).not.toThrow();
+         expect(() => simpleFossil(__dirname)).not.toThrow();
       });
 
    });

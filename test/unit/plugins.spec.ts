@@ -1,9 +1,9 @@
-import { SimpleGit } from '../../typings';
+import { SimpleFossil } from '../../typings';
 import {
    assertExecutedCommands,
    assertExecutedCommandsContainsOnce,
    closeWithSuccess,
-   newSimpleGit,
+   newSimpleFossil,
    theChildProcess,
    writeToStdErr,
    writeToStdOut
@@ -11,14 +11,14 @@ import {
 
 describe('plugins', () => {
 
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let fn: jest.Mock;
 
    beforeEach(() => fn = jest.fn());
 
    it('allows configuration prefixing', async () => {
-      git = newSimpleGit({config: ['a', 'bcd']});
-      git.raw('foo');
+      fossil = newSimpleFossil({config: ['a', 'bcd']});
+      fossil.raw('foo');
 
       await closeWithSuccess();
       assertExecutedCommands('-c', 'a', '-c', 'bcd', 'foo');
@@ -27,7 +27,7 @@ describe('plugins', () => {
    describe('progress', () => {
 
       it('emits progress events when counting objects', async () => {
-         newSimpleGit({progress: fn}).raw('something', '--progress');
+         newSimpleFossil({progress: fn}).raw('something', '--progress');
 
          await writeToStdErr(`Counting objects: 90% (180/200)`);
 
@@ -41,7 +41,7 @@ describe('plugins', () => {
       });
 
       it('emits progress events when writing objects', async () => {
-         newSimpleGit({progress: fn}).push();
+         newSimpleFossil({progress: fn}).push();
 
          await writeToStdErr(`Writing objects: 90% (180/200)`);
 
@@ -55,7 +55,7 @@ describe('plugins', () => {
       });
 
       it('emits progress events when receiving objects', async () => {
-         newSimpleGit({progress: fn}).raw('something', '--progress');
+         newSimpleFossil({progress: fn}).raw('something', '--progress');
 
          await writeToStdErr(`Receiving objects: 5% (1/20)`);
 
@@ -69,7 +69,7 @@ describe('plugins', () => {
       });
 
       it('no progress events emitted if --progress flag is not used', async () => {
-         newSimpleGit({progress: fn}).raw('other');
+         newSimpleFossil({progress: fn}).raw('other');
 
          await writeToStdErr(`Receiving objects: 5% (1/20)`);
 
@@ -77,11 +77,11 @@ describe('plugins', () => {
       });
 
       it('handles progress with custom config', async () => {
-         git = newSimpleGit({
+         fossil = newSimpleFossil({
             progress: fn,
             config: ['foo', '--progress', 'bar'],
          });
-         git.raw('baz');
+         fossil.raw('baz');
 
          await writeToStdErr(`Receiving objects: 10% (100/1000)`);
          await closeWithSuccess();
@@ -95,20 +95,20 @@ describe('plugins', () => {
          });
       });
 
-      it.each<[string, (git: SimpleGit) => unknown]>([
-         ['checkout', (git) => git.checkout('main')],
-         ['clone', (git) => git.clone('some-remote.git')],
-         ['fetch', (git) => git.fetch('some-remote')],
-         ['pull', (git) => git.pull()],
-         ['push', (git) => git.push()],
-         ['checkout - progress set', (git) => git.checkout('main', ['--progress', 'blah'])],
-         ['clone - progress set', (git) => git.clone('some-remote.git', ['--progress', 'blah'])],
-         ['fetch - progress set', (git) => git.fetch('some-remote', {'--progress': null, '--foo': 'bar'})],
-         ['pull - progress set', (git) => git.pull(['--progress', 'blah'])],
-         ['push - progress set', (git) => git.push(['--progress', 'blah'])],
-         ['raw - progress set', (git) => git.raw('foo', '--progress', 'blah')],
+      it.each<[string, (fossil: SimpleFossil) => unknown]>([
+         ['checkout', (fossil) => fossil.checkout('main')],
+         ['clone', (fossil) => fossil.clone('some-remote.git')],
+         ['fetch', (fossil) => fossil.fetch('some-remote')],
+         ['pull', (fossil) => fossil.pull()],
+         ['push', (fossil) => fossil.push()],
+         ['checkout - progress set', (fossil) => fossil.checkout('main', ['--progress', 'blah'])],
+         ['clone - progress set', (fossil) => fossil.clone('some-remote.git', ['--progress', 'blah'])],
+         ['fetch - progress set', (fossil) => fossil.fetch('some-remote', {'--progress': null, '--foo': 'bar'})],
+         ['pull - progress set', (fossil) => fossil.pull(['--progress', 'blah'])],
+         ['push - progress set', (fossil) => fossil.push(['--progress', 'blah'])],
+         ['raw - progress set', (fossil) => fossil.raw('foo', '--progress', 'blah')],
       ])(`auto-adds to %s`, async (_name, use) => {
-         use(newSimpleGit({progress: fn}));
+         use(newSimpleFossil({progress: fn}));
 
          await closeWithSuccess();
          assertExecutedCommandsContainsOnce('--progress');
@@ -120,8 +120,8 @@ describe('plugins', () => {
       beforeEach(() => jest.useFakeTimers());
 
       it('waits for some time after a block on stdout', async () => {
-         git = newSimpleGit({ timeout: { block: 2000 } });
-         git.init();
+         fossil = newSimpleFossil({ timeout: { block: 2000 } });
+         fossil.init();
 
          await Promise.resolve();
 

@@ -1,19 +1,19 @@
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 
 describe('submodule', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    describe('add', () => {
 
       it('adds a named sub module', async () => {
-         const queue = git.submoduleAdd('my_repo', 'at_path', callback);
+         const queue = fossil.submoduleAdd('my_repo', 'at_path', callback);
          closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);
@@ -25,7 +25,7 @@ describe('submodule', () => {
    describe('update', () => {
 
       it('update with no args', async () => {
-         const queue = git.submoduleUpdate(callback);
+         const queue = fossil.submoduleUpdate(callback);
          closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);
@@ -33,7 +33,7 @@ describe('submodule', () => {
       });
 
       it('update with string arg', async () => {
-         const queue = git.submoduleUpdate('foo', callback);
+         const queue = fossil.submoduleUpdate('foo', callback);
          closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);
@@ -41,7 +41,7 @@ describe('submodule', () => {
       });
 
       it('update with array arg', async () => {
-         const queue = git.submoduleUpdate(['foo', 'bar'], callback);
+         const queue = fossil.submoduleUpdate(['foo', 'bar'], callback);
          closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);
@@ -51,7 +51,7 @@ describe('submodule', () => {
 
    describe('init', () => {
       it('init with no args', async () => {
-         const queue = git.submoduleInit(callback);
+         const queue = fossil.submoduleInit(callback);
          closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);
@@ -59,7 +59,7 @@ describe('submodule', () => {
       });
 
       it('init with string arg', async () => {
-         const queue = git.submoduleInit('foo', callback);
+         const queue = fossil.submoduleInit('foo', callback);
          closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);
@@ -67,7 +67,7 @@ describe('submodule', () => {
       });
 
       it('init with array arg', async () => {
-         const queue = git.submoduleInit(['foo', 'bar'], callback);
+         const queue = fossil.submoduleInit(['foo', 'bar'], callback);
          closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);

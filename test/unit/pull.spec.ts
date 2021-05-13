@@ -1,13 +1,13 @@
-import { SimpleGit } from 'typings';
-import { assertExecutedCommands, closeWithSuccess, like, newSimpleGit, newSimpleGitP } from './__fixtures__';
+import { SimpleFossil } from 'typings';
+import { assertExecutedCommands, closeWithSuccess, like, newSimpleFossil, newSimpleFossilP } from './__fixtures__';
 import { parsePullResult } from '../../src/lib/parsers/parse-pull';
 import { PullSummary } from '../../src/lib/responses/PullSummary';
 
 describe('pull', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    const callback = jest.fn();
 
-   beforeEach(() => git = newSimpleGit());
+   beforeEach(() => fossil = newSimpleFossil());
 
    describe('parsing', () => {
       it('makes remoteMessages available', async () => {
@@ -87,7 +87,7 @@ Fast-forward
  3 files changed, 154 insertions(+), 352 deletions(-)
  create mode 100644 kis.call_stats_report.kjs
 `, `
-From git.kellpro.net:apps/templates
+From fossil.kellpro.net:apps/templates
 * branch            release/0.33.0 -> FETCH_HEAD
 `);
          expect(actual).toEqual(expect.objectContaining({
@@ -108,7 +108,7 @@ From git.kellpro.net:apps/templates
 
    describe('usage', () => {
       it('pulls with options', async () => {
-         const pull = git.pull(undefined, undefined, {'--rebase': null});
+         const pull = fossil.pull(undefined, undefined, {'--rebase': null});
          await closeWithSuccess(mockStdOut());
          expect(await pull).toEqual(expect.objectContaining({
             files: ['file_0.txt', 'file_1.txt'],
@@ -117,7 +117,7 @@ From git.kellpro.net:apps/templates
       });
 
       it('pulls with options without branch detail', async () => {
-         const pull = git.pull({'--rebase': null});
+         const pull = fossil.pull({'--rebase': null});
          await closeWithSuccess(mockStdOut());
          expect(await pull).toEqual(expect.objectContaining({
             files: ['file_0.txt', 'file_1.txt'],
@@ -126,7 +126,7 @@ From git.kellpro.net:apps/templates
       });
 
       it('pulls with rebase options with value', async () => {
-         const pull = git.pull('origin', 'master', {'--rebase': 'true'});
+         const pull = fossil.pull('origin', 'master', {'--rebase': 'true'});
          await closeWithSuccess(mockStdOut(1, 5, 10));
          expect(await pull).toEqual(expect.objectContaining(({
             summary: {
@@ -138,11 +138,11 @@ From git.kellpro.net:apps/templates
          assertExecutedCommands('pull', 'origin', 'master', '--rebase=true');
       });
 
-      describe('simple-git/promise', () => {
-         beforeEach(() => git = newSimpleGitP());
+      describe('simple-fossil/promise', () => {
+         beforeEach(() => fossil = newSimpleFossilP());
 
          it('returns a PullResult', async () => {
-            const pull = git.pull('origin', 'main');
+            const pull = fossil.pull('origin', 'main');
             await closeWithSuccess(mockStdOut(4, 5, 6));
             expect(await pull).toEqual(expect.objectContaining({
                summary: {
@@ -156,7 +156,7 @@ From git.kellpro.net:apps/templates
 
       describe('callback', () => {
          it('uses provided callback', async () => {
-            const pull = git.pull(callback);
+            const pull = fossil.pull(callback);
             await closeWithSuccess(mockStdOut());
             await pull;
             assertExecutedCommands('pull')
@@ -164,7 +164,7 @@ From git.kellpro.net:apps/templates
          });
 
          it('uses provided callback when there is an options array', async () => {
-            const pull = git.pull(['--rebase'], callback);
+            const pull = fossil.pull(['--rebase'], callback);
             await closeWithSuccess(mockStdOut());
             await pull;
             assertExecutedCommands('pull', '--rebase');
@@ -172,7 +172,7 @@ From git.kellpro.net:apps/templates
          });
 
          it('uses provided callback when there is an options object', async () => {
-            const pull = git.pull({'--rebase': null}, callback);
+            const pull = fossil.pull({'--rebase': null}, callback);
             await closeWithSuccess(mockStdOut());
             await pull;
             assertExecutedCommands('pull', '--rebase');
@@ -180,7 +180,7 @@ From git.kellpro.net:apps/templates
          });
 
          it('uses provided callback when there is an options array and branch detail', async () => {
-            const pull = git.pull('origin', 'main', ['--rebase'], callback);
+            const pull = fossil.pull('origin', 'main', ['--rebase'], callback);
             await closeWithSuccess(mockStdOut());
             await pull;
             assertExecutedCommands('pull', 'origin', 'main', '--rebase')
@@ -188,7 +188,7 @@ From git.kellpro.net:apps/templates
          });
 
          it('uses provided callback when there is an options object and branch detail', async () => {
-            const pull = git.pull('origin', 'main', {'--rebase': null}, callback);
+            const pull = fossil.pull('origin', 'main', {'--rebase': null}, callback);
             await closeWithSuccess(mockStdOut());
             await pull;
             assertExecutedCommands('pull', 'origin', 'main', '--rebase')
@@ -200,7 +200,7 @@ From git.kellpro.net:apps/templates
 
    function mockStdOut (changes = 2, insertions = 6, deletions = 4) {
       return `
-From git.kellpro.net:apps/templates
+From fossil.kellpro.net:apps/templates
 * branch            release/0.33.0 -> FETCH_HEAD
 Updating 1c6e99e..2a5dc63
 Fast-forward

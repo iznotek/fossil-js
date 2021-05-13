@@ -1,25 +1,25 @@
-import { assertExecutedCommands, closeWithSuccess, like, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from "../../typings";
+import { assertExecutedCommands, closeWithSuccess, like, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from "../../typings";
 
 describe('push', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('runs escaped fetch', async () => {
       const branchPrefix = 'some-name';
       const ref = `'refs/heads/${branchPrefix}*:refs/remotes/origin/${branchPrefix}*'`;
-      git.fetch(`origin`, ref, { '--depth': '2' }, callback);
+      fossil.fetch(`origin`, ref, { '--depth': '2' }, callback);
       await closeWithSuccess();
       assertExecutedCommands('fetch', '--depth=2', 'origin', ref);
    });
 
    it('git generates a fetch summary', async () => {
-      const queue = git.fetch('foo', 'bar', ['--depth=2']);
+      const queue = fossil.fetch('foo', 'bar', ['--depth=2']);
       await closeWithSuccess(`
          From https://github.com/steveukx/git-js
           * [new branch]       master     -> origin/master
@@ -35,25 +35,25 @@ describe('push', () => {
    });
 
    it('git fetch with remote and branch', async () => {
-      git.fetch('r', 'b', callback);
+      fossil.fetch('r', 'b', callback);
       await closeWithSuccess();
       assertExecutedCommands('fetch', 'r', 'b');
    });
 
    it('git fetch with no options', async () => {
-      git.fetch(callback);
+      fossil.fetch(callback);
       await closeWithSuccess();
       assertExecutedCommands('fetch');
    });
 
    it('git fetch with options', async () => {
-      git.fetch({'--all': null}, callback);
+      fossil.fetch({'--all': null}, callback);
       await closeWithSuccess();
       assertExecutedCommands('fetch', '--all');
    });
 
    it('git fetch with array of options', async () => {
-      git.fetch(['--all', '-v'], callback);
+      fossil.fetch(['--all', '-v'], callback);
       await closeWithSuccess();
       assertExecutedCommands('fetch', '--all', '-v');
    });

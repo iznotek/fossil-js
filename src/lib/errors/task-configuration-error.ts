@@ -1,4 +1,4 @@
-import { GitError } from './git-error';
+import { FossilError } from './fossil-error';
 
 /**
  * The `TaskConfigurationError` is thrown when a command was incorrectly
@@ -8,7 +8,7 @@ import { GitError } from './git-error';
  * Check the `.message` property for more detail on why your configuration
  * resulted in an error.
  */
-export class TaskConfigurationError extends GitError {
+export class TaskConfigurationError extends FossilError {
 
    constructor (
       message?: string,

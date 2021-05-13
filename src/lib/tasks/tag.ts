@@ -3,7 +3,7 @@ import { parseTagList } from '../responses/TagList';
 import { StringTask } from '../types';
 
 /**
- * Task used by `git.tags`
+ * Task used by `fossil.tags`
  */
 export function tagListTask (customArgs: string[] = []): StringTask<TagResult> {
    const hasCustomSort = customArgs.some((option) => /^--sort=/.test(option));
@@ -18,7 +18,7 @@ export function tagListTask (customArgs: string[] = []): StringTask<TagResult> {
 }
 
 /**
- * Task used by `git.addTag`
+ * Task used by `fossil.addTag`
  */
 export function addTagTask (name: string): StringTask<{name: string}> {
    return {
@@ -31,7 +31,7 @@ export function addTagTask (name: string): StringTask<{name: string}> {
 }
 
 /**
- * Task used by `git.addTag`
+ * Task used by `fossil.addTag`
  */
 export function addAnnotatedTagTask (name: string, tagMessage: string): StringTask<{name: string}> {
    return {

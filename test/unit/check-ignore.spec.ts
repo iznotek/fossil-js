@@ -1,17 +1,17 @@
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 
 describe('checkIgnore', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('with single excluded file specified', async () => {
-      const queue = git.checkIgnore('foo.log', callback);
+      const queue = fossil.checkIgnore('foo.log', callback);
       closeWithSuccess('foo.log');
 
       expect(callback).toHaveBeenCalledWith(null, await queue);
@@ -19,7 +19,7 @@ describe('checkIgnore', () => {
    });
 
    it('with two excluded files specified', async () => {
-      const queue = git.checkIgnore(['foo.log', 'bar.log']);
+      const queue = fossil.checkIgnore(['foo.log', 'bar.log']);
       closeWithSuccess(`
          foo.log
          bar.log
@@ -30,7 +30,7 @@ describe('checkIgnore', () => {
    });
 
    it('with no excluded files', async () => {
-      const queue = git.checkIgnore(['foo.log', 'bar.log']);
+      const queue = fossil.checkIgnore(['foo.log', 'bar.log']);
       closeWithSuccess();
 
       expect(await queue).toEqual([]);
@@ -38,7 +38,7 @@ describe('checkIgnore', () => {
    });
 
    it('with spaces in file names', async () => {
-      const queue = git.checkIgnore('foo space .log');
+      const queue = fossil.checkIgnore('foo space .log');
       closeWithSuccess(' foo space .log ');
 
       expect(await queue).toEqual(['foo space .log']);

@@ -1,19 +1,19 @@
 import { promiseError } from '@kwsites/promise-result';
 import {
-   assertGitError,
+   assertFossilError,
    createTestContext,
    like,
-   newSimpleGit,
+   newSimpleFossil,
    setUpFilesAdded,
    setUpInit,
-   SimpleGitTestContext
+   SimpleFossilTestContext
 } from '../__fixtures__';
 
 import { CleanOptions } from '../../src/lib/tasks/clean';
 
 describe('clean', () => {
 
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => context = await createTestContext());
    beforeEach(async () => {
@@ -23,16 +23,16 @@ describe('clean', () => {
    });
 
    it('rejects on bad configuration', async () => {
-      const git = newSimpleGit(context.root);
-      assertGitError(
-         await promiseError(git.clean(CleanOptions.DRY_RUN, ['--interactive'])),
+      const fossil = newSimpleFossil(context.root);
+      assertFossilError(
+         await promiseError(fossil.clean(CleanOptions.DRY_RUN, ['--interactive'])),
          /interactive mode/i
       );
    });
 
    it('removes ignored files', async () => {
-      const git = newSimpleGit(context.root);
-      expect(await git.clean(CleanOptions.FORCE + CleanOptions.IGNORED_ONLY))
+      const fossil = newSimpleFossil(context.root);
+      expect(await fossil.clean(CleanOptions.FORCE + CleanOptions.IGNORED_ONLY))
          .toEqual(like({
             dryRun: false,
             files: ['ignored.one', 'ignored.two'],
@@ -40,8 +40,8 @@ describe('clean', () => {
    });
 
    it('removes un-tracked and ignored files', async () => {
-      const git = newSimpleGit(context.root);
-      expect(await git.clean([CleanOptions.DRY_RUN, CleanOptions.IGNORED_INCLUDED]))
+      const fossil = newSimpleFossil(context.root);
+      expect(await fossil.clean([CleanOptions.DRY_RUN, CleanOptions.IGNORED_INCLUDED]))
          .toEqual(like({
             dryRun: true,
             files: ['ignored.one', 'ignored.two', 'un-tracked.ccc'],
@@ -58,14 +58,14 @@ describe('clean', () => {
          ['two', 'def'],
       );
 
-      const git = newSimpleGit(context.root);
+      const fossil = newSimpleFossil(context.root);
 
-      expect(await git.clean([CleanOptions.DRY_RUN])).toEqual(like({
+      expect(await fossil.clean([CleanOptions.DRY_RUN])).toEqual(like({
          files: ['un-tracked.ccc'],
          folders: [],
       }));
 
-      expect(await git.clean([CleanOptions.DRY_RUN], ['-d'])).toEqual(like({
+      expect(await fossil.clean([CleanOptions.DRY_RUN], ['-d'])).toEqual(like({
          files: ['un-tracked.ccc'],
          folders: ['one/', 'two/'],
       }));

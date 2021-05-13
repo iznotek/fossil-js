@@ -6,10 +6,10 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "simple-git": [
+      "simple-fossil": [
         "."
       ],
-      "simple-git/promise": [
+      "simple-fossil/promise": [
         "./promise"
       ]
     }

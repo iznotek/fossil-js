@@ -1,19 +1,19 @@
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit, newSimpleGitP } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil, newSimpleFossilP } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 import { parseTagList } from '../../src/lib/responses/TagList';
 
 describe('tags', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => callback = jest.fn());
 
-   describe('simple-git/promise', () => {
+   describe('simple-fossil/promise', () => {
 
-      beforeEach(() => git = newSimpleGitP());
+      beforeEach(() => fossil = newSimpleFossilP());
 
       it('tag with options array', async () => {
-         const result = git.tag(['-a', 'new-tag-name', '-m', 'commit message', 'cbb6fb8']);
+         const result = fossil.tag(['-a', 'new-tag-name', '-m', 'commit message', 'cbb6fb8']);
          await closeWithSuccess();
 
          expect(typeof (await result)).toBe('string');
@@ -21,7 +21,7 @@ describe('tags', () => {
       });
 
       it('tag with options object', async () => {
-         const result = git.tag({
+         const result = fossil.tag({
             '--annotate': null,
             'some-new-tag': null,
             '--message': 'commit message',
@@ -34,9 +34,9 @@ describe('tags', () => {
       });
    });
 
-   describe('simple-git', () => {
+   describe('simple-fossil', () => {
 
-      beforeEach(() => git = newSimpleGit());
+      beforeEach(() => fossil = newSimpleFossil());
 
       it('with a character prefix', () => {
          expect(parseTagList('v1.0.0 \n v0.0.1 \n v0.6.2')).toEqual(expect.objectContaining({
@@ -53,7 +53,7 @@ describe('tags', () => {
       });
 
       it('with max count shorthand property - callback', async () => {
-         const queue = git.tags(callback);
+         const queue = fossil.tags(callback);
          await closeWithSuccess(`
             0.1.1
             1.2.1
@@ -70,7 +70,7 @@ describe('tags', () => {
       });
 
       it('removes empty lines', async () => {
-         const tags = git.tags();
+         const tags = fossil.tags();
          await closeWithSuccess(`
              0.1.0
              0.10.0
@@ -91,7 +91,7 @@ describe('tags', () => {
       });
 
       it('respects a custom sort order - callback', async () => {
-         const queue = git.tags({'--sort': 'foo'}, callback);
+         const queue = fossil.tags({'--sort': 'foo'}, callback);
          await closeWithSuccess(`
             aaa
             0.10.0
@@ -109,7 +109,7 @@ describe('tags', () => {
       });
 
       it('respects a custom sort order - async', async () => {
-         const tags = git.tags({'--sort': 'foo'});
+         const tags = fossil.tags({'--sort': 'foo'});
          await closeWithSuccess(`
             aaa
             0.10.0

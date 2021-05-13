@@ -4,12 +4,12 @@ import { Maybe, StringTask } from '../types';
 import { asStringArray } from '../utils';
 import { configurationErrorTask } from './task';
 
-export const CONFIG_ERROR_INTERACTIVE_MODE = 'Git clean interactive mode is not supported';
-export const CONFIG_ERROR_MODE_REQUIRED = 'Git clean mode parameter ("n" or "f") is required';
-export const CONFIG_ERROR_UNKNOWN_OPTION = 'Git clean unknown option found in: ';
+export const CONFIG_ERROR_INTERACTIVE_MODE = 'Fossil clean interactive mode is not supported';
+export const CONFIG_ERROR_MODE_REQUIRED = 'Fossil clean mode parameter ("n" or "f") is required';
+export const CONFIG_ERROR_UNKNOWN_OPTION = 'Fossil clean unknown option found in: ';
 
 /**
- * All supported option switches available for use in a `git.clean` operation
+ * All supported option switches available for use in a `fossil.clean` operation
  */
 export enum CleanOptions {
    DRY_RUN = 'n',
@@ -22,7 +22,7 @@ export enum CleanOptions {
 }
 
 /**
- * The two modes `git.clean` can run in - one of these must be supplied in order
+ * The two modes `fossil.clean` can run in - one of these must be supplied in order
  * for the command to not throw a `TaskConfigurationError`
  */
 export type CleanMode = CleanOptions.FORCE | CleanOptions.DRY_RUN;

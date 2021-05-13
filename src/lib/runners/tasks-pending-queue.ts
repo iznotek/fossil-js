@@ -1,27 +1,27 @@
-import { SimpleGitTask } from '../types';
-import { GitError } from '../errors/git-error';
-import { createLogger, OutputLogger } from '../git-logger';
+import { SimpleFossilTask } from '../types';
+import { FossilError } from '../errors/fossil-error';
+import { createLogger, OutputLogger } from '../fossil-logger';
 
-type AnySimpleGitTask = SimpleGitTask<any>;
+type AnySimpleFossilTask = SimpleFossilTask<any>;
 
 type TaskInProgress = {
    name: string;
    logger: OutputLogger;
-   task: AnySimpleGitTask;
+   task: AnySimpleFossilTask;
 }
 
 export class TasksPendingQueue {
 
-   private _queue: Map<AnySimpleGitTask, TaskInProgress> = new Map();
+   private _queue: Map<AnySimpleFossilTask, TaskInProgress> = new Map();
 
-   constructor(private logLabel = 'GitExecutor') {
+   constructor(private logLabel = 'FossilExecutor') {
    }
 
-   private withProgress(task: AnySimpleGitTask) {
+   private withProgress(task: AnySimpleFossilTask) {
       return this._queue.get(task);
    }
 
-   private createProgress (task: AnySimpleGitTask): TaskInProgress {
+   private createProgress (task: AnySimpleFossilTask): TaskInProgress {
       const name = TasksPendingQueue.getName(task.commands[0]);
       const logger = createLogger(this.logLabel, name);
 
@@ -32,7 +32,7 @@ export class TasksPendingQueue {
       };
    }
 
-   push(task: AnySimpleGitTask): TaskInProgress {
+   push(task: AnySimpleFossilTask): TaskInProgress {
       const progress = this.createProgress(task);
       progress.logger('Adding task to the queue, commands = %o', task.commands);
 
@@ -41,7 +41,7 @@ export class TasksPendingQueue {
       return progress;
    }
 
-   fatal(err: GitError) {
+   fatal(err: FossilError) {
       for (const [task, {logger}] of Array.from(this._queue.entries())) {
          if (task === err.task) {
             logger.info(`Failed %o`, err);
@@ -58,17 +58,17 @@ export class TasksPendingQueue {
       }
    }
 
-   complete(task: AnySimpleGitTask) {
+   complete(task: AnySimpleFossilTask) {
       const progress = this.withProgress(task);
       if (progress) {
          this._queue.delete(task);
       }
    }
 
-   attempt(task: AnySimpleGitTask): TaskInProgress {
+   attempt(task: AnySimpleFossilTask): TaskInProgress {
       const progress = this.withProgress(task);
       if (!progress) {
-         throw new GitError(undefined, 'TasksPendingQueue: attempt called for an unknown task');
+         throw new FossilError(undefined, 'TasksPendingQueue: attempt called for an unknown task');
       }
       progress.logger('Starting task');
 

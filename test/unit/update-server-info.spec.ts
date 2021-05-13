@@ -1,14 +1,14 @@
 import { promiseError } from '@kwsites/promise-result';
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 
 describe('updateServerInfo', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
-   beforeEach(() =>git = newSimpleGit());
+   beforeEach(() => fossil = newSimpleFossil());
 
    it('update server info', async () => {
-      const queue = git.updateServerInfo();
+      const queue = fossil.updateServerInfo();
       closeWithSuccess();
 
       expect(await promiseError(queue)).toBeUndefined();

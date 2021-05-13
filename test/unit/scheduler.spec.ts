@@ -1,5 +1,5 @@
-import { assertAllExecutedCommands, newSimpleGit, theChildProcessMatching, wait } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertAllExecutedCommands, newSimpleFossil, theChildProcessMatching, wait } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 import { Scheduler } from '../../src/lib/runners/scheduler';
 
 describe('scheduler', () => {
@@ -66,14 +66,14 @@ describe('scheduler', () => {
       });
    });
 
-   describe('in simpleGit', () => {
+   describe('in simpleFossil', () => {
 
-      let git: SimpleGit;
+      let fossil: SimpleFossil;
 
-      beforeEach(() => git = newSimpleGit({maxConcurrentProcesses: 2}));
+      beforeEach(() => fossil = newSimpleFossil({maxConcurrentProcesses: 2}));
 
       it('shares a scheduler between chains', async () => {
-         ['a', 'b', 'c'].forEach(char => git.raw(char).then(() => git.raw(char.toUpperCase())));
+         ['a', 'b', 'c'].forEach(char => fossil.raw(char).then(() => fossil.raw(char.toUpperCase())));
          await wait();
 
          // a, b and c all tried at the same time, c is waiting behind a & b

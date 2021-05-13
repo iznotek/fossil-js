@@ -1,10 +1,10 @@
 import { promiseError, promiseResult } from '@kwsites/promise-result';
-import { assertGitError, createTestContext, newSimpleGit, SimpleGitTestContext, wait } from '../__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertFossilError, createTestContext, newSimpleFossil, SimpleFossilTestContext, wait } from '../__fixtures__';
+import { SimpleFossil } from '../../typings';
 
 describe('change-directory', () => {
 
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
    let goodDir: string;
    let badDir: string;
 
@@ -16,10 +16,10 @@ describe('change-directory', () => {
 
    it('cwd with path config starts new chain by default', async () => {
       await context.dir('foo', 'bar');
-      await newSimpleGit(context.root).init();
+      await newSimpleFossil(context.root).init();
 
       // root chain with a configured working directory
-      const root = newSimpleGit(await context.path('good'));
+      const root = newSimpleFossil(await context.path('good'));
 
       // other chains with their own working directories
       const foo = root.cwd({ path: await context.path('foo') });
@@ -36,10 +36,10 @@ describe('change-directory', () => {
 
    it('cwd with path config can act on root instance', async () => {
       await context.dir('foo', 'bar');
-      await newSimpleGit(context.root).init();
+      await newSimpleFossil(context.root).init();
 
       // root chain with a configured working directory
-      const root = newSimpleGit(await context.path('good'));
+      const root = newSimpleFossil(await context.path('good'));
 
       // other chains with their own working directories
       const foo = root.cwd({ path: await context.path('foo'), root: true });
@@ -53,7 +53,7 @@ describe('change-directory', () => {
    });
 
    it('switches into new directory - happy path promise', async () => {
-      const result = await promiseResult(newSimpleGit(context.root).cwd(goodDir));
+      const result = await promiseResult(newSimpleFossil(context.root).cwd(goodDir));
       expect(result).toEqual(expect.objectContaining({
          success: true,
          threw: false,
@@ -62,14 +62,14 @@ describe('change-directory', () => {
    });
 
    it('switches into new directory - sad path promise', async () => {
-      const result = await promiseError(newSimpleGit(context.root).cwd(badDir));
-      assertGitError(result, badDir);
+      const result = await promiseError(newSimpleFossil(context.root).cwd(badDir));
+      assertFossilError(result, badDir);
    });
 
    it('switches into new directory - chained with callbacks', async () => {
       const spies = [jest.fn(), jest.fn(), jest.fn()];
 
-      newSimpleGit(context.root)
+      newSimpleFossil(context.root)
          .cwd(goodDir, spies[0])
          .cwd(badDir, spies[1])
          .cwd(goodDir, spies[2]);
@@ -82,7 +82,7 @@ describe('change-directory', () => {
 
    });
 
-   function showPrefix (git: SimpleGit) {
-      return git.raw('rev-parse', '--show-prefix').then(s => String(s).trim());
+   function showPrefix (fossil: SimpleFossil) {
+      return fossil.raw('rev-parse', '--show-prefix').then(s => String(s).trim());
    }
 })

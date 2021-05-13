@@ -5,9 +5,9 @@ To handle the case where the underlying `git` processes appear to hang, configur
 `stdOut` or `stdErr` streams before sending a `SIGINT` kill message.
 
 ```typescript
-import simpleGit, { GitPluginError, SimpleGit, SimpleGitProgressEvent } from 'simple-git';
+import simpleFossil, { FossilPluginError, SimpleFossil, SimpleFossilProgressEvent } from 'simple-fossil';
 
-const git: SimpleGit = simpleGit({
+const git: SimpleFossil = simpleFossil({
    baseDir: '/some/path', 
    timeout: {
        block: 2000,
@@ -15,12 +15,12 @@ const git: SimpleGit = simpleGit({
 });
 
 // if the `git pull` process fails to send content to the `stdOut` or `stdErr`
-// streams for 2 seconds, simple-git will kill it with a SIGINT
+// streams for 2 seconds, simple-fossil will kill it with a SIGINT
 try {
-    await git.pull();
+    await fossil.pull();
 }
 catch (err) {
-    if (err instanceof GitPluginError && err.plugin === 'timeout') {
+    if (err instanceof FossilPluginError && err.plugin === 'timeout') {
         // task failed because of a timeout
     }
 }

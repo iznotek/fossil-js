@@ -1,5 +1,5 @@
-import { SimpleGit } from 'typings';
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
+import { SimpleFossil } from 'typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
 import { configListParser } from '../../src/lib/responses/ConfigList';
 
 describe('config list parser', () => {
@@ -49,12 +49,12 @@ describe('config list parser', () => {
 
 describe('config', () => {
 
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
-   beforeEach(() => git = newSimpleGit());
+   beforeEach(() => fossil = newSimpleFossil());
 
    it('adds', () => new Promise<void>(done => {
-      git.addConfig('user.name', 'test', function (err: null | Error) {
+      fossil.addConfig('user.name', 'test', function (err: null | Error) {
          expect(err).toBeNull();
          assertExecutedCommands('config', '--local', 'user.name', 'test');
          done();
@@ -64,7 +64,7 @@ describe('config', () => {
    }));
 
    it('appends', () => new Promise<void>(done => {
-      git.addConfig('user.name', 'test', true, function (err: null | Error) {
+      fossil.addConfig('user.name', 'test', true, function (err: null | Error) {
          expect(err).toBeNull();
          assertExecutedCommands('config', '--local', '--add', 'user.name', 'test');
          done();

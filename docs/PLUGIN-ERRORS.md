@@ -1,10 +1,10 @@
 ## Custom Error Detection
 
-By default, `simple-git` will determine that a `git` task has resulted in an error when the process exit
+By default, `simple-fossil` will determine that a `git` task has resulted in an error when the process exit
 code is anything other than `0` and there has been some data sent to the `stdErr` stream. Error handlers
 will be passed the content of both `stdOut` and `stdErr` concatenated together. 
 
-To change any of this behaviour, configure the `simple-git` with the `errors` plugin with a function to be
+To change any of this behaviour, configure the `simple-fossil` with the `errors` plugin with a function to be
 called after every task has been run and should return either `undefined` when the task is treated as
 a success, or a `Buffer` or `Error` when the task should be treated as a failure.
 
@@ -13,9 +13,9 @@ detection plugin is the original error. Either return that error directly to all
 task's error handlers, or implement your own error detection as below:
 
 ```typescript
-import simpleGit from 'simple-git';
+import simpleFossil from 'simple-fossil';
 
-const git = simpleGit({
+const git = simpleFossil({
    errors(error, result) {
       // optionally pass through any errors reported before this plugin runs
       if (error) return error;

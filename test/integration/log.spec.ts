@@ -3,14 +3,14 @@ import {
    GIT_USER_EMAIL,
    GIT_USER_NAME,
    like,
-   newSimpleGit,
+   newSimpleFossil,
    setUpFilesAdded,
    setUpInit,
-   SimpleGitTestContext
+   SimpleFossilTestContext
 } from '../__fixtures__';
 
 describe('log', () => {
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => {
       context = await createTestContext();
@@ -20,7 +20,7 @@ describe('log', () => {
    });
 
    it('multi-line commit message in log summary', async () => {
-      const actual = await newSimpleGit(context.root).log({multiLine: true});
+      const actual = await newSimpleFossil(context.root).log({multiLine: true});
       expect(actual).toEqual(like({
          latest: like({
             refs: 'HEAD -> master',
@@ -34,7 +34,7 @@ describe('log', () => {
 
    it('multi-line commit message in custom format log summary', async () => {
       const options = {format: {refs: '%D', body: '%B', message: '%s'}, splitter: '||'};
-      const actual = await newSimpleGit(context.root).log(options);
+      const actual = await newSimpleFossil(context.root).log(options);
 
       expect(actual.all).toEqual([
          like({
@@ -52,7 +52,7 @@ describe('log', () => {
 
    it('should read one line for each commit when using shortstat', async () => {
       const options = ['--shortstat'];
-      const actual = await newSimpleGit(context.root).log(options);
+      const actual = await newSimpleFossil(context.root).log(options);
 
       expect(actual.all).toHaveLength(2);
    });

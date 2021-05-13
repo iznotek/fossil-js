@@ -1,5 +1,5 @@
 import { TaskConfigurationError } from '../errors/task-configuration-error';
-import { BufferTask, EmptyTaskParser, SimpleGitTask, StringTask } from '../types';
+import { BufferTask, EmptyTaskParser, SimpleFossilTask, StringTask } from '../types';
 
 export const EMPTY_COMMANDS: [] = [];
 
@@ -49,10 +49,10 @@ export function straightThroughBufferTask(commands: string[]): BufferTask<any> {
    }
 }
 
-export function isBufferTask<R>(task: SimpleGitTask<R>): task is BufferTask<R> {
+export function isBufferTask<R>(task: SimpleFossilTask<R>): task is BufferTask<R> {
    return task.format === 'buffer';
 }
 
-export function isEmptyTask<R>(task: SimpleGitTask<R>): task is EmptyTask {
+export function isEmptyTask<R>(task: SimpleFossilTask<R>): task is EmptyTask {
    return task.format === 'empty' || !task.commands.length;
 }

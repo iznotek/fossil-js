@@ -1,19 +1,19 @@
-import { PushResult, SimpleGit, SimpleGitBase, TaskOptions } from '../../typings';
+import { PushResult, SimpleFossil, SimpleFossilBase, TaskOptions } from '../../typings';
 import { taskCallback } from './task-callback';
 import { changeWorkingDirectoryTask } from './tasks/change-working-directory';
 import { pushTask } from './tasks/push';
 import { configurationErrorTask, straightThroughStringTask } from './tasks/task';
-import { SimpleGitExecutor, SimpleGitTask, SimpleGitTaskCallback } from './types';
+import { SimpleFossilExecutor, SimpleFossilTask, SimpleFossilTaskCallback } from './types';
 import { asArray, filterString, filterType, getTrailingOptions, trailingFunctionArgument } from './utils';
 
-export class SimpleGitApi implements SimpleGitBase {
-   private _executor: SimpleGitExecutor;
+export class SimpleFossilApi implements SimpleFossilBase {
+   private _executor: SimpleFossilExecutor;
 
-   constructor(_executor: SimpleGitExecutor) {
+   constructor(_executor: SimpleFossilExecutor) {
       this._executor = _executor;
    }
 
-   private _runTask<T>(task: SimpleGitTask<T>, then?: SimpleGitTaskCallback<T>) {
+   private _runTask<T>(task: SimpleFossilTask<T>, then?: SimpleFossilTaskCallback<T>) {
       const chain = this._executor.chain();
       const promise = chain.push(task);
 
@@ -47,14 +47,14 @@ export class SimpleGitApi implements SimpleGitBase {
       }
 
       return this._runTask(
-         configurationErrorTask('Git.cwd: workingDirectory must be supplied as a string'),
+         configurationErrorTask('Fossil.cwd: workingDirectory must be supplied as a string'),
          next
       );
    }
 
-   push(remote?: string, branch?: string, options?: TaskOptions, callback?: SimpleGitTaskCallback<PushResult>): SimpleGit & Promise<PushResult>;
-   push(options?: TaskOptions, callback?: SimpleGitTaskCallback<PushResult>): SimpleGit & Promise<PushResult>;
-   push(callback?: SimpleGitTaskCallback<PushResult>): SimpleGit & Promise<PushResult>;
+   push(remote?: string, branch?: string, options?: TaskOptions, callback?: SimpleFossilTaskCallback<PushResult>): SimpleFossil & Promise<PushResult>;
+   push(options?: TaskOptions, callback?: SimpleFossilTaskCallback<PushResult>): SimpleFossil & Promise<PushResult>;
+   push(callback?: SimpleFossilTaskCallback<PushResult>): SimpleFossil & Promise<PushResult>;
    push() {
       const task = pushTask(
          {

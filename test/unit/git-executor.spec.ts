@@ -1,5 +1,5 @@
-import { newSimpleGit, wait } from './__fixtures__';
-import { SimpleGit } from 'typings';
+import { newSimpleFossil, wait } from './__fixtures__';
+import { SimpleFossil } from 'typings';
 import { mockChildProcessModule } from './__mocks__/mock-child-process';
 
 async function withStdOut () {
@@ -21,12 +21,12 @@ async function childProcessEmits(event: 'close' | 'exit', code: number, before?:
 const aWhile = () => wait(50);
 
 describe('git-executor', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
    let task: Promise<any>;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
@@ -40,7 +40,7 @@ describe('git-executor', () => {
    }
 
    function givenTheTaskIsAdded() {
-      task = git.init(callback);
+      task = fossil.init(callback);
    }
 
    it('with no stdErr and just a close event, terminates after a delay', async () => {

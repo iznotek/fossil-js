@@ -1,10 +1,10 @@
-import { ListLogSummary, SimpleGit } from 'typings';
+import { ListLogSummary, SimpleFossil } from 'typings';
 import {
    assertExecutedCommands,
    assertExecutedCommandsContains,
    closeWithSuccess,
    like,
-   newSimpleGit
+   newSimpleFossil
 } from './__fixtures__';
 import {
    COMMIT_BOUNDARY,
@@ -14,12 +14,12 @@ import {
 } from '../../src/lib/parsers/parse-list-log-summary';
 
 describe('log', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
-   beforeEach(() => git = newSimpleGit());
+   beforeEach(() => fossil = newSimpleFossil());
 
    it('follow option is added as a suffix', async () => {
-      git.log({
+      fossil.log({
          file: 'index.js',
          format: {hash: '%H'},
          '--fixed-strings': null,
@@ -32,7 +32,7 @@ describe('log', () => {
    });
 
    it('with stat=4096 and custom format / splitter', async () => {
-      const task = git.log({'--stat': '4096', 'splitter': ' !! ', 'format': {hash: '%H', author: '%aN'}});
+      const task = fossil.log({'--stat': '4096', 'splitter': ' !! ', 'format': {hash: '%H', author: '%aN'}});
       await closeWithSuccess(`
 òòòòòò 5806c0c1c5d8f8a949e95f8e1cbff7e149eef96b !! kobbikobb òò
  foo.js | 113 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------
@@ -67,7 +67,7 @@ describe('log', () => {
    });
 
    it('with shortstat', async () => {
-      const task = git.log(['--shortstat']);
+      const task = fossil.log(['--shortstat']);
       await closeWithSuccess(`
 ${START_BOUNDARY} 5806c0c1c5d8f8a949e95f8e1cbff7e149eef96b${SPLITTER}2019-07-18 00:10:25 +0000${SPLITTER}Exposes issue #382${SPLITTER}HEAD -> pr/383${SPLITTER}${SPLITTER}kobbikobb${SPLITTER}jakobjo@temposoftware.com${COMMIT_BOUNDARY}
  1 file changed, 70 insertions(+), 43 deletions(-)
@@ -92,7 +92,7 @@ ${START_BOUNDARY} d2934ee302221577157640cb8cc4995a915f7367${SPLITTER}2019-07-14 
    });
 
    it('with stat', async () => {
-      const task = git.log(['--stat']);
+      const task = fossil.log(['--stat']);
       await closeWithSuccess(`
 òòòòòò 5806c0c1c5d8f8a949e95f8e1cbff7e149eef96b ò 2019-07-18 00:10:25 +0000 ò Exposes issue #382 ò HEAD -> pr/383 ò  ò kobbikobb ò jakobjo@temposoftware.com òò
  foo.js | 113 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-------------------------------------------
@@ -131,7 +131,7 @@ ${START_BOUNDARY} d2934ee302221577157640cb8cc4995a915f7367${SPLITTER}2019-07-14 
    });
 
    it('allows for multi-line commit messages', async () => {
-      const task = git.log({multiLine: true});
+      const task = fossil.log({multiLine: true});
       await closeWithSuccess(`
 ${START_BOUNDARY}aaf7f71d53fdbe5f1783f4cc34514cb1067b9131 ò 2019-07-09 11:33:17 +0100 ò hello world ò HEAD -> master ò hello
 world
@@ -157,7 +157,7 @@ ${START_BOUNDARY}592ea103c33666fc4faf80e7fd68e655619ce137 ò 2019-07-03 07:11:52
    });
 
    it('allows for single-line commit messages', async () => {
-      const task = git.log({multiLine: false});
+      const task = fossil.log({multiLine: false});
       await closeWithSuccess(`
 ${START_BOUNDARY}aaf7f71d53fdbe5f1783f4cc34514cb1067b9131 ò 2019-07-09 11:33:17 +0100 ò hello world ò HEAD -> master ò  ò Steve King ò steve@mydev.co${COMMIT_BOUNDARY}
 ${START_BOUNDARY}592ea103c33666fc4faf80e7fd68e655619ce137 ò 2019-07-03 07:11:52 +0100 ò blah ò  ò  ò Steve King ò steve@mydev.co${COMMIT_BOUNDARY}
@@ -180,7 +180,7 @@ ${START_BOUNDARY}592ea103c33666fc4faf80e7fd68e655619ce137 ò 2019-07-03 07:11:52
    });
 
    it('allows for custom format multi-line commit messages', async () => {
-      const task = git.log({format: {body: '%B', hash: '%H'}, splitter: '||'});
+      const task = fossil.log({format: {body: '%B', hash: '%H'}, splitter: '||'});
       await closeWithSuccess(`
 ${START_BOUNDARY}hello
 world
@@ -200,7 +200,7 @@ ${START_BOUNDARY}blah
    });
 
    it('picks out the latest item', async () => {
-      const task = git.log();
+      const task = fossil.log();
       await closeWithSuccess(`
 ${START_BOUNDARY}ca931e641eb2929cf86093893e9a467e90bf4c9b ò 2016-01-04 18:54:56 +0100 ò Fix log.latest. (HEAD, stmbgr-master) ò stmbgr ò stmbgr@gmail.com${COMMIT_BOUNDARY}
 ${START_BOUNDARY}8655cb1cf2a3d6b83f4e6f7ff50ee0569758e805 ò 2016-01-03 16:02:22 +0000 ò Release 1.20.0 (origin/master, origin/HEAD, master) ò Steve King ò steve@mydev.co${COMMIT_BOUNDARY}
@@ -217,7 +217,7 @@ ${START_BOUNDARY}207601debebc170830f2921acf2b6b27034c3b1f ò 2016-01-03 15:50:58
    });
 
    it('with custom format option', async () => {
-      const task = git.log({
+      const task = fossil.log({
          format: {
             'myhash': '%H',
             'message': '%s',
@@ -242,7 +242,7 @@ ${START_BOUNDARY}207601debebc170830f2921acf2b6b27034c3b1f ò Release 1.19.0 ò $
    });
 
    it('with custom format option on multiline commit', async () => {
-      const task = git.log({
+      const task = fossil.log({
          format: {
             'myhash': '%H',
             'message': '%b',
@@ -273,7 +273,7 @@ ${START_BOUNDARY}d4bdd0c823584519ddd70f8eceb8ff06c0d72324 ò Support for any par
    });
 
    it('with custom format %b option on multiline commit', async () => {
-      const task = git.log({
+      const task = fossil.log({
          format: {
             'message': '%b',
          }
@@ -332,9 +332,9 @@ ${START_BOUNDARY}ccc;;;;;2018-09-13 06:48:22 +0100;;;;;WIP on master: 2942035 bl
       it('parses regular log', () => {
          const parser = createListLogSummaryParser(splitOn.PIPES, ['hash', 'message']);
          actual = parser(`
-${START_BOUNDARY}a9d0113c896c69d24583f567030fa5a8053f6893||Add support for 'git.raw' (origin/add_raw, add_raw)${COMMIT_BOUNDARY}
+${START_BOUNDARY}a9d0113c896c69d24583f567030fa5a8053f6893||Add support for 'fossil.raw' (origin/add_raw, add_raw)${COMMIT_BOUNDARY}
 ${START_BOUNDARY}d8cb111160e0a5925ef9b0bf21abda96d87fdc83||Merge remote-tracking branch 'origin/master' into add_raw${COMMIT_BOUNDARY}
-${START_BOUNDARY}204f2fd1d77ee5f8475c47f44acc8014d7534b00||Add support for 'git.raw'${COMMIT_BOUNDARY}
+${START_BOUNDARY}204f2fd1d77ee5f8475c47f44acc8014d7534b00||Add support for 'fossil.raw'${COMMIT_BOUNDARY}
 ${START_BOUNDARY}1dde94c3a06b6e9b7cc88fb32ee23d79eaf39aa6||Merge pull request #143 from steveukx/integration-test${COMMIT_BOUNDARY}
 ${START_BOUNDARY}8b613d080027354d4e8427d93b3f839ebb38c39a||Add broken-chain tests${COMMIT_BOUNDARY}
 `);
@@ -342,7 +342,7 @@ ${START_BOUNDARY}8b613d080027354d4e8427d93b3f839ebb38c39a||Add broken-chain test
          expected = like({
             latest: {
                hash: 'a9d0113c896c69d24583f567030fa5a8053f6893',
-               message: `Add support for 'git.raw' (origin/add_raw, add_raw)`
+               message: `Add support for 'fossil.raw' (origin/add_raw, add_raw)`
             }
          });
 
@@ -371,7 +371,7 @@ ${START_BOUNDARY}6dac0c61d77fcbb9b7c10848d3be55bb84217b1b;2019-03-22 18:59:44 +0
          const parser = createListLogSummaryParser(splitOn.SEMI, ['hash', 'date', 'message', 'refs', 'body', 'author_name', 'author_email']);
          actual = parser(`
 ${START_BOUNDARY}f1db07b4d526407c419731c5d6863a019f4bc051;2019-03-23 08:04:04 +0000;Merge branch 'master' into pr/333;HEAD -> pr/333;# Conflicts:
-#       src/git.js
+#       src/fossil.js
 #       test/unit/test-log.js
 ;Steve King;steve@mydev.co${COMMIT_BOUNDARY}
 ${START_BOUNDARY}8a5278c03a4dce0d2da64f8743d6e296b4060122;2019-03-23 07:59:05 +0000;Change name of the '%d' placeholder to'refs';master, RobertAKARobin-feature/git-log-body;;Steve King;steve@mydev.co${COMMIT_BOUNDARY}
@@ -379,7 +379,7 @@ ${START_BOUNDARY}e613462dc8384deab7c4046e7bc8b5370a295e14;2019-03-23 07:24:21 +0
       `);
 
          expected = `# Conflicts:
-#       src/git.js
+#       src/fossil.js
 #       test/unit/test-log.js
 `;
 
@@ -390,7 +390,7 @@ ${START_BOUNDARY}e613462dc8384deab7c4046e7bc8b5370a295e14;2019-03-23 07:24:21 +0
 
    describe('configuration', () => {
       it('supports optional non-ISO dates', async () => {
-         git.log({strictDate: false});
+         fossil.log({strictDate: false});
          await closeWithSuccess();
 
          assertExecutedCommands(
@@ -401,7 +401,7 @@ ${START_BOUNDARY}e613462dc8384deab7c4046e7bc8b5370a295e14;2019-03-23 07:24:21 +0
          const from = 'from';
          const to = 'to';
 
-         git.log({from, to});
+         fossil.log({from, to});
          await closeWithSuccess();
 
          assertCommandAppended(`${from}...${to}`);
@@ -411,7 +411,7 @@ ${START_BOUNDARY}e613462dc8384deab7c4046e7bc8b5370a295e14;2019-03-23 07:24:21 +0
          const from = 'from';
          const to = 'to';
 
-         git.log({from, to, symmetric: false});
+         fossil.log({from, to, symmetric: false});
          await closeWithSuccess();
 
          assertCommandAppended(`${from}..${to}`);
@@ -421,14 +421,14 @@ ${START_BOUNDARY}e613462dc8384deab7c4046e7bc8b5370a295e14;2019-03-23 07:24:21 +0
          const from = 'from';
          const to = 'to';
 
-         git.log({from, to, symmetric: true});
+         fossil.log({from, to, symmetric: true});
          await closeWithSuccess();
 
          assertCommandAppended(`${from}...${to}`);
       });
 
       it('supports custom splitters', async () => {
-         const task = git.log({splitter: '::'});
+         const task = fossil.log({splitter: '::'});
          await closeWithSuccess(`
 ${START_BOUNDARY}ca931e641eb2929cf86093893e9a467e90bf4c9b::2016-01-04 18:54:56 +0100::Fix log.latest. (HEAD, stmbgr-master)::stmbgr::stmbgr@gmail.com${COMMIT_BOUNDARY}
 ${START_BOUNDARY}8655cb1cf2a3d6b83f4e6f7ff50ee0569758e805::2016-01-03 16:02:22 +0000::Release 1.20.0 (origin/master, origin/HEAD, master)::Steve King::steve@mydev.co${COMMIT_BOUNDARY}
@@ -448,35 +448,35 @@ ${START_BOUNDARY}207601debebc170830f2921acf2b6b27034c3b1f::2016-01-03 15:50:58 +
       });
 
       it('supports options array', async () => {
-         git.log(['--some=thing']);
+         fossil.log(['--some=thing']);
          await closeWithSuccess();
 
          assertCommandAppended('--some=thing');
       });
 
       it('supports max count shorthand property', async () => {
-         git.log({n: 5});
+         fossil.log({n: 5});
          await closeWithSuccess();
 
          assertCommandAppended('--max-count=5');
       });
 
       it('supports max count long property', async () => {
-         git.log({'--max-count': 5});
+         fossil.log({'--max-count': 5});
          await closeWithSuccess();
 
          assertCommandAppended('--max-count=5');
       });
 
       it('supports custom options', async () => {
-         git.log({n: 5, '--custom': null, '--custom-with-value': '123'});
+         fossil.log({n: 5, '--custom': null, '--custom-with-value': '123'});
          await closeWithSuccess();
 
          assertCommandAppended('--max-count=5', '--custom', '--custom-with-value=123');
       });
 
       it('max count appears before file', async () => {
-         git.log({file: '/foo/bar.txt', n: 10});
+         fossil.log({file: '/foo/bar.txt', n: 10});
          await closeWithSuccess();
 
          assertCommandAppended('--max-count=10', '--follow', '/foo/bar.txt');
@@ -495,13 +495,13 @@ ${START_BOUNDARY}207601debebc170830f2921acf2b6b27034c3b1f::2016-01-03 15:50:58 +
 
       it('passes result to callback', async () => {
          const then = jest.fn();
-         const task = git.log(['--some-option'], then);
+         const task = fossil.log(['--some-option'], then);
          await closeWithSuccess();
          expect(then).toHaveBeenCalledWith(null, await task);
       });
 
       it('when awaiting array option', async () => {
-         git.log(['--all']);
+         fossil.log(['--all']);
          await closeWithSuccess();
          assertExecutedCommandsContains('--all');
       });
@@ -510,7 +510,7 @@ ${START_BOUNDARY}207601debebc170830f2921acf2b6b27034c3b1f::2016-01-03 15:50:58 +
          const from = 'from-name';
          const to = 'to-name';
 
-         git.log({from, to, symmetric: true});
+         fossil.log({from, to, symmetric: true});
          await closeWithSuccess();
 
          assertExecutedCommands(
@@ -523,7 +523,7 @@ ${START_BOUNDARY}207601debebc170830f2921acf2b6b27034c3b1f::2016-01-03 15:50:58 +
 
    describe('deprecations', () => {
       it('supports ListLogSummary without generic type', async () => {
-         const summary: Promise<ListLogSummary> = git.log({from: 'from', to: 'to'});
+         const summary: Promise<ListLogSummary> = fossil.log({from: 'from', to: 'to'});
          await closeWithSuccess();
 
          expect(summary).not.toBe(undefined);

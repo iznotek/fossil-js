@@ -1,22 +1,22 @@
-import { createTestContext, newSimpleGit, SimpleGitTestContext } from '../__fixtures__';
-import { SimpleGitOptions } from '../../src/lib/types';
+import { createTestContext, newSimpleFossil, SimpleFossilTestContext } from '../__fixtures__';
+import { SimpleFossilOptions } from '../../src/lib/types';
 
 describe('progress-monitor', () => {
 
    const upstream = 'https://github.com/steveukx/git-js.git';
 
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => context = await createTestContext());
 
    it('emits progress events', async () => {
       const progress = jest.fn();
-      const opt: Partial<SimpleGitOptions> = {
+      const opt: Partial<SimpleFossilOptions> = {
          baseDir: context.root,
          progress,
       };
 
-      await newSimpleGit(opt).clone(upstream);
+      await newSimpleFossil(opt).clone(upstream);
 
       const receivingUpdates = progressEventsAtStage(progress, 'receiving');
 

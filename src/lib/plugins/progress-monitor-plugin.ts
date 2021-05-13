@@ -1,13 +1,13 @@
-import { SimpleGitOptions } from '../types';
+import { SimpleFossilOptions } from '../types';
 import { asNumber, including } from '../utils';
 
-import { SimpleGitPlugin } from './simple-git-plugin';
+import { SimpleFossilPlugin } from './simple-fossil-plugin';
 
-export function progressMonitorPlugin(progress: Exclude<SimpleGitOptions['progress'], void>) {
+export function progressMonitorPlugin(progress: Exclude<SimpleFossilOptions['progress'], void>) {
    const progressCommand = '--progress';
    const progressMethods = ['checkout', 'clone', 'fetch', 'pull', 'push'];
 
-   const onProgress: SimpleGitPlugin<'spawn.after'> = {
+   const onProgress: SimpleFossilPlugin<'spawn.after'> = {
       type: 'spawn.after',
       action(_data, context) {
          if (!context.commands.includes(progressCommand)) {
@@ -31,7 +31,7 @@ export function progressMonitorPlugin(progress: Exclude<SimpleGitOptions['progre
       }
    };
 
-   const onArgs: SimpleGitPlugin<'spawn.args'> = {
+   const onArgs: SimpleFossilPlugin<'spawn.args'> = {
       type: 'spawn.args',
       action(args, context) {
          if (!progressMethods.includes(context.method)) {

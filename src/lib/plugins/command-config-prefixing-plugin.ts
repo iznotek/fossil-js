@@ -1,7 +1,7 @@
 import { prefixedArray } from '../utils';
-import { SimpleGitPlugin } from './simple-git-plugin';
+import { SimpleFossilPlugin } from './simple-fossil-plugin';
 
-export function commandConfigPrefixingPlugin(configuration: string[]): SimpleGitPlugin<'spawn.args'> {
+export function commandConfigPrefixingPlugin(configuration: string[]): SimpleFossilPlugin<'spawn.args'> {
    const prefix = prefixedArray(configuration, '-c');
 
    return {

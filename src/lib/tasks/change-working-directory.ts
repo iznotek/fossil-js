@@ -1,11 +1,11 @@
 import { folderExists } from '../utils';
-import { SimpleGitExecutor } from '../types';
+import { SimpleFossilExecutor } from '../types';
 import { adhocExecTask } from './task';
 
-export function changeWorkingDirectoryTask (directory: string, root?: SimpleGitExecutor) {
-   return adhocExecTask((instance: SimpleGitExecutor) => {
+export function changeWorkingDirectoryTask (directory: string, root?: SimpleFossilExecutor) {
+   return adhocExecTask((instance: SimpleFossilExecutor) => {
       if (!folderExists(directory)) {
-         throw new Error(`Git.cwd: cannot change to non-directory "${ directory }"`);
+         throw new Error(`Fossil.cwd: cannot change to non-directory "${ directory }"`);
       }
 
       return ((root || instance).cwd = directory);

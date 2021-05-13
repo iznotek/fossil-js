@@ -3,10 +3,10 @@ import { createFixture } from '../create-fixture';
 
 const stdErr = `Pushing to git@github.com:kwsites/mock-repo.git
 remote:
-remote: Create a pull request for 'new-branch-fff' on GitHub by visiting:
+remote: Create a pull request for 'new-branch-fff' on FossilHub by visiting:
 remote:      ${gitHubPullRequest}
 remote:
-remote: GitHub found 12 vulnerabilities on kwsites/mock-repo's default branch (12 moderate). To find out more, visit:
+remote: FossilHub found 12 vulnerabilities on kwsites/mock-repo's default branch (12 moderate). To find out more, visit:
 remote:      ${gitHubAlertsUrl}
 remote:
 updating local tracking ref 'refs/remotes/origin/new-branch-fff'`;

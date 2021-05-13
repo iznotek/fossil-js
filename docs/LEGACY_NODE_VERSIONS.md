@@ -1,7 +1,7 @@
 
 # Legacy Node Versions
 
-From `v3.x`, `simple-git` will drop support for `node.js` version 10 or below.
+From `v3.x`, `simple-fossil` will drop support for `node.js` version 10 or below.
 
 To use in lower versions of node, ensure you are also including the necessary polyfills from `core-js`:
 
@@ -12,7 +12,7 @@ require('core-js/stable/array/flat-map');
 require('core-js/stable/object/from-entries');
 require('core-js/stable/object/from-entries');
 
-const simpleGit = require('simple-git');
+const simpleFossil = require('simple-fossil');
 ```   
 
 ## Example - TypeScript
@@ -22,7 +22,7 @@ import 'core-js/stable/array/flat-map';
 import 'core-js/stable/object/from-entries';
 import 'core-js/stable/object/from-entries';
 
-import simpleGit, { SimpleGit } from 'simple-git';
+import simpleFossil, { SimpleFossil } from 'simple-fossil';
 
-const git: SimpleGit = simpleGit();
+const git: SimpleFossil = simpleFossil();
 ```   

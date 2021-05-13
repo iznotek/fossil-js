@@ -1,27 +1,27 @@
-import { closeWithError, closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { closeWithError, closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 import { BranchDeletionBatch } from '../../src/lib/responses/BranchDeleteSummary';
 import { CleanResponse } from '../../src/lib/responses/CleanSummary';
 
 describe('promises', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
    });
 
    it('initially resolves to itself', async () => {
-      expect(await git).toBe(git);
+      expect(await fossil).toBe(fossil);
    });
 
    it('is transparent to async await', async () => {
       closeWithSuccess('Removing foo/');
-      expect(await git.clean('f')).toBeInstanceOf(CleanResponse);
+      expect(await fossil.clean('f')).toBeInstanceOf(CleanResponse);
    });
 
    it('errors into catch with a subsequent then', async () => {
       const callbacks = callbackArray();
-      const queue = git.init()
+      const queue = fossil.init()
          .catch(callbacks.create('catcher'))
          .then(callbacks.create('later'))
       ;
@@ -34,7 +34,7 @@ describe('promises', () => {
 
    it('resolves over catch into subsequent then', async () => {
       const callbacks = callbackArray();
-      const queue = git.init()
+      const queue = fossil.init()
          .catch(callbacks.create('catcher'))
          .then(callbacks.create('later'))
       ;
@@ -46,7 +46,7 @@ describe('promises', () => {
 
    it('then with a subsequent catch handler', async () => {
       const callbacks = callbackArray();
-      const queue = git.init()
+      const queue = fossil.init()
          .then(callbacks.create('resolve'))
          .catch(callbacks.create('catcher'))
          .then(callbacks.create('after'))
@@ -60,7 +60,7 @@ describe('promises', () => {
 
    it('then with a rejection handler', async () => {
       const callbacks = callbackArray();
-      const queue = git.init()
+      const queue = fossil.init()
          .then(callbacks.create('resolve'), callbacks.create('reject'))
          .then(callbacks.create('after'))
          .catch(callbacks.create('catcher'))
@@ -75,8 +75,8 @@ describe('promises', () => {
    it('uses the promise from the the latest task', async () => {
       const callbacks = callbackArray();
       const queues = [
-         git.clean('f').then(callbacks.create('clean')),
-         git.deleteLocalBranches(['feature/something']).then(callbacks.create('branch')),
+         fossil.clean('f').then(callbacks.create('clean')),
+         fossil.deleteLocalBranches(['feature/something']).then(callbacks.create('branch')),
       ];
 
       await closeWithSuccess('Removing foo/');
@@ -127,12 +127,12 @@ describe('async generator', () => {
 
    it('git can be returned from a promise based getter', async () => {
       const factory = {
-         async getGit() {
-            return newSimpleGit();
+         async getFossil() {
+            return newSimpleFossil();
          },
          async doSomething() {
-            const git = await factory.getGit();
-            return await git.raw(['init']);
+            const fossil = await factory.getFossil();
+            return await fossil.raw(['init']);
          }
       };
 

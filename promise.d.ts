@@ -1,22 +1,22 @@
 import * as errors from './typings/errors';
 import * as types from './typings/types';
 import * as resp from './typings/response';
-import * as simpleGit from './typings/simple-git';
+import * as simpleFossil from './typings/simple-fossil';
 
-declare const simplegit: simplegit.SimpleGitExport;
+declare const simplefossil: simplefossil.SimpleFossilExport;
 
-declare namespace simplegit {
+declare namespace simplefossil {
 
-   type SimpleGitExport = ((basePath?: string) => simplegit.SimpleGit) & {
+   type SimpleFossilExport = ((basePath?: string) => simplefossil.SimpleFossil) & {
       CleanOptions: typeof types.CleanOptions
    };
 
-   type SimpleGit = simpleGit.SimpleGit;
+   type SimpleFossil = simpleFossil.SimpleFossil;
 
    // errors
-   type GitError = errors.GitError;
-   type GitConstructError = errors.GitConstructError;
-   type GitResponseError<T> = errors.GitResponseError<T>;
+   type FossilError = errors.FossilError;
+   type FossilConstructError = errors.FossilConstructError;
+   type FossilResponseError<T> = errors.FossilResponseError<T>;
    type TaskConfigurationError = errors.TaskConfigurationError;
 
    // responses
@@ -43,4 +43,4 @@ declare namespace simplegit {
    type CommitSummary = resp.CommitResult;
 }
 
-export = simplegit;
+export = simplefossil;

@@ -1,7 +1,7 @@
-import { createTestContext, newSimpleGit, SimpleGitTestContext } from '../__fixtures__';
+import { createTestContext, newSimpleFossil, SimpleFossilTestContext } from '../__fixtures__';
 
 describe('promises-from-root', () => {
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => context = await createTestContext());
 
@@ -10,10 +10,10 @@ describe('promises-from-root', () => {
       const onShowTopLevel = jest.fn();
       const onError = jest.fn();
 
-      const git = newSimpleGit(context.root);
-      const queue = git.init()
+      const fossil = newSimpleFossil(context.root);
+      const queue = fossil.init()
          .then(onInit)
-         .then(() => git.revparse(['--show-toplevel']))
+         .then(() => fossil.revparse(['--show-toplevel']))
          .then(onShowTopLevel)
          .catch(err => onError(err));
 
@@ -27,7 +27,7 @@ describe('promises-from-root', () => {
       const onInit = jest.fn();
       const onShowTopLevel = jest.fn();
 
-      const queue = newSimpleGit(context.root)
+      const queue = newSimpleFossil(context.root)
          .init(onInit)
          .revparse(['--show-toplevel'], onShowTopLevel);
 

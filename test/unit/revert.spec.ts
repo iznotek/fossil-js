@@ -1,39 +1,39 @@
 import { promiseError } from '@kwsites/promise-result';
 import {
    assertExecutedCommands,
-   assertGitError,
+   assertFossilError,
    assertNoExecutedTasks,
    closeWithSuccess,
-   newSimpleGit
+   newSimpleFossil
 } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { SimpleFossil } from '../../typings';
 
 import { TaskConfigurationError } from '../..';
 
 describe('revert', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('reverts', async () => {
-      git.revert('HEAD~3', callback);
+      fossil.revert('HEAD~3', callback);
       await closeWithSuccess();
       assertExecutedCommands('revert', 'HEAD~3');
    });
 
    it('reverts a range', async () => {
-      git.revert('master~5..master~2', {'-n': null}, callback);
+      fossil.revert('master~5..master~2', {'-n': null}, callback);
       await closeWithSuccess();
       assertExecutedCommands('revert', '-n', 'master~5..master~2');
    });
 
    it('requires a string', async () => {
-      const err = await promiseError(git.revert(callback as any));
-      assertGitError(err, 'Commit must be a string', TaskConfigurationError);
+      const err = await promiseError(fossil.revert(callback as any));
+      assertFossilError(err, 'Commit must be a string', TaskConfigurationError);
       assertNoExecutedTasks();
    });
 

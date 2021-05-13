@@ -1,13 +1,13 @@
-import { SimpleGit, SimpleGitOptions } from '../../typings';
+import { SimpleFossil, SimpleFossilOptions } from '../../typings';
 
-export function newSimpleGit (...args: [] | [string] | [Partial<SimpleGitOptions>]): SimpleGit {
-   const simpleGit = require('../..');
-   return simpleGit(...args);
+export function newSimpleFossil (...args: [] | [string] | [Partial<SimpleFossilOptions>]): SimpleFossil {
+   const simpleFossil = require('../..');
+   return simpleFossil(...args);
 }
 
-export function newSimpleGitP (baseDir: unknown | string = '/tmp/example-repo') {
+export function newSimpleFossilP (baseDir: unknown | string = '/tmp/example-repo') {
    if (typeof baseDir !== 'string') {
-      throw new Error('Bad arguments to newSimpleGitP');
+      throw new Error('Bad arguments to newSimpleFossilP');
    }
    return require('../../promise')(baseDir);
 }

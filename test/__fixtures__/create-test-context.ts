@@ -1,9 +1,9 @@
 import { join } from 'path';
 import { existsSync, mkdir, mkdtemp, realpathSync, writeFile, WriteFileOptions } from 'fs';
-import { SimpleGit } from '../../typings';
-import { newSimpleGit } from './instance';
+import { SimpleFossil } from '../../typings';
+import { newSimpleFossil } from './instance';
 
-export interface SimpleGitTestContext {
+export interface SimpleFossilTestContext {
    /** Creates a directory under the repo root at the given path(s) */
    dir (...segments: string[]): Promise<string>;
 
@@ -22,7 +22,7 @@ export interface SimpleGitTestContext {
    /** Fully qualified resolved path, accounts for any symlinks to the temp directory */
    readonly rootResolvedPath: string;
 
-   readonly git: SimpleGit;
+   readonly fossil: SimpleFossil;
 }
 
 const io = {
@@ -37,7 +37,7 @@ const io = {
    },
    mkdtemp (): Promise<string> {
       return new Promise((done, fail) => {
-         mkdtemp((process.env.TMPDIR || '/tmp/') + 'simple-git-test-', (err, path) => {
+         mkdtemp((process.env.TMPDIR || '/tmp/') + 'simple-fossil-test-', (err, path) => {
             err ? fail(err) : done(path);
          });
       });
@@ -51,13 +51,13 @@ const io = {
    }
 }
 
-export async function createTestContext (): Promise<SimpleGitTestContext> {
+export async function createTestContext (): Promise<SimpleFossilTestContext> {
 
    require('@kwsites/file-exists').$real(true);
 
    const root = await io.mkdtemp();
 
-   const context: SimpleGitTestContext = {
+   const context: SimpleFossilTestContext = {
       path (...segments) {
          return join(root, ...segments);
       },
@@ -87,8 +87,8 @@ export async function createTestContext (): Promise<SimpleGitTestContext> {
       get rootResolvedPath () {
          return realpathSync(context.root);
       },
-      get git () {
-         return newSimpleGit(root);
+      get fossil () {
+         return newSimpleFossil(root);
       },
    };
 

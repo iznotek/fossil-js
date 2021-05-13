@@ -16,7 +16,7 @@ module.exports = {
       ['module-resolver', {
          root: [__dirname],
          alias: {
-            'simple-git': __dirname,
+            'simple-fossil': __dirname,
          },
       }],
    ],

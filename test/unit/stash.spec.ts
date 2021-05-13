@@ -1,17 +1,17 @@
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 
 describe('stash', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('stash working directory', async () => {
-      const queue = git.stash(callback);
+      const queue = fossil.stash(callback);
       await closeWithSuccess();
 
       assertExecutedCommands('stash');
@@ -19,7 +19,7 @@ describe('stash', () => {
    });
 
    it('stash pop', async () => {
-      const queue = git.stash(['pop'], callback);
+      const queue = fossil.stash(['pop'], callback);
       await closeWithSuccess();
 
       assertExecutedCommands('stash', 'pop');
@@ -27,14 +27,14 @@ describe('stash', () => {
    });
 
    it('stash with options no handler', async () => {
-      git.stash(["branch", "some-branch"]);
+      fossil.stash(["branch", "some-branch"]);
       await closeWithSuccess();
 
       assertExecutedCommands('stash', 'branch', 'some-branch');
    });
 
    it('stash with options object no handler', async () => {
-      git.stash({'--foo': null});
+      fossil.stash({'--foo': null});
       await closeWithSuccess();
 
       assertExecutedCommands('stash', '--foo');

@@ -1,12 +1,12 @@
-import { SimpleGitTestContext } from './create-test-context';
+import { SimpleFossilTestContext } from './create-test-context';
 
 export async function setUpFilesAdded(
-   {git, files}: SimpleGitTestContext,
+   {fossil, files}: SimpleFossilTestContext,
    fileNames: string[],
    addSelector: string | string[] = '.',
    message = 'Create files'
 ) {
    await files(...fileNames);
-   await git.add(addSelector);
-   await git.commit(message);
+   await fossil.add(addSelector);
+   await fossil.commit(message);
 }

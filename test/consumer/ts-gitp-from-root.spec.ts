@@ -1,29 +1,29 @@
-import { CleanOptions, CleanSummary, gitP, SimpleGit, TaskConfigurationError } from 'simple-git';
-import { createTestContext, SimpleGitTestContext } from '../__fixtures__';
+import { CleanOptions, CleanSummary, fossilP, SimpleFossil, TaskConfigurationError } from 'simple-fossil';
+import { createTestContext, SimpleFossilTestContext } from '../__fixtures__';
 
 describe('TS Root Consumer', () => {
 
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => context = await createTestContext());
 
    it('imports', () => {
-      expect(typeof gitP).toBe('function');
+      expect(typeof fossilP).toBe('function');
       expect(CleanOptions).toEqual(expect.objectContaining({
          'FORCE': 'f',
       }));
    });
 
    it('finds types, enums and errors', async () => {
-      const git: SimpleGit = gitP(context.root);
-      await git.init();
+      const fossil: SimpleFossil = fossilP(context.root);
+      await fossil.init();
       await context.file('file.txt', 'content');
 
-      const error: TaskConfigurationError | CleanSummary = await git.clean(CleanOptions.DRY_RUN, ['--interactive'])
+      const error: TaskConfigurationError | CleanSummary = await fossil.clean(CleanOptions.DRY_RUN, ['--interactive'])
          .catch((e: TaskConfigurationError) => e);
       expect(error).toBeInstanceOf(Error);
 
-      const clean: CleanSummary = await git.clean(CleanOptions.FORCE);
+      const clean: CleanSummary = await fossil.clean(CleanOptions.FORCE);
       expect(clean).toEqual(expect.objectContaining({
          dryRun: false,
          files: ['file.txt'],

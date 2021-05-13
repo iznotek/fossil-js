@@ -1,9 +1,9 @@
 import { TaskParser, TaskResponseFormat } from '../types';
-import { GitOutputStreams } from './git-output-streams';
+import { FossilOutputStreams } from './fossil-output-streams';
 import { LineParser } from './line-parser';
 import { toLinesWithContent } from './util';
 
-export function callTaskParser<INPUT extends TaskResponseFormat, RESPONSE>(parser: TaskParser<INPUT, RESPONSE>, streams: GitOutputStreams<INPUT>) {
+export function callTaskParser<INPUT extends TaskResponseFormat, RESPONSE>(parser: TaskParser<INPUT, RESPONSE>, streams: FossilOutputStreams<INPUT>) {
    return parser(streams.stdOut, streams.stdErr);
 }
 

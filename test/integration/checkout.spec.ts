@@ -1,25 +1,25 @@
-import { createTestContext, newSimpleGit, setUpInit, SimpleGitTestContext } from '../__fixtures__';
-import { SimpleGit } from '../../typings';
+import { createTestContext, newSimpleFossil, setUpInit, SimpleFossilTestContext } from '../__fixtures__';
+import { SimpleFossil } from '../../typings';
 import { promiseError } from '@kwsites/promise-result';
 
 describe('checkout', () => {
 
-   let context: SimpleGitTestContext;
-   let git: SimpleGit;
+   let context: SimpleFossilTestContext;
+   let fossil: SimpleFossil;
 
    beforeEach(async () => context = await createTestContext());
    beforeEach(async () => {
       await setUpInit(context);
       await context.files('aaa.txt', 'bbb.txt', 'ccc.other');
-      git = newSimpleGit(context.root);
+      fossil = newSimpleFossil(context.root);
    });
 
    it('checkoutLocalBranch', async () => {
-      const {current: initialBranch} = await git.status();
+      const {current: initialBranch} = await fossil.status();
 
-      expect(await promiseError(git.checkoutLocalBranch('my-new-branch'))).toBeUndefined();
+      expect(await promiseError(fossil.checkoutLocalBranch('my-new-branch'))).toBeUndefined();
 
-      const {current: finalBranch} = await git.status();
+      const {current: finalBranch} = await fossil.status();
       expect(finalBranch).toBe('my-new-branch');
       expect(finalBranch).not.toBe(initialBranch);
    });

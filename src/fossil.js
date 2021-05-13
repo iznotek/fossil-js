@@ -1,8 +1,8 @@
-const {GitExecutor} = require('./lib/runners/git-executor');
-const {SimpleGitApi} = require('./lib/simple-git-api');
+const {FossilExecutor} = require('./lib/runners/fossil-executor');
+const {SimpleFossilApi} = require('./lib/simple-fossil-api');
 
 const {Scheduler} = require('./lib/runners/scheduler');
-const {GitLogger} = require('./lib/git-logger');
+const {FossilLogger} = require('./lib/fossil-logger');
 const {configurationErrorTask} = require('./lib/tasks/task');
 const {
    asArray,
@@ -40,31 +40,31 @@ const {addSubModuleTask, initSubModuleTask, subModuleTask, updateSubModuleTask} 
 const {addAnnotatedTagTask, addTagTask, tagListTask} = require('./lib/tasks/tag');
 const {straightThroughBufferTask, straightThroughStringTask} = require('./lib/tasks/task');
 
-function Git (options, plugins) {
-   this._executor = new GitExecutor(
+function Fossil (options, plugins) {
+   this._executor = new FossilExecutor(
       options.binary, options.baseDir,
       new Scheduler(options.maxConcurrentProcesses), plugins,
    );
-   this._logger = new GitLogger();
+   this._logger = new FossilLogger();
 }
 
-(Git.prototype = Object.create(SimpleGitApi.prototype)).constructor = Git;
+(Fossil.prototype = Object.create(SimpleFossilApi.prototype)).constructor = Fossil;
 
 /**
  * Logging utility for printing out info or error messages to the user
- * @type {GitLogger}
+ * @type {FossilLogger}
  * @private
  */
-Git.prototype._logger = null;
+Fossil.prototype._logger = null;
 
 /**
- * Sets the path to a custom git binary, should either be `git` when there is an installation of git available on
+ * Sets the path to a custom fossil binary, should either be `fossil` when there is an installation of fossil available on
  * the system path, or a fully qualified path to the executable.
  *
  * @param {string} command
- * @returns {Git}
+ * @returns {Fossil}
  */
-Git.prototype.customBinary = function (command) {
+Fossil.prototype.customBinary = function (command) {
    this._executor.binary = command;
    return this;
 };
@@ -75,9 +75,9 @@ Git.prototype.customBinary = function (command) {
  *
  * @param {string|Object} name
  * @param {string} [value]
- * @returns {Git}
+ * @returns {Fossil}
  */
-Git.prototype.env = function (name, value) {
+Fossil.prototype.env = function (name, value) {
    if (arguments.length === 1 && typeof name === 'object') {
       this._executor.env = name;
    } else {
@@ -92,7 +92,7 @@ Git.prototype.env = function (name, value) {
  * with the name of the command being run and the stdout & stderr streams used by the ChildProcess.
  *
  * @example
- * require('simple-git')
+ * require('simple-fossil')
  *    .outputHandler(function (command, stdout, stderr) {
  *       stdout.pipe(process.stdout);
  *    })
@@ -101,20 +101,20 @@ Git.prototype.env = function (name, value) {
  * @see https://nodejs.org/api/child_process.html#child_process_class_childprocess
  * @see https://nodejs.org/api/stream.html#stream_class_stream_readable
  * @param {Function} outputHandler
- * @returns {Git}
+ * @returns {Fossil}
  */
-Git.prototype.outputHandler = function (outputHandler) {
+Fossil.prototype.outputHandler = function (outputHandler) {
    this._executor.outputHandler = outputHandler;
    return this;
 };
 
 /**
- * Initialize a git repo
+ * Initialize a fossil repo
  *
  * @param {Boolean} [bare=false]
  * @param {Function} [then]
  */
-Git.prototype.init = function (bare, then) {
+Fossil.prototype.init = function (bare, then) {
    return this._runTask(
       initTask(bare === true, this._executor.cwd, getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -124,7 +124,7 @@ Git.prototype.init = function (bare, then) {
 /**
  * Check the status of the local repo
  */
-Git.prototype.status = function () {
+Fossil.prototype.status = function () {
    return this._runTask(
       statusTask(getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -134,7 +134,7 @@ Git.prototype.status = function () {
 /**
  * List the stash(s) of the local repo
  */
-Git.prototype.stashList = function (options) {
+Fossil.prototype.stashList = function (options) {
    return this._runTask(
       stashListTask(
          trailingOptionsArgument(arguments) || {},
@@ -150,7 +150,7 @@ Git.prototype.stashList = function (options) {
  * @param {Object|Array} [options]
  * @param {Function} [then]
  */
-Git.prototype.stash = function (options, then) {
+Fossil.prototype.stash = function (options, then) {
    return this._runTask(
       straightThroughStringTask(['stash', ...getTrailingOptions(arguments)]),
       trailingFunctionArgument(arguments),
@@ -159,7 +159,7 @@ Git.prototype.stash = function (options, then) {
 
 function createCloneTask (api, task, repoPath, localPath) {
    if (typeof repoPath !== 'string') {
-      return configurationErrorTask(`git.${ api }() requires a string 'repoPath'`);
+      return configurationErrorTask(`fossil.${ api }() requires a string 'repoPath'`);
    }
 
    return task(repoPath, filterType(localPath, filterString), getTrailingOptions(arguments));
@@ -167,9 +167,9 @@ function createCloneTask (api, task, repoPath, localPath) {
 
 
 /**
- * Clone a git repo
+ * Clone a fossil repo
  */
-Git.prototype.clone = function () {
+Fossil.prototype.clone = function () {
    return this._runTask(
       createCloneTask('clone', cloneTask, ...arguments),
       trailingFunctionArgument(arguments),
@@ -177,9 +177,9 @@ Git.prototype.clone = function () {
 };
 
 /**
- * Mirror a git repo
+ * Mirror a fossil repo
  */
-Git.prototype.mirror = function () {
+Fossil.prototype.mirror = function () {
    return this._runTask(
       createCloneTask('mirror', cloneMirrorTask, ...arguments),
       trailingFunctionArgument(arguments),
@@ -194,7 +194,7 @@ Git.prototype.mirror = function () {
  * @param {string|string[]} from
  * @param {string} to
  */
-Git.prototype.mv = function (from, to) {
+Fossil.prototype.mv = function (from, to) {
    return this._runTask(moveTask(from, to), trailingFunctionArgument(arguments));
 };
 
@@ -203,11 +203,11 @@ Git.prototype.mv = function (from, to) {
  *
  * @param {Function} [then]
  */
-Git.prototype.checkoutLatestTag = function (then) {
+Fossil.prototype.checkoutLatestTag = function (then) {
    var git = this;
    return this.pull(function () {
-      git.tags(function (err, tags) {
-         git.checkout(tags.latest, then);
+      fossil.tags(function (err, tags) {
+         fossil.checkout(tags.latest, then);
       });
    });
 };
@@ -221,14 +221,14 @@ Git.prototype.checkoutLatestTag = function (then) {
  * @param {Object} [options]
  * @param {Function} [then]
  */
-Git.prototype.commit = function (message, files, options, then) {
+Fossil.prototype.commit = function (message, files, options, then) {
    const next = trailingFunctionArgument(arguments);
    const messages = [];
 
    if (filterStringOrStringArray(message)) {
       messages.push(...asArray(message));
    } else {
-      console.warn('simple-git deprecation notice: git.commit: requires the commit message to be supplied as a string/string[], this will be an error in version 3');
+      console.warn('simple-fossil deprecation notice: fossil.commit: requires the commit message to be supplied as a string/string[], this will be an error in version 3');
    }
 
    return this._runTask(
@@ -244,7 +244,7 @@ Git.prototype.commit = function (message, files, options, then) {
 /**
  * Pull the updated contents of the current repo
  */
-Git.prototype.pull = function (remote, branch, options, then) {
+Fossil.prototype.pull = function (remote, branch, options, then) {
    return this._runTask(
       pullTask(filterType(remote, filterString), filterType(branch, filterString), getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -261,7 +261,7 @@ Git.prototype.pull = function (remote, branch, options, then) {
  * @param {string} [remote]
  * @param {string} [branch]
  */
-Git.prototype.fetch = function (remote, branch) {
+Fossil.prototype.fetch = function (remote, branch) {
    return this._runTask(
       fetchTask(filterType(remote, filterString), filterType(branch, filterString), getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -273,24 +273,24 @@ Git.prototype.fetch = function (remote, branch) {
  * a production environment.
  *
  * @param {boolean} silence
- * @returns {Git}
+ * @returns {Fossil}
  */
-Git.prototype.silent = function (silence) {
-   console.warn('simple-git deprecation notice: git.silent: logging should be configured using the `debug` library / `DEBUG` environment variable, this will be an error in version 3');
+Fossil.prototype.silent = function (silence) {
+   console.warn('simple-fossil deprecation notice: fossil.silent: logging should be configured using the `debug` library / `DEBUG` environment variable, this will be an error in version 3');
    this._logger.silent(!!silence);
    return this;
 };
 
 /**
- * List all tags. When using git 2.7.0 or above, include an options object with `"--sort": "property-name"` to
+ * List all tags. When using fossil 2.7.0 or above, include an options object with `"--sort": "property-name"` to
  * sort the tags by that property instead of using the default semantic versioning sort.
  *
- * Note, supplying this option when it is not supported by your Git version will cause the operation to fail.
+ * Note, supplying this option when it is not supported by your Fossil version will cause the operation to fail.
  *
  * @param {Object} [options]
  * @param {Function} [then]
  */
-Git.prototype.tags = function (options, then) {
+Fossil.prototype.tags = function (options, then) {
    return this._runTask(
       tagListTask(getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -298,20 +298,9 @@ Git.prototype.tags = function (options, then) {
 };
 
 /**
- * Rebases the current working copy. Options can be supplied either as an array of string parameters
- * to be sent to the `git rebase` command, or a standard options object.
- */
-Git.prototype.rebase = function () {
-   return this._runTask(
-      straightThroughStringTask(['rebase', ...getTrailingOptions(arguments)]),
-      trailingFunctionArgument(arguments)
-   );
-};
-
-/**
  * Reset a repo
  */
-Git.prototype.reset = function (mode) {
+Fossil.prototype.reset = function (mode) {
    return this._runTask(
       resetTask(getResetMode(mode), getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -321,7 +310,7 @@ Git.prototype.reset = function (mode) {
 /**
  * Revert one or more commits in the local working copy
  */
-Git.prototype.revert = function (commit) {
+Fossil.prototype.revert = function (commit) {
    const next = trailingFunctionArgument(arguments);
 
    if (typeof commit !== 'string') {
@@ -340,10 +329,10 @@ Git.prototype.revert = function (commit) {
 /**
  * Add a lightweight tag to the head of the current branch
  */
-Git.prototype.addTag = function (name) {
+Fossil.prototype.addTag = function (name) {
    const task = (typeof name === 'string')
       ? addTagTask(name)
-      : configurationErrorTask('Git.addTag requires a tag name');
+      : configurationErrorTask('Fossil.addTag requires a tag name');
 
    return this._runTask(task, trailingFunctionArgument(arguments));
 };
@@ -351,7 +340,7 @@ Git.prototype.addTag = function (name) {
 /**
  * Add an annotated tag to the head of the current branch
  */
-Git.prototype.addAnnotatedTag = function (tagName, tagMessage) {
+Fossil.prototype.addAnnotatedTag = function (tagName, tagMessage) {
    return this._runTask(
       addAnnotatedTagTask(tagName, tagMessage),
       trailingFunctionArgument(arguments),
@@ -359,10 +348,10 @@ Git.prototype.addAnnotatedTag = function (tagName, tagMessage) {
 };
 
 /**
- * Check out a tag or revision, any number of additional arguments can be passed to the `git checkout` command
+ * Check out a tag or revision, any number of additional arguments can be passed to the `fossil checkout` command
  * by supplying either a string or array of strings as the first argument.
  */
-Git.prototype.checkout = function () {
+Fossil.prototype.checkout = function () {
    const commands = ['checkout', ...getTrailingOptions(arguments, true)];
    return this._runTask(
       straightThroughStringTask(commands),
@@ -377,21 +366,21 @@ Git.prototype.checkout = function () {
  * @param {string} startPoint (e.g origin/development)
  * @param {Function} [then]
  */
-Git.prototype.checkoutBranch = function (branchName, startPoint, then) {
+Fossil.prototype.checkoutBranch = function (branchName, startPoint, then) {
    return this.checkout(['-b', branchName, startPoint], trailingFunctionArgument(arguments));
 };
 
 /**
  * Check out a local branch
  */
-Git.prototype.checkoutLocalBranch = function (branchName, then) {
+Fossil.prototype.checkoutLocalBranch = function (branchName, then) {
    return this.checkout(['-b', branchName], trailingFunctionArgument(arguments));
 };
 
 /**
  * Delete a local branch
  */
-Git.prototype.deleteLocalBranch = function (branchName, forceDelete, then) {
+Fossil.prototype.deleteLocalBranch = function (branchName, forceDelete, then) {
    return this._runTask(
       deleteBranchTask(branchName, typeof forceDelete === "boolean" ? forceDelete : false),
       trailingFunctionArgument(arguments),
@@ -401,7 +390,7 @@ Git.prototype.deleteLocalBranch = function (branchName, forceDelete, then) {
 /**
  * Delete one or more local branches
  */
-Git.prototype.deleteLocalBranches = function (branchNames, forceDelete, then) {
+Fossil.prototype.deleteLocalBranches = function (branchNames, forceDelete, then) {
    return this._runTask(
       deleteBranchesTask(branchNames, typeof forceDelete === "boolean" ? forceDelete : false),
       trailingFunctionArgument(arguments),
@@ -414,7 +403,7 @@ Git.prototype.deleteLocalBranches = function (branchNames, forceDelete, then) {
  * @param {Object | string[]} [options]
  * @param {Function} [then]
  */
-Git.prototype.branch = function (options, then) {
+Fossil.prototype.branch = function (options, then) {
    return this._runTask(
       branchTask(getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -426,7 +415,7 @@ Git.prototype.branch = function (options, then) {
  *
  * @param {Function} [then]
  */
-Git.prototype.branchLocal = function (then) {
+Fossil.prototype.branchLocal = function (then) {
    return this._runTask(
       branchLocalTask(),
       trailingFunctionArgument(arguments),
@@ -434,28 +423,28 @@ Git.prototype.branchLocal = function (then) {
 };
 
 /**
- * Add config to local git instance
+ * Add config to local fossil instance
  *
  * @param {string} key configuration key (e.g user.name)
  * @param {string} value for the given key (e.g your name)
  * @param {boolean} [append=false] optionally append the key/value pair (equivalent of passing `--add` option).
  * @param {Function} [then]
  */
-Git.prototype.addConfig = function (key, value, append, then) {
+Fossil.prototype.addConfig = function (key, value, append, then) {
    return this._runTask(
       addConfigTask(key, value, typeof append === "boolean" ? append : false),
       trailingFunctionArgument(arguments),
    );
 };
 
-Git.prototype.listConfig = function () {
+Fossil.prototype.listConfig = function () {
    return this._runTask(listConfigTask(), trailingFunctionArgument(arguments));
 };
 
 /**
- * Executes any command against the git binary.
+ * Executes any command against the fossil binary.
  */
-Git.prototype.raw = function (commands) {
+Fossil.prototype.raw = function (commands) {
    const createRestCommands = !Array.isArray(commands);
    const command = [].slice.call(createRestCommands ? arguments : commands, 0);
 
@@ -482,35 +471,35 @@ Git.prototype.raw = function (commands) {
    return this._runTask(straightThroughStringTask(command), next);
 };
 
-Git.prototype.submoduleAdd = function (repo, path, then) {
+Fossil.prototype.submoduleAdd = function (repo, path, then) {
    return this._runTask(
       addSubModuleTask(repo, path),
       trailingFunctionArgument(arguments),
    );
 };
 
-Git.prototype.submoduleUpdate = function (args, then) {
+Fossil.prototype.submoduleUpdate = function (args, then) {
    return this._runTask(
       updateSubModuleTask(getTrailingOptions(arguments, true)),
       trailingFunctionArgument(arguments),
    );
 };
 
-Git.prototype.submoduleInit = function (args, then) {
+Fossil.prototype.submoduleInit = function (args, then) {
    return this._runTask(
       initSubModuleTask(getTrailingOptions(arguments, true)),
       trailingFunctionArgument(arguments),
    );
 };
 
-Git.prototype.subModule = function (options, then) {
+Fossil.prototype.subModule = function (options, then) {
    return this._runTask(
       subModuleTask(getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
    );
 };
 
-Git.prototype.listRemote = function () {
+Fossil.prototype.listRemote = function () {
    return this._runTask(
       listRemotesTask(getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -520,7 +509,7 @@ Git.prototype.listRemote = function () {
 /**
  * Adds a remote to the list of remotes.
  */
-Git.prototype.addRemote = function (remoteName, remoteRepo, then) {
+Fossil.prototype.addRemote = function (remoteName, remoteRepo, then) {
    return this._runTask(
       addRemoteTask(remoteName, remoteRepo, getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -530,7 +519,7 @@ Git.prototype.addRemote = function (remoteName, remoteRepo, then) {
 /**
  * Removes an entry by name from the list of remotes.
  */
-Git.prototype.removeRemote = function (remoteName, then) {
+Fossil.prototype.removeRemote = function (remoteName, then) {
    return this._runTask(
       removeRemoteTask(remoteName),
       trailingFunctionArgument(arguments),
@@ -541,7 +530,7 @@ Git.prototype.removeRemote = function (remoteName, then) {
  * Gets the currently available remotes, setting the optional verbose argument to true includes additional
  * detail on the remotes themselves.
  */
-Git.prototype.getRemotes = function (verbose, then) {
+Fossil.prototype.getRemotes = function (verbose, then) {
    return this._runTask(
       getRemotesTask(verbose === true),
       trailingFunctionArgument(arguments),
@@ -551,7 +540,7 @@ Git.prototype.getRemotes = function (verbose, then) {
 /**
  * Compute object ID from a file
  */
-Git.prototype.hashObject = function (path, write) {
+Fossil.prototype.hashObject = function (path, write) {
    return this._runTask(
       hashObjectTask(path, write === true),
       trailingFunctionArgument(arguments),
@@ -559,12 +548,12 @@ Git.prototype.hashObject = function (path, write) {
 };
 
 /**
- * Call any `git remote` function with arguments passed as an array of strings.
+ * Call any `fossil remote` function with arguments passed as an array of strings.
  *
  * @param {string[]} options
  * @param {Function} [then]
  */
-Git.prototype.remote = function (options, then) {
+Fossil.prototype.remote = function (options, then) {
    return this._runTask(
       remoteTask(getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -572,16 +561,16 @@ Git.prototype.remote = function (options, then) {
 };
 
 /**
- * Merges from one branch to another, equivalent to running `git merge ${from} $[to}`, the `options` argument can
+ * Merges from one branch to another, equivalent to running `fossil merge ${from} $[to}`, the `options` argument can
  * either be an array of additional parameters to pass to the command or null / omitted to be ignored.
  *
  * @param {string} from
  * @param {string} to
  */
-Git.prototype.mergeFromTo = function (from, to) {
+Fossil.prototype.mergeFromTo = function (from, to) {
    if (!(filterString(from) && filterString(to))) {
       return this._runTask(configurationErrorTask(
-         `Git.mergeFromTo requires that the 'from' and 'to' arguments are supplied as strings`
+         `Fossil.mergeFromTo requires that the 'from' and 'to' arguments are supplied as strings`
       ));
    }
 
@@ -593,7 +582,7 @@ Git.prototype.mergeFromTo = function (from, to) {
 
 /**
  * Runs a merge, `options` can be either an array of arguments
- * supported by the [`git merge`](https://git-scm.com/docs/git-merge)
+ * supported by the [`fossil merge`](https://git-scm.com/docs/git-merge)
  * or an options object.
  *
  * Conflicts during the merge result in an error response,
@@ -607,7 +596,7 @@ Git.prototype.mergeFromTo = function (from, to) {
  * @see ./responses/MergeSummary.js
  * @see ./responses/PullSummary.js
  */
-Git.prototype.merge = function () {
+Fossil.prototype.merge = function () {
    return this._runTask(
       mergeTask(getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
@@ -615,12 +604,12 @@ Git.prototype.merge = function () {
 };
 
 /**
- * Call any `git tag` function with arguments passed as an array of strings.
+ * Call any `fossil tag` function with arguments passed as an array of strings.
  *
  * @param {string[]} options
  * @param {Function} [then]
  */
-Git.prototype.tag = function (options, then) {
+Fossil.prototype.tag = function (options, then) {
    const command = getTrailingOptions(arguments);
 
    if (command[0] !== 'tag') {
@@ -638,7 +627,7 @@ Git.prototype.tag = function (options, then) {
  *
  * @param {Function} [then]
  */
-Git.prototype.updateServerInfo = function (then) {
+Fossil.prototype.updateServerInfo = function (then) {
    return this._runTask(
       straightThroughStringTask(['update-server-info']),
       trailingFunctionArgument(arguments),
@@ -652,7 +641,7 @@ Git.prototype.updateServerInfo = function (then) {
  * @param {string} [remote]
  * @param {Function} [then]
  */
-Git.prototype.pushTags = function (remote, then) {
+Fossil.prototype.pushTags = function (remote, then) {
    const task = pushTagsTask({remote: filterType(remote, filterString)}, getTrailingOptions(arguments));
 
    return this._runTask(task, trailingFunctionArgument(arguments));
@@ -661,7 +650,7 @@ Git.prototype.pushTags = function (remote, then) {
 /**
  * Removes the named files from source control.
  */
-Git.prototype.rm = function (files) {
+Fossil.prototype.rm = function (files) {
    return this._runTask(
       straightThroughStringTask(['rm', '-f', ...asArray(files)]),
       trailingFunctionArgument(arguments)
@@ -674,7 +663,7 @@ Git.prototype.rm = function (files) {
  *
  * @param {string|string[]} files
  */
-Git.prototype.rmKeepLocal = function (files) {
+Fossil.prototype.rmKeepLocal = function (files) {
    return this._runTask(
       straightThroughStringTask(['rm', '--cached', ...asArray(files)]),
       trailingFunctionArgument(arguments)
@@ -690,22 +679,22 @@ Git.prototype.rmKeepLocal = function (files) {
  * @param {string[]} [options]
  * @param {Function} [then]
  */
-Git.prototype.catFile = function (options, then) {
+Fossil.prototype.catFile = function (options, then) {
    return this._catFile('utf-8', arguments);
 };
 
-Git.prototype.binaryCatFile = function () {
+Fossil.prototype.binaryCatFile = function () {
    return this._catFile('buffer', arguments);
 };
 
-Git.prototype._catFile = function (format, args) {
+Fossil.prototype._catFile = function (format, args) {
    var handler = trailingFunctionArgument(args);
    var command = ['cat-file'];
    var options = args[0];
 
    if (typeof options === 'string') {
       return this._runTask(
-         configurationErrorTask('Git.catFile: options must be supplied as an array of strings'),
+         configurationErrorTask('Fossil.catFile: options must be supplied as an array of strings'),
          handler,
       );
    }
@@ -721,12 +710,12 @@ Git.prototype._catFile = function (format, args) {
    return this._runTask(task, handler);
 };
 
-Git.prototype.diff = function (options, then) {
+Fossil.prototype.diff = function (options, then) {
    const command = ['diff', ...getTrailingOptions(arguments)];
 
    if (typeof options === 'string') {
       command.splice(1, 0, options);
-      this._logger.warn('Git#diff: supplying options as a single string is now deprecated, switch to an array of strings');
+      this._logger.warn('Fossil#diff: supplying options as a single string is now deprecated, switch to an array of strings');
    }
 
    return this._runTask(
@@ -735,16 +724,16 @@ Git.prototype.diff = function (options, then) {
    );
 };
 
-Git.prototype.diffSummary = function () {
+Fossil.prototype.diffSummary = function () {
    return this._runTask(
       diffSummaryTask(getTrailingOptions(arguments, 1)),
       trailingFunctionArgument(arguments),
    );
 };
 
-Git.prototype.applyPatch = function (patches) {
+Fossil.prototype.applyPatch = function (patches) {
    const task = !filterStringOrStringArray(patches)
-      ? configurationErrorTask(`git.applyPatch requires one or more string patches as the first argument`)
+      ? configurationErrorTask(`fossil.applyPatch requires one or more string patches as the first argument`)
       : applyPatchTask(asArray(patches), getTrailingOptions([].slice.call(arguments, 1)));
 
    return this._runTask(
@@ -753,7 +742,7 @@ Git.prototype.applyPatch = function (patches) {
    );
 }
 
-Git.prototype.revparse = function () {
+Fossil.prototype.revparse = function () {
    const commands = ['rev-parse', ...getTrailingOptions(arguments, true)];
    return this._runTask(
       straightThroughStringTask(commands, true),
@@ -767,7 +756,7 @@ Git.prototype.revparse = function () {
  * @param {string[]} [options]
  * @param {Function} [then]
  */
-Git.prototype.show = function (options, then) {
+Fossil.prototype.show = function (options, then) {
    return this._runTask(
       straightThroughStringTask(['show', ...getTrailingOptions(arguments, 1)]),
       trailingFunctionArgument(arguments)
@@ -776,7 +765,7 @@ Git.prototype.show = function (options, then) {
 
 /**
  */
-Git.prototype.clean = function (mode, options, then) {
+Fossil.prototype.clean = function (mode, options, then) {
    const usingCleanOptionsArray = isCleanOptionsArray(mode);
    const cleanMode = usingCleanOptionsArray && mode.join('') || filterType(mode, filterString) || '';
    const customArgs = getTrailingOptions([].slice.call(arguments, usingCleanOptionsArray ? 1 : 0));
@@ -791,7 +780,7 @@ Git.prototype.clean = function (mode, options, then) {
  * Call a simple function at the next step in the chain.
  * @param {Function} [then]
  */
-Git.prototype.exec = function (then) {
+Fossil.prototype.exec = function (then) {
    const task = {
       commands: [],
       format: 'utf-8',
@@ -813,15 +802,15 @@ Git.prototype.exec = function (then) {
  *
  * To use a custom splitter in the log format, set `options.splitter` to be the string the log should be split on.
  *
- * Options can also be supplied as a standard options object for adding custom properties supported by the git log command.
- * For any other set of options, supply options as an array of strings to be appended to the git log command.
+ * Options can also be supplied as a standard options object for adding custom properties supported by the fossil log command.
+ * For any other set of options, supply options as an array of strings to be appended to the fossil log command.
  */
-Git.prototype.log = function (options) {
+Fossil.prototype.log = function (options) {
    const next = trailingFunctionArgument(arguments);
 
    if (filterString(arguments[0]) && filterString(arguments[1])) {
       return this._runTask(
-         configurationErrorTask(`git.log(string, string) should be replaced with git.log({ from: string, to: string })`),
+         configurationErrorTask(`fossil.log(string, string) should be replaced with fossil.log({ from: string, to: string })`),
          next
       );
    }
@@ -840,9 +829,9 @@ Git.prototype.log = function (options) {
 /**
  * Clears the queue of pending commands and returns the wrapper instance for chaining.
  *
- * @returns {Git}
+ * @returns {Fossil}
  */
-Git.prototype.clearQueue = function () {
+Fossil.prototype.clearQueue = function () {
    // TODO:
    // this._executor.clear();
    return this;
@@ -854,18 +843,18 @@ Git.prototype.clearQueue = function () {
  * @param {string|string[]} pathnames
  * @param {Function} [then]
  */
-Git.prototype.checkIgnore = function (pathnames, then) {
+Fossil.prototype.checkIgnore = function (pathnames, then) {
    return this._runTask(
       checkIgnoreTask(asArray((filterType(pathnames, filterStringOrStringArray, [])))),
       trailingFunctionArgument(arguments),
    );
 };
 
-Git.prototype.checkIsRepo = function (checkType, then) {
+Fossil.prototype.checkIsRepo = function (checkType, then) {
    return this._runTask(
       checkIsRepoTask(filterType(checkType, filterString)),
       trailingFunctionArgument(arguments),
    );
 };
 
-module.exports = Git;
+module.exports = Fossil;

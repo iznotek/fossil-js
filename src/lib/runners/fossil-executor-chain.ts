@@ -1,14 +1,14 @@
 import { spawn, SpawnOptions } from 'child_process';
-import { GitError } from '../errors/git-error';
-import { OutputLogger } from '../git-logger';
+import { FossilError } from '../errors/fossil-error';
+import { OutputLogger } from '../fossil-logger';
 import { PluginStore } from '../plugins';
 import { EmptyTask, isBufferTask, isEmptyTask, } from '../tasks/task';
-import { GitExecutorResult, Maybe, outputHandler, RunnableTask, SimpleGitExecutor, SimpleGitTask } from '../types';
-import { callTaskParser, first, GitOutputStreams, objectToString } from '../utils';
+import { FossilExecutorResult, Maybe, outputHandler, RunnableTask, SimpleFossilExecutor, SimpleFossilTask } from '../types';
+import { callTaskParser, first, FossilOutputStreams, objectToString } from '../utils';
 import { Scheduler } from './scheduler';
 import { TasksPendingQueue } from './tasks-pending-queue';
 
-export class GitExecutorChain implements SimpleGitExecutor {
+export class FossilExecutorChain implements SimpleFossilExecutor {
 
    private _chain: Promise<any> = Promise.resolve();
    private _queue = new TasksPendingQueue();
@@ -35,7 +35,7 @@ export class GitExecutorChain implements SimpleGitExecutor {
    }
 
    constructor(
-      private _executor: SimpleGitExecutor,
+      private _executor: SimpleFossilExecutor,
       private _scheduler: Scheduler,
       private _plugins: PluginStore
    ) {
@@ -45,13 +45,13 @@ export class GitExecutorChain implements SimpleGitExecutor {
       return this;
    }
 
-   public push<R>(task: SimpleGitTask<R>): Promise<R> {
+   public push<R>(task: SimpleFossilTask<R>): Promise<R> {
       this._queue.push(task);
 
       return this._chain = this._chain.then(() => this.attemptTask(task));
    }
 
-   private async attemptTask<R>(task: SimpleGitTask<R>): Promise<void | R> {
+   private async attemptTask<R>(task: SimpleFossilTask<R>): Promise<void | R> {
       const onScheduleComplete = await this._scheduler.next();
       const onQueueComplete = () => this._queue.complete(task);
 
@@ -69,8 +69,8 @@ export class GitExecutorChain implements SimpleGitExecutor {
       }
    }
 
-   private onFatalException<R>(task: SimpleGitTask<R>, e: Error) {
-      const gitError = (e instanceof GitError) ? Object.assign(e, {task}) : new GitError(task, e && String(e));
+   private onFatalException<R>(task: SimpleFossilTask<R>, e: Error) {
+      const gitError = (e instanceof FossilError) ? Object.assign(e, {task}) : new FossilError(task, e && String(e));
 
       this._chain = Promise.resolve();
       this._queue.fatal(gitError);
@@ -102,9 +102,9 @@ export class GitExecutorChain implements SimpleGitExecutor {
    }
 
    private handleTaskData<R>(
-      task: SimpleGitTask<R>,
+      task: SimpleFossilTask<R>,
       args: string[],
-      result: GitExecutorResult, logger: OutputLogger): Promise<GitOutputStreams> {
+      result: FossilExecutorResult, logger: OutputLogger): Promise<FossilOutputStreams> {
 
       const {exitCode, rejection, stdOut, stdErr} = result;
 
@@ -126,7 +126,7 @@ export class GitExecutorChain implements SimpleGitExecutor {
                   logger.info(`custom error handler treated as success`);
                   logger(`custom error returned a %s`, objectToString(newStdOut));
 
-                  done(new GitOutputStreams(
+                  done(new FossilOutputStreams(
                      Array.isArray(newStdOut) ? Buffer.concat(newStdOut) : newStdOut,
                      Buffer.concat(stdErr),
                   ));
@@ -141,14 +141,14 @@ export class GitExecutorChain implements SimpleGitExecutor {
          }
 
          logger.info(`retrieving task output complete`);
-         done(new GitOutputStreams(
+         done(new FossilOutputStreams(
             Buffer.concat(stdOut),
             Buffer.concat(stdErr),
          ));
       });
    }
 
-   private async gitResponse<R>(task: SimpleGitTask<R>, command: string, args: string[], outputHandler: Maybe<outputHandler>, logger: OutputLogger): Promise<GitExecutorResult> {
+   private async gitResponse<R>(task: SimpleFossilTask<R>, command: string, args: string[], outputHandler: Maybe<outputHandler>, logger: OutputLogger): Promise<FossilExecutorResult> {
       const outputLogger = logger.sibling('output');
       const spawnOptions: SpawnOptions = {
          cwd: this.cwd,
@@ -221,7 +221,7 @@ export class GitExecutorChain implements SimpleGitExecutor {
 
 }
 
-function pluginContext<R>(task: SimpleGitTask<R>, commands: string[]) {
+function pluginContext<R>(task: SimpleFossilTask<R>, commands: string[]) {
    return {
       method: first(task.commands) || '',
       commands,

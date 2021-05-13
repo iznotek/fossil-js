@@ -1,38 +1,38 @@
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 import { showAbbrevCommitSingleFile } from './__fixtures__/responses/show';
 
 describe('show', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('passes the response through without editing', async () => {
       const {stdOut} = showAbbrevCommitSingleFile();
 
-      const queue = git.show(callback);
+      const queue = fossil.show(callback);
       await closeWithSuccess(stdOut);
       expect(await queue).toBe(stdOut);
    });
 
    it('allows the use of an array of options', async () => {
-      git.show(['--abbrev-commit', 'foo', 'bar'], callback);
+      fossil.show(['--abbrev-commit', 'foo', 'bar'], callback);
       await closeWithSuccess();
       assertExecutedCommands('show', '--abbrev-commit', 'foo', 'bar');
    });
 
    it('allows an options string', async () => {
-      git.show('--abbrev-commit', callback);
+      fossil.show('--abbrev-commit', callback);
       await closeWithSuccess();
       assertExecutedCommands('show', '--abbrev-commit');
    });
 
    it('allows an options object', async () => {
-      git.show({'--foo': null}, callback);
+      fossil.show({'--foo': null}, callback);
       await closeWithSuccess();
       assertExecutedCommands('show', '--foo');
    });

@@ -1,13 +1,13 @@
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 import { getRemotesTask } from '../../src/lib/tasks/remote';
 
 describe('remotes', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
@@ -71,7 +71,7 @@ describe('remotes', () => {
 
    describe('getRemotes', () => {
       it('list remotes no options', async () => {
-         const task = git.getRemotes(callback);
+         const task = fossil.getRemotes(callback);
          closeWithSuccess();
 
          expect(callback).toHaveBeenCalledWith(null, await task);
@@ -79,7 +79,7 @@ describe('remotes', () => {
       });
 
       it('verbose list remotes no options', async () => {
-         const task = git.getRemotes(true, callback);
+         const task = fossil.getRemotes(true, callback);
          closeWithSuccess();
 
          expect(callback).toHaveBeenCalledWith(null, await task);
@@ -87,19 +87,19 @@ describe('remotes', () => {
       });
 
       it('non-verbose list remotes no options', async () => {
-         git.getRemotes(false);
+         fossil.getRemotes(false);
          await closeWithSuccess();
          assertExecutedCommands('remote');
       });
 
       it('non-verbose list remotes no options', async () => {
-         git.getRemotes(false);
+         fossil.getRemotes(false);
          await closeWithSuccess();
          assertExecutedCommands('remote');
       });
 
       it('no options no callback', async () => {
-         const result = git.getRemotes();
+         const result = fossil.getRemotes();
          await closeWithSuccess();
          expect(await result).toEqual([]);
          assertExecutedCommands('remote');
@@ -110,7 +110,7 @@ describe('remotes', () => {
    describe('addRemote', () => {
 
       it('adds by name and repo', async () => {
-         const task = git.addRemote('repo-name', 'remote-repo', callback);
+         const task = fossil.addRemote('repo-name', 'remote-repo', callback);
          await closeWithSuccess('done');
 
          assertExecutedCommands('remote', 'add', 'repo-name', 'remote-repo');
@@ -118,13 +118,13 @@ describe('remotes', () => {
       });
 
       it('adds by name and repo with options object', async () => {
-         git.addRemote('repo-name', 'remote-repo', {'-f': null}, callback);
+         fossil.addRemote('repo-name', 'remote-repo', {'-f': null}, callback);
          await closeWithSuccess();
          assertExecutedCommands('remote', 'add', '-f', 'repo-name', 'remote-repo');
       });
 
       it('adds by name and repo with options array', async () => {
-         git.addRemote('repo-name', 'remote-repo', ['-f'], callback);
+         fossil.addRemote('repo-name', 'remote-repo', ['-f'], callback);
          await closeWithSuccess();
          assertExecutedCommands('remote', 'add', '-f', 'repo-name', 'remote-repo');
       });

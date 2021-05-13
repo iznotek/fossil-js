@@ -1,10 +1,10 @@
 import { isPromiseFailure, promiseError, promiseResult } from '@kwsites/promise-result';
-import { assertGitError, createTestContext, newSimpleGit, newSimpleGitP, SimpleGitTestContext } from '../__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertFossilError, createTestContext, newSimpleFossil, newSimpleFossilP, SimpleFossilTestContext } from '../__fixtures__';
+import { SimpleFossil } from '../../typings';
 
 /*
    The broken chains test assures the behaviour of both standard and Promise wrapped versions
-   of the simple-git library.
+   of the simple-fossil library.
 
    Failures (exit code other than zero and some content in the stderr output) cause the current
    queue to be truncated and no additional steps to be taken.
@@ -15,41 +15,41 @@ import { SimpleGit } from '../../typings';
 
 describe('broken-chains', () => {
 
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => context = await createTestContext());
 
-   it('promise chains from legacy promise api', () => testPromiseChains(newSimpleGitP(context.root)));
+   it('promise chains from legacy promise api', () => testPromiseChains(newSimpleFossilP(context.root)));
 
-   it('promise chains from main api', () => testPromiseChains(newSimpleGit(context.root)));
+   it('promise chains from main api', () => testPromiseChains(newSimpleFossil(context.root)));
 
-   /* When many tasks are called as a chain (ie: `git.init().addRemote(...).fetch()`) the
+   /* When many tasks are called as a chain (ie: `fossil.init().addRemote(...).fetch()`) the
     * chain is treated as atomic and any error should prevent the rest of the chain from
     * executing.
     * Once the chain is purged, chaining a new task from it should allow that task to be
     * executed.
     */
    it('failed chains can spawn new chains after being purged', async () => {
-      const git = newSimpleGit(context.root);
-      const failedChain = git.raw('failed');
+      const fossil = newSimpleFossil(context.root);
+      const failedChain = fossil.raw('failed');
       const failedChild = failedChain.raw('blah');
 
       const results = await Promise.all([promiseError(failedChain), promiseError(failedChild)]);
 
-      assertGitError(results[0], 'failed');
-      assertGitError(results[1], 'failed');
+      assertFossilError(results[0], 'failed');
+      assertFossilError(results[1], 'failed');
       expect(results[0]).toBe(results[1]);
 
       expect(await promiseError(failedChain.raw('version'))).toBeUndefined();
    });
 
-   /* When many tasks are called as a chain (ie: `git.init().addRemote(...).fetch()`) the
+   /* When many tasks are called as a chain (ie: `fossil.init().addRemote(...).fetch()`) the
     * chain is treated as atomic and any error should prevent the rest of the chain from
     * executing.
     */
    it('should reject subsequent steps of a chain if there is a rejection', async () => {
-      const git = newSimpleGit(context.root);
-      const first = git.raw('init');
+      const fossil = newSimpleFossil(context.root);
+      const first = fossil.raw('init');
       const second = first.raw('errors');
       const third = second.status();
 
@@ -64,16 +64,16 @@ describe('broken-chains', () => {
    });
 
    /* When many tasks are called on the `git` instance directly, they are each the head of a separate chain
-    * (ie: `[ git.init(), git.addRemote(...), git.fetch() ]`) while the individual chains are treated as
+    * (ie: `[ fossil.init(), fossil.addRemote(...), fossil.fetch() ]`) while the individual chains are treated as
     * atomic, they are handled independently of each other and errors shouldn't impact the continued execution
     * of the other chains
     */
    it('should continue making subsequent steps of other chains when there is a rejection', async () => {
-      const git = newSimpleGit(context.root);
+      const fossil = newSimpleFossil(context.root);
 
-      const first = git.raw('version');
-      const second = git.raw('errors');
-      const third = git.raw('version');
+      const first = fossil.raw('version');
+      const second = fossil.raw('errors');
+      const third = fossil.raw('version');
 
       const results = await Promise.all([
          promiseResult(first),
@@ -84,7 +84,7 @@ describe('broken-chains', () => {
       expect(results.map(r => r.threw)).toEqual([false, true, false]);
    });
 
-   async function testPromiseChains(git: SimpleGit) {
+   async function testPromiseChains(fossil: SimpleFossil) {
       const successes: string[] = [];
       const errors: string[] = [];
       const catcher = jest.fn(() => {
@@ -92,11 +92,11 @@ describe('broken-chains', () => {
          expect(errors).toEqual([]);
       });
 
-      const chain = git.raw('version')
+      const chain = fossil.raw('version')
          .then(() => successes.push('A'))
-         .then(() => git.raw('failed'))
+         .then(() => fossil.raw('failed'))
          .then(() => errors.push('B'))
-         .then(() => git.raw('failed'))
+         .then(() => fossil.raw('failed'))
          .then(() => errors.push('C'))
          .catch(catcher);
 

@@ -1,6 +1,6 @@
 {
-  "name": "simple-git",
-  "description": "Simple GIT interface for node.js",
+  "name": "simple-fossil",
+  "description": "Simple Fossil SCM interface for node.js",
   "version": "2.39.0",
   "author": "Steve King <steve@mydev.co>",
   "contributors": [
@@ -58,3 +58,4 @@
     "postversion": "npm publish && git push && git push --tags"
   }
 }
+

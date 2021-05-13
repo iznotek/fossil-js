@@ -13,7 +13,7 @@ debug.formatters.B = (value: Buffer) => {
 type OutputLoggingHandler = (message: string, ...args: any[]) => void;
 
 function createLog () {
-   return debug('simple-git');
+   return debug('simple-fossil');
 }
 
 export interface OutputLogger extends OutputLoggingHandler {
@@ -81,10 +81,10 @@ export function createLogger (label: string, verbose?: string | Debugger, initia
 }
 
 /**
- * The `GitLogger` is used by the main `SimpleGit` runner to handle logging
+ * The `FossilLogger` is used by the main `SimpleFossil` runner to handle logging
  * any warnings or errors.
  */
-export class GitLogger {
+export class FossilLogger {
 
    public error: OutputLoggingHandler;
 

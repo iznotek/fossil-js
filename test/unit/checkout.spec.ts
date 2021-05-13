@@ -1,17 +1,17 @@
-import { SimpleGit } from 'typings';
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit, wait } from './__fixtures__';
+import { SimpleFossil } from 'typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil, wait } from './__fixtures__';
 
 describe('checkout', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('checkout with trailing options array', async () => {
-      const queue = git.checkout('something', ['--track', 'upstream/something']);
+      const queue = fossil.checkout('something', ['--track', 'upstream/something']);
 
       await closeWithSuccess();
       await queue;
@@ -20,7 +20,7 @@ describe('checkout', () => {
    })
 
    it('checkout with trailing options object', async () => {
-      const queue = git.checkout('something', {'--track': null, 'upstream/something': null});
+      const queue = fossil.checkout('something', {'--track': null, 'upstream/something': null});
 
       await closeWithSuccess();
       await queue;
@@ -29,7 +29,7 @@ describe('checkout', () => {
    });
 
    it('checkout with just trailing options array', async () => {
-      const queue = git.checkout(['-b', 'foo']);
+      const queue = fossil.checkout(['-b', 'foo']);
 
       await closeWithSuccess();
       await queue;
@@ -38,7 +38,7 @@ describe('checkout', () => {
    })
 
    it('checkout with just trailing options object', async () => {
-      const queue = git.checkout({'-b': null, 'my-branch': null});
+      const queue = fossil.checkout({'-b': null, 'my-branch': null});
 
       await closeWithSuccess();
       await queue;
@@ -47,7 +47,7 @@ describe('checkout', () => {
    });
 
    it('simple checkout with callback', async function () {
-      git.checkout('something', callback);
+      fossil.checkout('something', callback);
 
       await closeWithSuccess();
       await wait();
@@ -58,7 +58,7 @@ describe('checkout', () => {
 
    describe('checkoutLocalBranch', () => {
       it('with callback', async () => {
-         git.checkoutLocalBranch('new-branch', callback);
+         fossil.checkoutLocalBranch('new-branch', callback);
          await closeWithSuccess();
          await wait();
 
@@ -67,7 +67,7 @@ describe('checkout', () => {
       });
 
       it('as promise', async () => {
-         const queue = git.checkoutLocalBranch('new-branch');
+         const queue = fossil.checkoutLocalBranch('new-branch');
          await closeWithSuccess();
          await queue;
 
@@ -78,7 +78,7 @@ describe('checkout', () => {
    describe('checkoutBranch', () => {
 
       it('with callback', async function () {
-         git.checkoutBranch('branch', 'start', callback);
+         fossil.checkoutBranch('branch', 'start', callback);
 
          await closeWithSuccess();
          await wait();
@@ -88,7 +88,7 @@ describe('checkout', () => {
       });
 
       it('as promise', async function () {
-         const result = git.checkoutBranch('abc', 'def');
+         const result = fossil.checkoutBranch('abc', 'def');
 
          await closeWithSuccess();
          expect(await result).toEqual(expect.any(String));

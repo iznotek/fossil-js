@@ -1,12 +1,12 @@
-import { SimpleGitPlugin, SimpleGitPluginType, SimpleGitPluginTypes } from './simple-git-plugin';
+import { SimpleFossilPlugin, SimpleFossilPluginType, SimpleFossilPluginTypes } from './simple-fossil-plugin';
 import { append, asArray } from '../utils';
 
 export class PluginStore {
 
-   private plugins: Set<SimpleGitPlugin<SimpleGitPluginType>> = new Set();
+   private plugins: Set<SimpleFossilPlugin<SimpleFossilPluginType>> = new Set();
 
-   public add<T extends SimpleGitPluginType>(plugin: void | SimpleGitPlugin<T> | SimpleGitPlugin<T>[]) {
-      const plugins: SimpleGitPlugin<T>[] = [];
+   public add<T extends SimpleFossilPluginType>(plugin: void | SimpleFossilPlugin<T> | SimpleFossilPlugin<T>[]) {
+      const plugins: SimpleFossilPlugin<T>[] = [];
 
       asArray(plugin).forEach(plugin => plugin && this.plugins.add(append(plugins, plugin)));
 
@@ -15,7 +15,7 @@ export class PluginStore {
       };
    }
 
-   public exec<T extends SimpleGitPluginType>(type: T, data: SimpleGitPluginTypes[T]['data'], context: SimpleGitPluginTypes[T]['context']): typeof data {
+   public exec<T extends SimpleFossilPluginType>(type: T, data: SimpleFossilPluginTypes[T]['data'], context: SimpleFossilPluginTypes[T]['context']): typeof data {
       let output = data;
       const contextual = Object.freeze(Object.create(context));
 

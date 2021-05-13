@@ -1,14 +1,14 @@
-import { SimpleGit } from '../../typings';
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
 
 describe('add', () => {
 
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
-   beforeEach(() => git = newSimpleGit());
+   beforeEach(() => fossil = newSimpleFossil());
 
    it('adds a single file', async () => {
-      const queue = git.add('file.ext');
+      const queue = fossil.add('file.ext');
       await closeWithSuccess('raw response');
 
       expect(await queue).toBe('raw response');
@@ -16,7 +16,7 @@ describe('add', () => {
    });
 
    it('adds multiple files', async () => {
-      const queue = git.add(['file.one', 'file.two']);
+      const queue = fossil.add(['file.one', 'file.two']);
       await closeWithSuccess('raw response');
 
       expect(await queue).toBe('raw response');
@@ -25,7 +25,7 @@ describe('add', () => {
 
    it('adds files with trailing callback', async () => {
       const callback = jest.fn();
-      const queue = git.add(['file.one', 'file.two'], callback);
+      const queue = fossil.add(['file.one', 'file.two'], callback);
       await closeWithSuccess('raw response');
 
       expect(await queue).toBe('raw response');

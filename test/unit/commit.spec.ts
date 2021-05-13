@@ -5,72 +5,72 @@ import {
    commitResultSingleFile,
    commitToRepoRoot,
    like,
-   newSimpleGit
+   newSimpleFossil
 } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { SimpleFossil } from '../../typings';
 import { parseCommitResult } from '../../src/lib/parsers/parse-commit';
 
 describe('commit', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    describe('usage', () => {
       it('single message, no files, no options and callback', async () => {
-         const task = git.commit('message', callback);
+         const task = fossil.commit('message', callback);
          await closeWithSuccess();
          assertExecutedCommands('commit', '-m', 'message');
          expect(callback).toHaveBeenCalledWith(null, await task);
       });
 
       it('multi message, no files, no options and callback', async () => {
-         const task = git.commit(['aaa', 'bbb'], callback);
+         const task = fossil.commit(['aaa', 'bbb'], callback);
          await closeWithSuccess();
          assertExecutedCommands('commit', '-m', 'aaa', '-m', 'bbb');
          expect(callback).toHaveBeenCalledWith(null, await task);
       });
 
       it('single message, no files, with options object and callback', async () => {
-         const task = git.commit('message', {'--opt': null}, callback);
+         const task = fossil.commit('message', {'--opt': null}, callback);
          await closeWithSuccess();
          assertExecutedCommands('commit', '-m', 'message', '--opt');
          expect(callback).toHaveBeenCalledWith(null, await task);
       });
 
       it('single message, single file, options object and callback', async () => {
-         const task = git.commit('msg', 'aaa.txt', {'--opt': null}, callback);
+         const task = fossil.commit('msg', 'aaa.txt', {'--opt': null}, callback);
          await closeWithSuccess();
          assertExecutedCommands('commit', '-m', 'msg', 'aaa.txt', '--opt');
          expect(callback).toHaveBeenCalledWith(null, await task);
       });
 
       it('single message, single file, no options with callback', async () => {
-         const task = git.commit('msg', 'aaa.txt', callback);
+         const task = fossil.commit('msg', 'aaa.txt', callback);
          await closeWithSuccess();
          assertExecutedCommands('commit', '-m', 'msg', 'aaa.txt',);
          expect(callback).toHaveBeenCalledWith(null, await task);
       });
 
       it('multi message, single file, no options with callback', async () => {
-         const task = git.commit(['aaa', 'bbb'], 'aaa.txt', callback);
+         const task = fossil.commit(['aaa', 'bbb'], 'aaa.txt', callback);
          await closeWithSuccess();
          assertExecutedCommands('commit', '-m', 'aaa', '-m', 'bbb', 'aaa.txt');
          expect(callback).toHaveBeenCalledWith(null, await task);
       });
 
       it('multi message, multi file, no options with callback', async () => {
-         const task = git.commit(['aaa', 'bbb'], ['a.txt', 'b.txt'], callback);
+         const task = fossil.commit(['aaa', 'bbb'], ['a.txt', 'b.txt'], callback);
          await closeWithSuccess();
          assertExecutedCommands('commit', '-m', 'aaa', '-m', 'bbb', 'a.txt', 'b.txt');
          expect(callback).toHaveBeenCalledWith(null, await task);
       });
 
       it('multi message, multi file, options object with callback', async () => {
-         const task = git.commit(['aaa', 'bbb'], ['a.txt', 'b.txt'], {'--foo': null}, callback);
+         const task = fossil.commit(['aaa', 'bbb'], ['a.txt', 'b.txt'], {'--foo': null}, callback);
          await closeWithSuccess();
          assertExecutedCommands('commit', '-m', 'aaa', '-m', 'bbb', 'a.txt', 'b.txt', '--foo');
          expect(callback).toHaveBeenCalledWith(null, await task);

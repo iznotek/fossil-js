@@ -1,45 +1,45 @@
 import { promiseError } from '@kwsites/promise-result';
 import {
    assertChildProcessEnvironmentVariables,
-   assertGitError,
+   assertFossilError,
    closeWithError,
    closeWithSuccess,
-   newSimpleGit
+   newSimpleFossil
 } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { SimpleFossil } from '../../typings';
 
 describe('child-process', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('handles child process errors', async () => {
-      const queue = git.init(callback);
+      const queue = fossil.init(callback);
       await closeWithError('SOME ERROR');
 
       const error = await promiseError(queue);
       expect(callback).toHaveBeenCalledWith(error);
-      assertGitError(error, 'SOME ERROR');
+      assertFossilError(error, 'SOME ERROR');
    });
 
    it('passes empty set of environment variables by default', async () => {
-      git.init(callback);
+      fossil.init(callback);
       await closeWithSuccess();
       assertChildProcessEnvironmentVariables(undefined);
    });
 
    it('supports passing individual environment variables to the underlying child process', async () => {
-      git.env('foo', 'bar').env('baz', 'bat').init();
+      fossil.env('foo', 'bar').env('baz', 'bat').init();
       await closeWithSuccess();
       assertChildProcessEnvironmentVariables({foo: 'bar', baz: 'bat'});
    });
 
    it('supports passing environment variables to the underlying child process', async () => {
-      git.env({foo: 'bar'}).init();
+      fossil.env({foo: 'bar'}).init();
       await closeWithSuccess();
       assertChildProcessEnvironmentVariables({foo: 'bar'});
    });

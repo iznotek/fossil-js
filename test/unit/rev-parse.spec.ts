@@ -1,19 +1,19 @@
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit, newSimpleGitP } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil, newSimpleFossilP } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 
 describe('revParse', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
       callback = jest.fn();
    });
 
-   describe('simple-git/promise', () => {
-      beforeEach(() => git = newSimpleGitP());
+   describe('simple-fossil/promise', () => {
+      beforeEach(() => fossil = newSimpleFossilP());
 
       it('returns rev-parse data to a promise', async () => {
-         const queue = git.revparse(['--show-toplevel']);
+         const queue = fossil.revparse(['--show-toplevel']);
          closeWithSuccess('  /var/tmp/some-root   ');
 
          expect(await queue).toBe('/var/tmp/some-root');
@@ -22,23 +22,23 @@ describe('revParse', () => {
    });
 
 
-   describe('simple-git', () => {
-      beforeEach(() => git = newSimpleGit());
+   describe('simple-fossil', () => {
+      beforeEach(() => fossil = newSimpleFossil());
 
       it('called with a string', async () => {
-         git.revparse('some string');
+         fossil.revparse('some string');
          await closeWithSuccess();
          assertExecutedCommands('rev-parse', 'some string');
       });
 
       it('called with an array of strings', async () => {
-         git.revparse(['another', 'string']);
+         fossil.revparse(['another', 'string']);
          await closeWithSuccess();
          assertExecutedCommands('rev-parse', 'another', 'string');
       });
 
       it('called with all arguments', async () => {
-         const queue = git.revparse('foo', {bar: null}, callback);
+         const queue = fossil.revparse('foo', {bar: null}, callback);
          await closeWithSuccess(' some data ');
          expect(await queue).toBe('some data');
          expect(callback).toHaveBeenCalledWith(null, 'some data');

@@ -1,12 +1,12 @@
 import { promiseError } from '@kwsites/promise-result';
 import {
    assertExecutedCommands,
-   assertGitError,
+   assertFossilError,
    closeWithError,
    closeWithSuccess,
    like,
-   newSimpleGit,
-   newSimpleGitP,
+   newSimpleFossil,
+   newSimpleFossilP,
    stagedDeleted,
    stagedModified,
    stagedRenamed,
@@ -14,11 +14,11 @@ import {
    statusResponse,
    unStagedDeleted
 } from './__fixtures__';
-import { SimpleGit, StatusResult } from '../../typings';
+import { SimpleFossil, StatusResult } from '../../typings';
 import { parseStatusSummary, StatusSummary } from '../../src/lib/responses/StatusSummary';
 
 describe('status', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
    let statusCommands = (...extras: string[]) => ['status', '--porcelain', '-b', '-u', ...extras];
 
@@ -26,31 +26,31 @@ describe('status', () => {
 
    describe('(legacy) promise usage', () => {
 
-      beforeEach(() => git = newSimpleGitP());
+      beforeEach(() => fossil = newSimpleFossilP());
 
       it('gets the repo status with no options', async () => {
-         const queue = git.status();
+         const queue = fossil.status();
          await closeWithSuccess();
 
          assertSuccess(await queue, statusCommands());
       });
 
       it('gets the repo status with array options', async () => {
-         const queue = git.status(['some', 'options']);
+         const queue = fossil.status(['some', 'options']);
          await closeWithSuccess();
 
          assertSuccess(await queue, statusCommands('some', 'options'));
       });
 
       it('gets the repo status with object options', async () => {
-         const queue = git.status({'--foo': 'bar'});
+         const queue = fossil.status({'--foo': 'bar'});
          await closeWithSuccess();
 
          assertSuccess(await queue, statusCommands('--foo=bar'));
       });
 
       it('throws errors to the rejection handler', async () => {
-         const error = promiseError(git.status({'--foo': 'bar'}));
+         const error = promiseError(fossil.status({'--foo': 'bar'}));
          await closeWithError('something');
 
          assertFailure(await error, 'something', statusCommands('--foo=bar'));
@@ -59,38 +59,38 @@ describe('status', () => {
 
    describe('usage', () => {
 
-      beforeEach(() => git = newSimpleGit());
+      beforeEach(() => fossil = newSimpleFossil());
 
       it('throws errors to the rejection handler', async () => {
-         const queue = git.status();
+         const queue = fossil.status();
          await closeWithError('unknown');
 
          assertFailure(await promiseError(queue), 'unknown', statusCommands());
       });
 
       it('Awaiting no arguments', async () => {
-         const summary = git.status();
+         const summary = fossil.status();
          await closeWithSuccess();
 
          assertSuccess(await summary, statusCommands());
       });
 
       it('Awaiting array options', async () => {
-         const summary = git.status(['--', 'pathspec']);
+         const summary = fossil.status(['--', 'pathspec']);
          await closeWithSuccess();
 
          assertSuccess(await summary, statusCommands('--', 'pathspec'));
       });
 
       it('Awaiting object options', async () => {
-         const summary = git.status({'--some': 'value'});
+         const summary = fossil.status({'--some': 'value'});
          await closeWithSuccess();
 
          assertSuccess(await summary, statusCommands('--some=value'));
       });
 
       it('Callback with no options', async () => {
-         const queue = git.status(callback);
+         const queue = fossil.status(callback);
          await closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);
@@ -98,7 +98,7 @@ describe('status', () => {
       });
 
       it('Callback with array options', async () => {
-         const queue = git.status(['--', 'pathspec'], callback);
+         const queue = fossil.status(['--', 'pathspec'], callback);
          await closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);
@@ -106,7 +106,7 @@ describe('status', () => {
       });
 
       it('Callback with object options', async () => {
-         const queue = git.status({'--arg': 'value'}, callback);
+         const queue = fossil.status({'--arg': 'value'}, callback);
          await closeWithSuccess();
 
          expect(callback).toBeCalledWith(null, await queue);
@@ -114,7 +114,7 @@ describe('status', () => {
       });
 
       it('throws errors to the callback', async () => {
-         const queue = git.status(callback);
+         const queue = fossil.status(callback);
          await closeWithError('unknown');
 
          expect(callback).toBeCalledWith(await promiseError(queue));
@@ -322,7 +322,7 @@ R  src/a.txt -> src/c.txt
       it('modified status', () => {
          const statusSummary = parseStatusSummary(`
              M package.json
-            M  src/git.js
+            M  src/fossil.js
             AM src/index.js
              A src/newfile.js
             ?? test
@@ -332,10 +332,10 @@ R  src/a.txt -> src/c.txt
          expect(statusSummary).toEqual(like({
             created: ['src/index.js', 'src/newfile.js'],
             deleted: [],
-            modified: ['package.json', 'src/git.js', 'src/index.js'],
+            modified: ['package.json', 'src/fossil.js', 'src/index.js'],
             not_added: ['test'],
             conflicted: ['test.js'],
-            staged: ['src/git.js', 'src/index.js'],
+            staged: ['src/fossil.js', 'src/index.js'],
          }));
       });
 
@@ -362,7 +362,7 @@ M  src/git_ind.js
       it('Report all types of merge conflict statuses', () => {
          const statusSummary = parseStatusSummary(`
             UU package.json
-            DD src/git.js
+            DD src/fossil.js
             DU src/index.js
             UD src/newfile.js
             AU test.js
@@ -371,7 +371,7 @@ M  src/git_ind.js
       `);
 
          expect(statusSummary).toEqual(expect.objectContaining({
-            conflicted: ['package.json', 'src/git.js', 'src/index.js', 'src/newfile.js', 'test.js', 'test', 'test-foo.js']
+            conflicted: ['package.json', 'src/fossil.js', 'src/index.js', 'src/newfile.js', 'test.js', 'test', 'test-foo.js']
          }));
       });
    });
@@ -384,7 +384,7 @@ M  src/git_ind.js
    }
 
    function assertFailure(err: Error | unknown, message: string, commands: string[]) {
-      assertGitError(err, message)
+      assertFossilError(err, message)
       assertExecutedCommands(...commands);
 
       return err;

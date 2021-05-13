@@ -65,5 +65,5 @@ export function checkIsBareRepoTask(): StringTask<boolean> {
 
 
 function isNotRepoMessage(error: Error): boolean {
-   return /(Not a git repository|Kein Git-Repository)/i.test(String(error));
+   return /(Not a git repository|Kein Fossil-Repository)/i.test(String(error));
 }

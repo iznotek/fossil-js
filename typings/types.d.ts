@@ -2,7 +2,7 @@ export { RemoteWithoutRefs, RemoteWithRefs } from '../src/lib/responses/GetRemot
 export { LogOptions, DefaultLogFields } from '../src/lib/tasks/log';
 
 export {
-   outputHandler, Options, TaskOptions, SimpleGitOptions, SimpleGitProgressEvent, SimpleGitTaskCallback
+   outputHandler, Options, TaskOptions, SimpleFossilOptions, SimpleFossilProgressEvent, SimpleFossilTaskCallback
 } from '../src/lib/types';
 
 export { CheckRepoActions } from '../src/lib/tasks/check-is-repo';

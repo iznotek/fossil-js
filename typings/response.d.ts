@@ -251,7 +251,7 @@ export interface FileStatusResult {
 }
 
 /**
- * The StatusResult is returned for calls to `git.status()`, represents the state of the
+ * The StatusResult is returned for calls to `fossil.status()`, represents the state of the
  * working directory.
  */
 export interface StatusResult {
@@ -275,7 +275,7 @@ export interface StatusResult {
 }
 
 /**
- * Response retrieved when using the `git.tags` method
+ * Response retrieved when using the `fossil.tags` method
  */
 export interface TagResult {
    /**
@@ -290,13 +290,13 @@ export interface TagResult {
 }
 
 /**
- * The ListLogLine represents a single entry in the `git.log`, the properties on the object
+ * The ListLogLine represents a single entry in the `fossil.log`, the properties on the object
  * are mixed in depending on the names used in the format (see `DefaultLogFields`), but some
  * properties are dependent on the command used.
  */
 export interface ListLogLine {
    /**
-    * When using a `--stat=4096` or `--shortstat` options in the `git.log` or `git.stashList`,
+    * When using a `--stat=4096` or `--shortstat` options in the `fossil.log` or `fossil.stashList`,
     * each entry in the `ListLogSummary` will also have a `diff` property representing as much
     * detail as was given in the response.
     */

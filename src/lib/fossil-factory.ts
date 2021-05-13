@@ -1,4 +1,4 @@
-import { SimpleGitFactory } from '../../typings';
+import { SimpleFossilFactory } from '../../typings';
 
 import api from './api';
 import {
@@ -10,9 +10,9 @@ import {
    timeoutPlugin
 } from './plugins';
 import { createInstanceConfig, folderExists } from './utils';
-import { SimpleGitOptions } from './types';
+import { SimpleFossilOptions } from './types';
 
-const Git = require('../git');
+const Fossil = require('../fossil');
 
 /**
  * Adds the necessary properties to the supplied object to enable it for use as
@@ -27,8 +27,8 @@ export function esModuleFactory<T>(defaultExport: T): T & { __esModule: true, de
    });
 }
 
-export function gitExportFactory<T = {}>(factory: SimpleGitFactory, extra: T) {
-   return Object.assign(function (...args: Parameters<SimpleGitFactory>) {
+export function gitExportFactory<T = {}>(factory: SimpleFossilFactory, extra: T) {
+   return Object.assign(function (...args: Parameters<SimpleFossilFactory>) {
          return factory.apply(null, args);
       },
       api,
@@ -36,7 +36,7 @@ export function gitExportFactory<T = {}>(factory: SimpleGitFactory, extra: T) {
    );
 }
 
-export function gitInstanceFactory(baseDir?: string | Partial<SimpleGitOptions>, options?: Partial<SimpleGitOptions>) {
+export function gitInstanceFactory(baseDir?: string | Partial<SimpleFossilOptions>, options?: Partial<SimpleFossilOptions>) {
    const plugins = new PluginStore();
    const config = createInstanceConfig(
       baseDir && (typeof baseDir === 'string' ? {baseDir} : baseDir) || {},
@@ -44,7 +44,7 @@ export function gitInstanceFactory(baseDir?: string | Partial<SimpleGitOptions>,
    );
 
    if (!folderExists(config.baseDir)) {
-      throw new api.GitConstructError(config, `Cannot use simple-git on a directory that does not exist`);
+      throw new api.FossilConstructError(config, `Cannot use simple-fossil on a directory that does not exist`);
    }
 
    if (Array.isArray(config.config)) {
@@ -57,5 +57,5 @@ export function gitInstanceFactory(baseDir?: string | Partial<SimpleGitOptions>,
    plugins.add(errorDetectionPlugin(errorDetectionHandler(true)));
    config.errors && plugins.add(errorDetectionPlugin(config.errors));
 
-   return new Git(config, plugins);
+   return new Fossil(config, plugins);
 }

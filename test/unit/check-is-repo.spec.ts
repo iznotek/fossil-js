@@ -1,11 +1,11 @@
 import { promiseError } from '@kwsites/promise-result';
-import { SimpleGit } from 'typings';
+import { SimpleFossil } from 'typings';
 import {
    assertExecutedCommands,
-   assertGitError,
+   assertFossilError,
    closeWithError,
    closeWithSuccess,
-   newSimpleGit,
+   newSimpleFossil,
    wait
 } from './__fixtures__';
 import { CheckRepoActions } from '../../src/lib/tasks/check-is-repo';
@@ -15,12 +15,12 @@ describe('checkIsRepo', () => {
    const EXIT_UNCLEAN = 128;
    const EXIT_ERROR = 1;
 
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
    let error: Error | null | undefined;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn((_error) => {
          error = _error;
       });
@@ -32,7 +32,7 @@ describe('checkIsRepo', () => {
 
    describe('bare repos', () => {
       it('asserts that the repo is bare', async () => {
-         const actual = git.checkIsRepo('bare' as CheckRepoActions);
+         const actual = fossil.checkIsRepo('bare' as CheckRepoActions);
          await closeWithSuccess(` true `);
 
          expect(await actual).toBe(true);
@@ -40,7 +40,7 @@ describe('checkIsRepo', () => {
       });
 
       it('recognises that the repo is not bare', async () => {
-         const actual = git.checkIsRepo(CheckRepoActions.BARE);
+         const actual = fossil.checkIsRepo(CheckRepoActions.BARE);
          await closeWithSuccess(` false `);
 
          expect(await actual).toBe(false);
@@ -53,7 +53,7 @@ describe('checkIsRepo', () => {
       const errorString = 'Some other non-clean shutdown message';
 
       it('when is a part of a git repo', async () => {
-         const actual = git.checkIsRepo();
+         const actual = fossil.checkIsRepo();
          await closeWithSuccess(` true `);
 
          expect(await actual).toBe(true);
@@ -61,7 +61,7 @@ describe('checkIsRepo', () => {
       });
 
       it('explicitly setting the action (defaults to tree)', async () => {
-         const actual = git.checkIsRepo(CheckRepoActions.IN_TREE);
+         const actual = fossil.checkIsRepo(CheckRepoActions.IN_TREE);
          await closeWithSuccess(` true `);
 
          expect(await actual).toBe(true);
@@ -69,7 +69,7 @@ describe('checkIsRepo', () => {
       });
 
       it('when is not part of a git repo', async () => {
-         const actual = git.checkIsRepo();
+         const actual = fossil.checkIsRepo();
          await closeWithError(` Not a git repository `, EXIT_UNCLEAN);
 
          expect(await actual).toBe(false);
@@ -77,43 +77,43 @@ describe('checkIsRepo', () => {
       });
 
       it('when is not part of a German locale git repo', async () => {
-         const actual = git.checkIsRepo();
-         await closeWithError(` Kein Git-Repository `, EXIT_UNCLEAN);
+         const actual = fossil.checkIsRepo();
+         await closeWithError(` Kein Fossil-Repository `, EXIT_UNCLEAN);
 
          expect(await actual).toBe(false);
          assertExecutedCommands('rev-parse', '--is-inside-work-tree');
       });
 
       it('when there is some other non-clean shutdown - callback', async () => {
-         git.checkIsRepo(CheckRepoActions.IN_TREE, callback);
+         fossil.checkIsRepo(CheckRepoActions.IN_TREE, callback);
 
          await closeWithError(errorString, EXIT_UNCLEAN);
          await wait();
 
-         assertGitError(error, errorString);
+         assertFossilError(error, errorString);
       });
 
       it('when there is some other non-clean shutdown - async', async () => {
-         const checkIsRepo = git.checkIsRepo(CheckRepoActions.IN_TREE);
+         const checkIsRepo = fossil.checkIsRepo(CheckRepoActions.IN_TREE);
 
          await closeWithError(errorString, EXIT_UNCLEAN);
 
-         assertGitError(await promiseError(checkIsRepo), errorString);
+         assertFossilError(await promiseError(checkIsRepo), errorString);
       });
 
       it('when there is some other error - callback', async () => {
-         git.checkIsRepo(callback);
+         fossil.checkIsRepo(callback);
          await closeWithError(errorString, EXIT_ERROR);
          await wait();
 
-         assertGitError(error, errorString);
+         assertFossilError(error, errorString);
       });
 
       it('when there is some other error - async', async () => {
-         const checkIsRepo = git.checkIsRepo(callback);
+         const checkIsRepo = fossil.checkIsRepo(callback);
          await closeWithError(errorString, EXIT_ERROR);
 
-         assertGitError(await promiseError(checkIsRepo), errorString);
+         assertFossilError(await promiseError(checkIsRepo), errorString);
       });
 
    });
@@ -133,7 +133,7 @@ describe('checkIsRepo', () => {
       });
 
       async function assertCheckIsRepoRoot(response: string, expected: boolean) {
-         const actual = git.checkIsRepo(CheckRepoActions.IS_REPO_ROOT);
+         const actual = fossil.checkIsRepo(CheckRepoActions.IS_REPO_ROOT);
          await closeWithSuccess(response);
          expect(await actual).toBe(expected);
          assertExecutedCommands('rev-parse', '--git-dir');

@@ -1,14 +1,14 @@
-import { SimpleGit } from '../../typings';
-import { assertExecutedCommands, closeWithSuccess, like, newSimpleGit } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, like, newSimpleFossil } from './__fixtures__';
 import { COMMIT_BOUNDARY, SPLITTER, START_BOUNDARY } from '../../src/lib/parsers/parse-list-log-summary';
 
 describe('stashList', () => {
 
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
@@ -17,7 +17,7 @@ describe('stashList', () => {
          total: 0,
          all: [],
       });
-      const queue = git.stashList(callback);
+      const queue = fossil.stashList(callback);
       closeWithSuccess();
 
       expect(await queue).toEqual(expected);
@@ -25,7 +25,7 @@ describe('stashList', () => {
    });
 
    it('commands - default', async () => {
-      git.stashList();
+      fossil.stashList();
       await closeWithSuccess();
 
       assertExecutedCommands(
@@ -38,7 +38,7 @@ describe('stashList', () => {
    it('commands - custom splitter', async () => {
       const splitter = ';;';
 
-      git.stashList({splitter});
+      fossil.stashList({splitter});
       await closeWithSuccess();
 
       assertExecutedCommands(

@@ -1,10 +1,10 @@
-import { SimpleGit } from 'typings';
+import { SimpleFossil } from 'typings';
 import {
    assertExecutedCommands,
    assertNoExecutedTasks,
    closeWithSuccess,
-   newSimpleGit,
-   newSimpleGitP,
+   newSimpleFossil,
+   newSimpleFossilP,
    wait
 } from './__fixtures__';
 
@@ -20,7 +20,7 @@ import {
 
 describe('clean', () => {
 
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
    describe('parser', () => {
 
@@ -51,10 +51,10 @@ describe('clean', () => {
    });
 
    describe('promises', () => {
-      beforeEach(() => git = newSimpleGitP());
+      beforeEach(() => fossil = newSimpleFossilP());
 
       it('cleans', async () => {
-         const cleanedP = git.clean(CleanOptions.FORCE);
+         const cleanedP = fossil.clean(CleanOptions.FORCE);
          await closeWithSuccess(`
             Removing a
             Removing b/
@@ -71,24 +71,24 @@ describe('clean', () => {
 
       it('options combined as a string', async () => {
          closeWithSuccess();
-         await git.clean(CleanOptions.FORCE + CleanOptions.RECURSIVE);
+         await fossil.clean(CleanOptions.FORCE + CleanOptions.RECURSIVE);
          assertExecutedCommands('clean', '-f', '-d')
       });
 
       it('cleans multiple paths', async () => {
          closeWithSuccess();
-         await git.clean(CleanOptions.FORCE, ['./path-1', './path-2']);
+         await fossil.clean(CleanOptions.FORCE, ['./path-1', './path-2']);
          assertExecutedCommands('clean', '-f', './path-1', './path-2')
       });
 
       it('cleans with options and multiple paths', async () => {
          closeWithSuccess();
-         await git.clean(CleanOptions.IGNORED_ONLY + CleanOptions.FORCE, {'./path-1': null, './path-2': null});
+         await fossil.clean(CleanOptions.IGNORED_ONLY + CleanOptions.FORCE, {'./path-1': null, './path-2': null});
          assertExecutedCommands('clean', '-f', '-X', './path-1', './path-2')
       });
 
       it('handles configuration errors', async () => {
-         const err = await (git.clean('X').catch(e => e));
+         const err = await (fossil.clean('X').catch(e => e));
 
          expectTheError(err).toBe(CONFIG_ERROR_MODE_REQUIRED);
       });
@@ -97,10 +97,10 @@ describe('clean', () => {
 
    describe('callbacks', () => {
 
-      beforeEach(() => git = newSimpleGit());
+      beforeEach(() => fossil = newSimpleFossil());
 
       it('cleans with dfx', test((done) => {
-         git.clean('dfx', function (err: null | Error) {
+         fossil.clean('dfx', function (err: null | Error) {
             expect(err).toBeNull();
             assertExecutedCommands('clean', '-f', '-d', '-x')
             done();
@@ -109,7 +109,7 @@ describe('clean', () => {
       }));
 
       it('missing required n or f in mode', test((done) => {
-         git.clean('x', function (err: null | Error) {
+         fossil.clean('x', function (err: null | Error) {
             expectTheError(err).toBe(CONFIG_ERROR_MODE_REQUIRED);
             expectNoTasksToHaveBeenRun();
             done();
@@ -117,7 +117,7 @@ describe('clean', () => {
       }));
 
       it('unknown options', test((done) => {
-         git.clean('fa', function (err: null | Error) {
+         fossil.clean('fa', function (err: null | Error) {
             expectTheError(err).toBe(CONFIG_ERROR_UNKNOWN_OPTION);
             expectNoTasksToHaveBeenRun();
             done();
@@ -125,7 +125,7 @@ describe('clean', () => {
       }));
 
       it('no args', test((done) => {
-         git.clean(function (err: null | Error) {
+         fossil.clean(function (err: null | Error) {
             expectTheError(err).toBe(CONFIG_ERROR_MODE_REQUIRED);
             expectNoTasksToHaveBeenRun();
             done();
@@ -133,7 +133,7 @@ describe('clean', () => {
       }));
 
       it('just show no directories', test((done) => {
-         git.clean('n', function (err: null | Error) {
+         fossil.clean('n', function (err: null | Error) {
             expect(err).toBeNull();
             assertExecutedCommands('clean', '-n')
             done();
@@ -142,7 +142,7 @@ describe('clean', () => {
       }));
 
       it('just show', test((done) => {
-         git.clean('n', ['-d'], function (err: null | Error) {
+         fossil.clean('n', ['-d'], function (err: null | Error) {
             expect(err).toBeNull();
             assertExecutedCommands('clean', '-n', '-d')
             done();
@@ -151,7 +151,7 @@ describe('clean', () => {
       }));
 
       it('force clean space', test((done) => {
-         git.clean('f', ['-d'], function (err: null | Error) {
+         fossil.clean('f', ['-d'], function (err: null | Error) {
             expect(err).toBeNull();
             assertExecutedCommands('clean', '-f', '-d')
             done();
@@ -160,7 +160,7 @@ describe('clean', () => {
       }));
 
       it('clean ignored files', test((done) => {
-         git.clean('f', ['-x', '-d'], function (err: null | Error) {
+         fossil.clean('f', ['-x', '-d'], function (err: null | Error) {
             expect(err).toBeNull();
             assertExecutedCommands('clean', '-f', '-x', '-d')
             done();
@@ -169,7 +169,7 @@ describe('clean', () => {
       }));
 
       it('prevents interactive mode - shorthand option', test((done) => {
-         git.clean('f', ['-i'], function (err: null | Error) {
+         fossil.clean('f', ['-i'], function (err: null | Error) {
             expectTheError(err).toBe(CONFIG_ERROR_INTERACTIVE_MODE);
             expectNoTasksToHaveBeenRun();
 
@@ -178,7 +178,7 @@ describe('clean', () => {
       }));
 
       it('prevents interactive mode - shorthand mode', test((done) => {
-         git.clean('fi', function (err: null | Error) {
+         fossil.clean('fi', function (err: null | Error) {
             expectTheError(err).toBe(CONFIG_ERROR_INTERACTIVE_MODE);
             expectNoTasksToHaveBeenRun();
 
@@ -187,7 +187,7 @@ describe('clean', () => {
       }));
 
       it('prevents interactive mode - longhand option', test((done) => {
-         git.clean('f', ['--interactive'], function (err: null | Error) {
+         fossil.clean('f', ['--interactive'], function (err: null | Error) {
             expectTheError(err).toBe(CONFIG_ERROR_INTERACTIVE_MODE);
             expectNoTasksToHaveBeenRun();
 

@@ -1,41 +1,41 @@
 import { promiseError } from '@kwsites/promise-result';
 import {
-   assertGitError,
+   assertFossilError,
    createTestContext,
    like,
-   newSimpleGit,
-   newSimpleGitP,
-   SimpleGitTestContext
+   newSimpleFossil,
+   newSimpleFossilP,
+   SimpleFossilTestContext
 } from '../__fixtures__';
 
-import { GitConstructError } from '../..';
+import { FossilConstructError } from '../..';
 
 describe('bad initial path', () => {
 
-   let context: SimpleGitTestContext;
+   let context: SimpleFossilTestContext;
 
    beforeEach(async () => context = await createTestContext());
 
-   it('simple-git/promise', async () => {
+   it('simple-fossil/promise', async () => {
       const baseDir = context.path('foo');
-      const git = newSimpleGitP(baseDir);
+      const fossil = newSimpleFossilP(baseDir);
 
-      const errorInstance = await promiseError(git.init());
-      assertGitError(errorInstance, `does not exist`, GitConstructError);
+      const errorInstance = await promiseError(fossil.init());
+      assertFossilError(errorInstance, `does not exist`, FossilConstructError);
       expect(errorInstance).toHaveProperty('config', like({
          baseDir,
       }));
    });
 
-   it('simple-git', async () => {
+   it('simple-fossil', async () => {
       const baseDir = context.path('foo');
 
       let errorInstance: Error | undefined;
       try {
-         newSimpleGit(baseDir);
+         newSimpleFossil(baseDir);
       } catch (e) {
          errorInstance = e;
-         assertGitError(errorInstance, `does not exist`, GitConstructError);
+         assertFossilError(errorInstance, `does not exist`, FossilConstructError);
          expect(errorInstance).toHaveProperty('config', like({
             baseDir,
          }));

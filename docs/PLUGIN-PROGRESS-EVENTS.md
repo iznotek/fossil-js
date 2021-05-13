@@ -1,21 +1,21 @@
 ## Progress Events
 
-To receive progress updates, pass a `progress` configuration option to the `simpleGit` instance:
+To receive progress updates, pass a `progress` configuration option to the `simpleFossil` instance:
 
 ```typescript
-import simpleGit, { SimpleGit, SimpleGitProgressEvent } from 'simple-git';
+import simpleFossil, { SimpleFossil, SimpleFossilProgressEvent } from 'simple-fossil';
 
-const progress = ({method, stage, progress}: SimpleGitProgressEvent) => {
-   console.log(`git.${method} ${stage} stage ${progress}% complete`);
+const progress = ({method, stage, progress}: SimpleFossilProgressEvent) => {
+   console.log(`fossil.${method} ${stage} stage ${progress}% complete`);
 }
-const git: SimpleGit = simpleGit({baseDir: '/some/path', progress});
+const git: SimpleFossil = simpleFossil({baseDir: '/some/path', progress});
 
 // pull automatically triggers progress events when the progress plugin is configured
-await git.pull();
+await fossil.pull();
 
 // supply the `--progress` option to any other command that supports it to receive
 // progress events into your handler
-await git.raw('pull', '--progress');
+await fossil.raw('pull', '--progress');
 ```
 
 The `checkout`, `clone`, 'fetch, `pull`, `push` methods will automatically enable progress events
@@ -24,6 +24,6 @@ set `--progress` in the task's `TaskOptions` for example to receive progress eve
 submodule tasks:
 
 ```typescript
-await git.submoduleUpdate('submodule-name', { '--progress': null });
-await git.submoduleUpdate('submodule-name', ['--progress']);
+await fossil.submoduleUpdate('submodule-name', { '--progress': null });
+await fossil.submoduleUpdate('submodule-name', ['--progress']);
 ```

@@ -1,23 +1,23 @@
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 
 describe('rm', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('remove single file', async () => {
-      git.rm('string', callback);
+      fossil.rm('string', callback);
       await closeWithSuccess();
       assertExecutedCommands('rm', '-f', 'string');
    });
 
    it('remove multiple files', async () => {
-      git.rm(['foo', 'bar'], callback);
+      fossil.rm(['foo', 'bar'], callback);
       await closeWithSuccess();
       assertExecutedCommands('rm', '-f', 'foo', 'bar');
    });

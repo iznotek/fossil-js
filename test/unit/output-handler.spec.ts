@@ -1,17 +1,17 @@
-import { closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 
 describe('outputHandler', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('passes name of command to callback', async () => {
-      const queue = git.outputHandler(callback).init();
+      const queue = fossil.outputHandler(callback).init();
 
       closeWithSuccess();
       await queue;
@@ -22,7 +22,7 @@ describe('outputHandler', () => {
    });
 
    it('passes name of command to callback - custom binary', async () => {
-      const queue = git.outputHandler(callback).customBinary('something').init();
+      const queue = fossil.outputHandler(callback).customBinary('something').init();
 
       closeWithSuccess();
       await queue;

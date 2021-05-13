@@ -1,11 +1,11 @@
-import { BranchSingleDeleteResult, BranchSummary, SimpleGit } from 'typings';
+import { BranchSingleDeleteResult, BranchSummary, SimpleFossil } from 'typings';
 import {
    assertExecutedCommands,
    branchSummary,
    branchSummaryLine,
    closeWithSuccess,
    like,
-   newSimpleGit
+   newSimpleFossil
 } from './__fixtures__';
 
 import { parseBranchSummary } from '../../src/lib/parsers/parse-branch';
@@ -14,7 +14,7 @@ import { BranchSummaryResult } from '../../src/lib/responses/BranchSummary';
 describe('branch', () => {
 
    let callback: jest.Mock;
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let promise: Promise<BranchSummary | BranchSingleDeleteResult>;
 
    function branchDeleteLog(branchName: string, hash = 'b190102') {
@@ -30,19 +30,19 @@ describe('branch', () => {
    }
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
    it('handles verbosity being set by the user', async () => {
-      git.branch(['--list', '--remote', '-v']);
+      fossil.branch(['--list', '--remote', '-v']);
       await closeWithSuccess();
 
       assertExecutedCommands('branch', '--list', '--remote', '-v');
    });
 
    it('handles verbosity not being set by the user', async () => {
-      git.branch(['--list', '--remote']);
+      fossil.branch(['--list', '--remote']);
       await closeWithSuccess();
 
       assertExecutedCommands('branch', '-v', '--list', '--remote');
@@ -62,7 +62,7 @@ describe('branch', () => {
 
       it('delete local branch with -d option', async () => {
          const options = ['-d', branchName];
-         const result = git.branch(options, callback);
+         const result = fossil.branch(options, callback);
          await closeWithSuccess(branchDeleteLog(branchName));
 
          assertBranchDeletion(options, await result);
@@ -70,7 +70,7 @@ describe('branch', () => {
 
       it('delete local branch with -D option', async () => {
          const options = ['-D', branchName];
-         const result = git.branch(options, callback);
+         const result = fossil.branch(options, callback);
          await closeWithSuccess(branchDeleteLog(branchName));
 
          assertBranchDeletion(options, await result);
@@ -78,7 +78,7 @@ describe('branch', () => {
 
       it('delete local branch with --delete option', async () => {
          const options = ['--delete', branchName];
-         const result = git.branch(options, callback);
+         const result = fossil.branch(options, callback);
          await closeWithSuccess(branchDeleteLog(branchName));
 
          assertBranchDeletion(options, await result);
@@ -86,14 +86,14 @@ describe('branch', () => {
 
       it('deleteLocalBranch success', async () => {
          const options = ['-d', branchName];
-         promise = git.deleteLocalBranch(branchName);
+         promise = fossil.deleteLocalBranch(branchName);
          await closeWithSuccess(branchDeleteLog(branchName));
 
          assertBranchDeletion(options, await promise);
       });
 
       it('deleteLocalBranch errors', async () => {
-         promise = git.deleteLocalBranch(branchName, callback);
+         promise = fossil.deleteLocalBranch(branchName, callback);
          await closeWithSuccess(branchDeleteNotFound(branchName));
 
          assertBranchDeletion(
@@ -215,7 +215,7 @@ describe('branch', () => {
 
       describe('branch', () => {
          it('with options array and callback', async () => {
-            promise = git.branch(['-v', '--sort=-committerdate'], callback);
+            promise = fossil.branch(['-v', '--sort=-committerdate'], callback);
             await closeWithSuccess();
 
             assertExecutedCommands('branch', '-v', '--sort=-committerdate');
@@ -223,7 +223,7 @@ describe('branch', () => {
          });
 
          it('with options array as promise', async () => {
-            promise = git.branch(['-v', '--sort=-committerdate']);
+            promise = fossil.branch(['-v', '--sort=-committerdate']);
             await closeWithSuccess();
 
             assertExecutedCommands('branch', '-v', '--sort=-committerdate');
@@ -231,7 +231,7 @@ describe('branch', () => {
          });
 
          it('with options object and callback', async () => {
-            promise = git.branch({'-v': null, '--sort': '-committerdate'}, callback);
+            promise = fossil.branch({'-v': null, '--sort': '-committerdate'}, callback);
             await closeWithSuccess();
 
             assertExecutedCommands('branch', '-v', '--sort=-committerdate');
@@ -239,7 +239,7 @@ describe('branch', () => {
          });
 
          it('with options object as promise', async () => {
-            promise = git.branch({'-v': null, '--sort': '-committerdate'});
+            promise = fossil.branch({'-v': null, '--sort': '-committerdate'});
             await closeWithSuccess();
 
             assertExecutedCommands('branch', '-v', '--sort=-committerdate');
@@ -249,7 +249,7 @@ describe('branch', () => {
 
       describe('branchLocal', () => {
          it('with callback', async () => {
-            promise = git.branchLocal(callback);
+            promise = fossil.branchLocal(callback);
             await closeWithSuccess(branchDetailLine('master', '899725c'));
 
             assertExecutedCommands('branch', '-v');
@@ -257,7 +257,7 @@ describe('branch', () => {
          });
 
          it('as promise', async () => {
-            promise = git.branchLocal();
+            promise = fossil.branchLocal();
             await closeWithSuccess(branchDetailLine('master', '899725c'));
 
             assertExecutedCommands('branch', '-v');
@@ -270,7 +270,7 @@ describe('branch', () => {
          const deleteLocalSuccess = () => closeWithSuccess(branchDeleteLog(branch, hash));
 
          it('with callback', async () => {
-            promise = git.deleteLocalBranch(branch, callback);
+            promise = fossil.deleteLocalBranch(branch, callback);
             await deleteLocalSuccess();
 
             assertExecutedCommands('branch', '-v', '-d', branch);
@@ -278,7 +278,7 @@ describe('branch', () => {
          });
 
          it('as promise', async () => {
-            promise = git.deleteLocalBranch(branch);
+            promise = fossil.deleteLocalBranch(branch);
             await deleteLocalSuccess();
 
             assertExecutedCommands('branch', '-v', '-d', branch);
@@ -286,7 +286,7 @@ describe('branch', () => {
          });
 
          it('as force with callback', async () => {
-            promise = git.deleteLocalBranch(branch, true, callback);
+            promise = fossil.deleteLocalBranch(branch, true, callback);
             await deleteLocalSuccess();
 
             assertExecutedCommands('branch', '-v', '-D', branch);
@@ -294,7 +294,7 @@ describe('branch', () => {
          });
 
          it('as force promise', async () => {
-            promise = git.deleteLocalBranch(branch, true);
+            promise = fossil.deleteLocalBranch(branch, true);
             await deleteLocalSuccess();
 
             assertExecutedCommands('branch', '-v', '-D', branch);
@@ -302,7 +302,7 @@ describe('branch', () => {
          });
 
          it('as not-force with callback', async () => {
-            promise = git.deleteLocalBranch(branch, false, callback);
+            promise = fossil.deleteLocalBranch(branch, false, callback);
             await deleteLocalSuccess();
 
             assertExecutedCommands('branch', '-v', '-d', branch);

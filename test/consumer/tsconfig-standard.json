@@ -6,7 +6,7 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": false,
     "paths": {
-      "simple-git": [
+      "simple-fossil": [
         "."
       ]
     }

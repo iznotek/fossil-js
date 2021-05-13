@@ -1,9 +1,9 @@
-import { SimpleGitOptions } from '../types';
+import { SimpleFossilOptions } from '../types';
 
-import { SimpleGitPlugin } from './simple-git-plugin';
-import { GitPluginError } from '../errors/git-plugin-error';
+import { SimpleFossilPlugin } from './simple-fossil-plugin';
+import { FossilPluginError } from '../errors/fossil-plugin-error';
 
-export function timeoutPlugin({block}: Exclude<SimpleGitOptions['timeout'], undefined>): SimpleGitPlugin<'spawn.after'> | void {
+export function timeoutPlugin({block}: Exclude<SimpleFossilOptions['timeout'], undefined>): SimpleFossilPlugin<'spawn.after'> | void {
 
    if (block > 0) {
       return {
@@ -26,7 +26,7 @@ export function timeoutPlugin({block}: Exclude<SimpleGitOptions['timeout'], unde
             function kill() {
                stop()
                context.kill(
-                  new GitPluginError(undefined, 'timeout', `block timeout reached`)
+                  new FossilPluginError(undefined, 'timeout', `block timeout reached`)
                );
             }
 

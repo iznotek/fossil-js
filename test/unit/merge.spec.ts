@@ -1,15 +1,15 @@
 import { promiseError } from '@kwsites/promise-result';
 import {
    assertExecutedCommands,
-   assertGitResponseError,
+   assertFossilResponseError,
    closeWithError,
    closeWithSuccess,
    like,
    mergeMadeByStrategy,
-   newSimpleGit,
+   newSimpleFossil,
    wait
 } from './__fixtures__';
-import { MergeResult, SimpleGit, SimpleGitTaskCallback } from 'typings';
+import { MergeResult, SimpleFossil, SimpleFossilTaskCallback } from 'typings';
 import { MergeSummaryDetail } from '../../src/lib/responses/MergeSummary';
 import { parseMergeResult } from '../../src/lib/parsers/parse-merge';
 
@@ -17,33 +17,33 @@ describe('merge', () => {
 
    describe('api', () => {
 
-      let git: SimpleGit;
+      let fossil: SimpleFossil;
 
-      beforeEach(() => git = newSimpleGit());
+      beforeEach(() => fossil = newSimpleFossil());
 
       it('merge', async () => {
-         git.merge(['--no-ff', 'someOther-master']);
+         fossil.merge(['--no-ff', 'someOther-master']);
          await closeWithSuccess();
 
          assertExecutedCommands('merge', '--no-ff', 'someOther-master');
       });
 
       it('mergeFromTo', async () => {
-         git.mergeFromTo('aaa', 'bbb', jest.fn());
+         fossil.mergeFromTo('aaa', 'bbb', jest.fn());
          await closeWithSuccess();
 
          assertExecutedCommands('merge', 'aaa', 'bbb');
       });
 
       it('mergeFromToWithOptions', async () => {
-         git.mergeFromTo('aaa', 'bbb', ['x', 'y'], jest.fn());
+         fossil.mergeFromTo('aaa', 'bbb', ['x', 'y'], jest.fn());
          await closeWithSuccess();
 
          assertExecutedCommands('merge', 'aaa', 'bbb', 'x', 'y');
       });
 
       it('mergeFromToWithBadOptions', async () => {
-         (git as any).mergeFromTo('aaa', 'bbb', 'x', jest.fn());
+         (fossil as any).mergeFromTo('aaa', 'bbb', 'x', jest.fn());
          await closeWithSuccess();
 
          assertExecutedCommands('merge', 'aaa', 'bbb');
@@ -52,7 +52,7 @@ describe('merge', () => {
       it('merge with fatal error', async () => {
          const message = 'Some fatal error';
          const later = jest.fn();
-         git.mergeFromTo('aaa', 'bbb', 'x' as any, later);
+         fossil.mergeFromTo('aaa', 'bbb', 'x' as any, later);
 
 
          await closeWithError(message, 128);
@@ -62,19 +62,19 @@ describe('merge', () => {
       });
 
       it('merge with conflicts treated as an error', async () => {
-         const queue = git.mergeFromTo('aaa', 'bbb');
+         const queue = fossil.mergeFromTo('aaa', 'bbb');
          closeWithSuccess(`
 Auto-merging readme.md
 CONFLICT (content): Merge conflict in readme.md
 Automatic merge failed; fix conflicts and then commit the result.
 `);
          const error = await promiseError(queue);
-         assertGitResponseError(error, MergeSummaryDetail, like({failed: true}))
+         assertFossilResponseError(error, MergeSummaryDetail, like({failed: true}))
       });
 
       it('responds with a MergeResult', async () => {
-         const mock: SimpleGitTaskCallback<MergeResult> = jest.fn();
-         const queue = git.mergeFromTo('alpha', 'beta', mock);
+         const mock: SimpleFossilTaskCallback<MergeResult> = jest.fn();
+         const queue = fossil.mergeFromTo('alpha', 'beta', mock);
          await closeWithSuccess(mergeMadeByStrategy('recursive'));
 
          const result: MergeResult = await queue;

@@ -1,34 +1,34 @@
-import { PushResult, SimpleGit } from '../../typings';
-import { assertExecutedCommands, closeWithSuccess, like, newSimpleGit } from './__fixtures__';
+import { PushResult, SimpleFossil } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, like, newSimpleFossil } from './__fixtures__';
 import { pushNewBranch, pushNewBranchWithTags, pushUpdateExistingBranch } from './__fixtures__/push';
 import { parsePushResult } from '../../src/lib/parsers/parse-push';
 
 describe('push', () => {
 
    describe('usage', () => {
-      let git: SimpleGit;
+      let fossil: SimpleFossil;
       const defaultCommands = ['--verbose', '--porcelain'];
 
-      beforeEach(() => git = newSimpleGit());
+      beforeEach(() => fossil = newSimpleFossil());
 
       describe('pushTags', () => {
 
          it('with remote', async () => {
-            git.pushTags('foo');
+            fossil.pushTags('foo');
             await closeWithSuccess();
 
             assertExecutedCommands('push', 'foo', '--tags', ...defaultCommands)
          });
 
          it('without remote', async () => {
-            git.pushTags();
+            fossil.pushTags();
             await closeWithSuccess();
 
             assertExecutedCommands('push', '--tags', ...defaultCommands)
          });
 
          it('without remote with options', async () => {
-            git.pushTags(['--blah', '--tags']);
+            fossil.pushTags(['--blah', '--tags']);
             await closeWithSuccess();
 
             assertExecutedCommands('push', '--blah', '--tags', ...defaultCommands)
@@ -37,35 +37,35 @@ describe('push', () => {
       })
 
       it('git push can set multiple options', async () => {
-         git.push(['foo', 'bar']);
+         fossil.push(['foo', 'bar']);
          await closeWithSuccess();
 
          assertExecutedCommands('push', 'foo', 'bar', ...defaultCommands)
       });
 
       it('git push can set branch and remote', async () => {
-         git.push('rrr', 'bbb');
+         fossil.push('rrr', 'bbb');
          await closeWithSuccess();
 
          assertExecutedCommands('push', 'rrr', 'bbb', ...defaultCommands)
       });
 
       it('git push can run with no arguments', async () => {
-         git.push();
+         fossil.push();
          await closeWithSuccess();
 
          assertExecutedCommands('push', ...defaultCommands)
       });
 
       it('git push with options', async () => {
-         git.push({'--follow-tags': null});
+         fossil.push({'--follow-tags': null});
          await closeWithSuccess();
 
          assertExecutedCommands('push', '--follow-tags', ...defaultCommands)
       });
 
       it('git push with remote/branch and options', async () => {
-         git.push('rrr', 'bbb', {'--follow-tags': null});
+         fossil.push('rrr', 'bbb', {'--follow-tags': null});
          await closeWithSuccess();
 
          assertExecutedCommands('push', 'rrr', 'bbb', '--follow-tags', ...defaultCommands)

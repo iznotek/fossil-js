@@ -1,15 +1,15 @@
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
-import { SimpleGit } from '../../typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
+import { SimpleFossil } from '../../typings';
 import { parseMoveResult } from '../../src/lib/parsers/parse-move';
 
 const renaming = (from: string, to: string) => `Renaming ${ from } to ${ to }`;
 
 describe('mv', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
    let callback: jest.Mock;
 
    beforeEach(() => {
-      git = newSimpleGit();
+      fossil = newSimpleFossil();
       callback = jest.fn();
    });
 
@@ -41,7 +41,7 @@ ${ renaming('name with spaces.foo', 'less-spaces') }
       let promise;
 
       it('moves a single file - with callback', async () => {
-         promise = git.mv('a', 'b', callback);
+         promise = fossil.mv('a', 'b', callback);
          await closeWithSuccess(renaming('a', 'b'));
 
          expect(callback).toHaveBeenCalledWith(null, await promise);
@@ -49,7 +49,7 @@ ${ renaming('name with spaces.foo', 'less-spaces') }
       });
 
       it('moves multiple files to a single directory - with callback', async () => {
-         promise = git.mv(['a', 'b', 'c'], 'd', callback);
+         promise = fossil.mv(['a', 'b', 'c'], 'd', callback);
          await closeWithSuccess(`
 Renaming a to d/a
 Renaming b to d/b

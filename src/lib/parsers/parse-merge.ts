@@ -23,7 +23,7 @@ const parsers: LineParser<MergeDetail>[] = [
 ];
 
 /**
- * Parse the complete response from `git.merge`
+ * Parse the complete response from `fossil.merge`
  */
 export const parseMergeResult: TaskParser<string, MergeResult> = (stdOut, stdErr) => {
    return Object.assign(
@@ -33,7 +33,7 @@ export const parseMergeResult: TaskParser<string, MergeResult> = (stdOut, stdErr
 };
 
 /**
- * Parse the merge specific detail (ie: not the content also available in the pull detail) from `git.mnerge`
+ * Parse the merge specific detail (ie: not the content also available in the pull detail) from `fossil.mnerge`
  * @param stdOut
  */
 export const parseMergeDetail: TaskParser<string, MergeDetail> = (stdOut) => {

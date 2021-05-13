@@ -1,10 +1,10 @@
-import { SimpleGit, TaskOptions } from 'typings';
-import { assertExecutedCommands, closeWithSuccess, newSimpleGit } from './__fixtures__';
+import { SimpleFossil, TaskOptions } from 'typings';
+import { assertExecutedCommands, closeWithSuccess, newSimpleFossil } from './__fixtures__';
 
 describe('clone', () => {
-   let git: SimpleGit;
+   let fossil: SimpleFossil;
 
-   const cloneTests: [keyof SimpleGit, string, Array<string | TaskOptions>, string[]][] = [
+   const cloneTests: [keyof SimpleFossil, string, Array<string | TaskOptions>, string[]][] = [
       ['clone', 'with repo and local', ['repo', 'lcl'], ['clone', 'repo', 'lcl']],
       ['clone', 'with just repo', ['proto://remote.com/repo.git'], ['clone', 'proto://remote.com/repo.git']],
       ['clone', 'with options array', ['repo', 'lcl', ['foo', 'bar']], ['clone', 'foo', 'bar', 'repo', 'lcl']],
@@ -13,11 +13,11 @@ describe('clone', () => {
       ['mirror', 'explicitly set', ['r', 'l'], ['clone', '--mirror', 'r', 'l']],
    ];
 
-   beforeEach(() => git = newSimpleGit());
+   beforeEach(() => fossil = newSimpleFossil());
 
    it.each(cloneTests)('callbacks - %s %s', async (api, name, cloneArgs, executedCommands)=> {
       const callback = jest.fn();
-      const queue = (git[api] as any)(...cloneArgs, callback);
+      const queue = (fossil[api] as any)(...cloneArgs, callback);
       await closeWithSuccess(name);
 
       expect(await queue).toBe(name);
@@ -26,7 +26,7 @@ describe('clone', () => {
    });
 
    it.each(cloneTests)(`promises - %s %s`, async (api, name, cloneArgs, executedCommands) => {
-      const queue = (git[api] as any)(...cloneArgs);
+      const queue = (fossil[api] as any)(...cloneArgs);
       await closeWithSuccess(name);
 
       expect(await queue).toBe(name);

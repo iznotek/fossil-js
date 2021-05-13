@@ -1,5 +1,5 @@
-import { SimpleGitTask } from './tasks';
-import { SimpleGitProgressEvent } from './handlers';
+import { SimpleFossilTask } from './tasks';
+import { SimpleFossilProgressEvent } from './handlers';
 
 export * from './handlers';
 export * from './tasks';
@@ -35,44 +35,44 @@ export type outputHandler = (
 /**
  * Environment variables to be passed into the child process.
  */
-export type GitExecutorEnv = NodeJS.ProcessEnv | undefined;
+export type FossilExecutorEnv = NodeJS.ProcessEnv | undefined;
 
 
 /**
  * Public interface of the Executor
  */
-export interface SimpleGitExecutor {
-   env: GitExecutorEnv;
+export interface SimpleFossilExecutor {
+   env: FossilExecutorEnv;
    outputHandler?: outputHandler;
    binary: string;
    cwd: string;
 
-   chain(): SimpleGitExecutor;
+   chain(): SimpleFossilExecutor;
 
-   push<R>(task: SimpleGitTask<R>): Promise<R>;
+   push<R>(task: SimpleFossilTask<R>): Promise<R>;
 }
 
 /**
  * The resulting output from running the git child process
  */
-export interface GitExecutorResult {
+export interface FossilExecutorResult {
    stdOut: Buffer[];
    stdErr: Buffer[];
    exitCode: number;
    rejection: Maybe<Error>;
 }
 
-export interface SimpleGitPluginConfig {
+export interface SimpleFossilPluginConfig {
 
    /**
-    * Configures the content of errors thrown by the `simple-git` instance for each task
+    * Configures the content of errors thrown by the `simple-fossil` instance for each task
     */
-   errors(error: Buffer | Error | undefined, result: Omit<GitExecutorResult, 'rejection'>): Buffer | Error | undefined;
+   errors(error: Buffer | Error | undefined, result: Omit<FossilExecutorResult, 'rejection'>): Buffer | Error | undefined;
 
    /**
     * Handler to be called with progress events emitted through the progress plugin
     */
-   progress(data: SimpleGitProgressEvent): void;
+   progress(data: SimpleFossilProgressEvent): void;
 
    /**
     * Configuration for the `timeoutPlugin`
@@ -88,10 +88,10 @@ export interface SimpleGitPluginConfig {
 }
 
 /**
- * Optional configuration settings to be passed to the `simpleGit`
+ * Optional configuration settings to be passed to the `simpleFossil`
  * builder.
  */
-export interface SimpleGitOptions extends Partial<SimpleGitPluginConfig> {
+export interface SimpleFossilOptions extends Partial<SimpleFossilPluginConfig> {
    baseDir: string;
    binary: string;
    maxConcurrentProcesses: number;
