@@ -1,24 +1,25 @@
 import { InitResult } from '../../../typings';
 import { parseInit } from '../responses/InitSummary';
-import { StringTask } from '../types';
+import { OptionFlags, Options, StringTask } from '../types';
 
-const bareCommand = '--bare';
+export type InitOptions = Options &
+   OptionFlags<
+      '--sha1'
+      > &
+   OptionFlags<
+      '--template' | 
+      '--admin-user' | 
+      '-A' | 
+      '--date-override', string>
 
-function hasBareCommand(command: string[]) {
-   return command.includes(bareCommand);
-}
-
-export function initTask(bare = false, path: string, customArgs: string[]): StringTask<InitResult> {
+export function initTask(path: string, customArgs: string[]): StringTask<InitResult> {
    const commands = ['init', ...customArgs];
-   if (bare && !hasBareCommand(commands)) {
-      commands.splice(1, 0, bareCommand);
-   }
 
    return {
       commands,
       format: 'utf-8',
       parser(text: string): InitResult {
-         return parseInit(commands.includes('--bare'), path, text);
+         return parseInit(path, text);
       }
    }
 }

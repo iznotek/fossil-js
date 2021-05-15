@@ -2,37 +2,39 @@ import { InitResult } from '../../../typings';
 
 export class InitSummary implements InitResult {
    constructor(
-      public readonly bare: boolean,
       public readonly path: string,
-      public readonly existing: boolean,
-      public readonly gitDir: string,
+      public readonly projectId: string,
+      public readonly serverId: string,
+      public readonly admin: string,
+      public readonly password: string,
    ) {}
 }
 
-const initResponseRegex = /^Init.+ repository in (.+)$/;
-const reInitResponseRegex = /^Rein.+ in (.+)$/;
+const projectResponseRegex = /^project-id:(.*)/;
+const serverResponseRegex = /server-id:(.*)/;
+const adminResponseRegex = /admin-user:(.*) \(/;
+const passwordResponseRegex = /initial password is "(.*)"/;
 
-export function parseInit(bare: boolean, path: string, text: string) {
+export function parseInit(path: string, text: string) {
    const response = String(text).trim();
    let result;
+   let projectId, serverId, admin, password;
 
-   if ((result = initResponseRegex.exec(response))) {
-      return new InitSummary(bare, path, false, result[1]);
-   }
+   if ((result = projectResponseRegex.exec(response))) { 
+      projectId = result[1];
 
-   if ((result = reInitResponseRegex.exec(response))) {
-      return new InitSummary(bare, path, true, result[1]);
-   }
+      if ((result = serverResponseRegex.exec(response))) { 
+         serverId = result[1];
+      }
 
-   let gitDir = '';
-   const tokens = response.split(' ');
-   while (tokens.length) {
-      const token = tokens.shift();
-      if (token === 'in') {
-         gitDir = tokens.join(' ');
-         break;
+      if ((result = adminResponseRegex.exec(response))) { 
+         admin = result[1];
+      }
+
+      if ((result = passwordResponseRegex.exec(response))) { 
+         password = result[1];
       }
    }
 
-   return new InitSummary(bare, path, /^re/i.test(response), gitDir);
+   return new InitSummary(path, projectId || '', serverId || '', admin || '', password || '');
 }

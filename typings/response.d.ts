@@ -84,7 +84,7 @@ export interface CommitResult {
 }
 
 /**
- * Represents the current git configuration, as defined by the output from `git log`
+ * Represents the current fossil configuration, as defined by the output from `fossil log`
  */
 export interface ConfigListSummary {
 
@@ -156,18 +156,9 @@ export interface FetchResult {
 }
 
 /**
- * The `InitResult` is returned when (re)initialising a git repo.
+ * The `InitResult` is returned when (re)initialising a fossil repo.
  */
 export interface InitResult {
-   /**
-    * Boolean representing whether the `--bare` option was used
-    */
-   readonly bare: boolean;
-
-   /**
-    * Boolean representing whether the repo already existed (re-initialised rather than initialised)
-    */
-   readonly existing: boolean;
 
    /**
     * The path used when initialising
@@ -175,11 +166,24 @@ export interface InitResult {
    readonly path: string;
 
    /**
-    * The git configuration directory - for a bare repo this is the same as `path`, in non-bare repos
-    * this will usually be a sub-directory with the name `.git` (or value of the `$GIT_DIR` environment
-    * variable).
+    * The fossil projectId  
     */
-   readonly gitDir: string;
+   readonly projectId: string;
+
+   /**
+    * The fossil projectId  
+    */
+   readonly serverId: string;
+
+   /**
+    * The fossil admin user  
+    */
+   readonly admin: string;
+
+   /**
+    * The fossil admin password  
+    */
+   readonly password: string;
 }
 
 /**

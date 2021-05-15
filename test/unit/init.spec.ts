@@ -7,29 +7,29 @@ describe('init', () => {
    let fossil: SimpleFossil;
    const path = '/some/path/repo';
 
-   const successMessage = (alreadyExisting = false, gitDir = `${path}/.git/`) =>
+   const successMessage = (alreadyExisting = false, fossilDir = `${path}/.git/`) =>
       alreadyExisting
-         ? `Reinitialized existing Fossil repository in ${ gitDir }\n`
-         : `Initialized empty Fossil repository in ${ gitDir }\n`;
+         ? `Reinitialized existing Fossil repository in ${ fossilDir }\n`
+         : `Initialized empty Fossil repository in ${ fossilDir }\n`;
    const existingRepoSuccess = successMessage.bind(null, true);
    const newRepoSuccess = successMessage.bind(null, false);
 
    beforeEach(() => fossil = newSimpleFossil(path));
 
-   describe('path vs gitDir', () => {
+   describe('path vs fossilDir', () => {
       it('non-bare', async () => {
-         const gitDir = `${path}/.git/`;
+         const fossilDir = `${path}/.git/`;
          const init = fossil.init();
 
-         await closeWithSuccess(newRepoSuccess(gitDir));
-         assertSuccess(await init, {path, gitDir}, ['init']);
+         await closeWithSuccess(newRepoSuccess(fossilDir));
+         assertSuccess(await init, {path, fossilDir}, ['init']);
       });
       it('bare', async () => {
-         const gitDir = `${path}/`;
+         const fossilDir = `${path}/`;
          const init = fossil.init(true);
 
-         await closeWithSuccess(newRepoSuccess(gitDir));
-         assertSuccess(await init, {path, gitDir}, ['init', '--bare']);
+         await closeWithSuccess(newRepoSuccess(fossilDir));
+         assertSuccess(await init, {path, fossilDir}, ['init', '--bare']);
       });
    });
 

@@ -114,9 +114,9 @@ Fossil.prototype.outputHandler = function (outputHandler) {
  * @param {Boolean} [bare=false]
  * @param {Function} [then]
  */
-Fossil.prototype.init = function (bare, then) {
+Fossil.prototype.init = function (then) {
    return this._runTask(
-      initTask(bare === true, this._executor.cwd, getTrailingOptions(arguments)),
+      initTask(this._executor.cwd, getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
    );
 };
