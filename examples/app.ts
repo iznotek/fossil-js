@@ -120,6 +120,7 @@ async function boot () {
     // await fossil.status().then(logError).catch(logError)
     await fossil.init(dbFile).open(dbFile).then(logError).catch(ignoreError)
     await fossil.cwd(repoClone).clone(dbUrl).then(logError).catch(ignoreError)
+    await fossil.getRemotes().then(logError).catch(ignoreError)
     await fossil.cwd(repoOpen).open(dbUrl).then(logError).catch(ignoreError)
     await io.writeFile(join(repoNew,'new.txt'), 'something in');
     await fossil.cwd(repoNew).status().then(logError).catch(ignoreError)
@@ -135,6 +136,7 @@ async function boot () {
     }).catch(ignoreError)
     await fossil.status().then(logError).catch(ignoreError)
     await fossil.branch().then(logError).catch(ignoreError)
+    
   }
   catch (e) {
     logError(e) 

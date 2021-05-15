@@ -33,7 +33,7 @@ const {mergeTask} = require('./lib/tasks/merge');
 const {moveTask} = require("./lib/tasks/move");
 const {pullTask} = require('./lib/tasks/pull');
 const {pushTagsTask} = require('./lib/tasks/push');
-const {addRemoteTask, getRemotesTask, listRemotesTask, remoteTask, removeRemoteTask} = require('./lib/tasks/remote');
+const {addRemoteTask, getRemotesTask, remoteTask, deleteRemoteTask} = require('./lib/tasks/remote');
 const {getResetMode, resetTask} = require('./lib/tasks/reset');
 const {stashListTask} = require('./lib/tasks/stash-list');
 const {statusTask} = require('./lib/tasks/status');
@@ -473,13 +473,6 @@ Fossil.prototype.raw = function (commands) {
 };
 
 
-Fossil.prototype.listRemote = function () {
-   return this._runTask(
-      listRemotesTask(getTrailingOptions(arguments)),
-      trailingFunctionArgument(arguments),
-   );
-};
-
 /**
  * Adds a remote to the list of remotes.
  */
@@ -493,9 +486,9 @@ Fossil.prototype.addRemote = function (remoteName, remoteRepo, then) {
 /**
  * Removes an entry by name from the list of remotes.
  */
-Fossil.prototype.removeRemote = function (remoteName, then) {
+Fossil.prototype.deleteRemote = function (remoteName, then) {
    return this._runTask(
-      removeRemoteTask(remoteName),
+      deleteRemoteTask(remoteName),
       trailingFunctionArgument(arguments),
    );
 };
@@ -504,19 +497,9 @@ Fossil.prototype.removeRemote = function (remoteName, then) {
  * Gets the currently available remotes, setting the optional verbose argument to true includes additional
  * detail on the remotes themselves.
  */
-Fossil.prototype.getRemotes = function (verbose, then) {
+Fossil.prototype.getRemotes = function (then) {
    return this._runTask(
-      getRemotesTask(verbose === true),
-      trailingFunctionArgument(arguments),
-   );
-};
-
-/**
- * Compute object ID from a file
- */
-Fossil.prototype.hashObject = function (path, write) {
-   return this._runTask(
-      hashObjectTask(path, write === true),
+      getRemotesTask(),
       trailingFunctionArgument(arguments),
    );
 };
@@ -527,9 +510,19 @@ Fossil.prototype.hashObject = function (path, write) {
  * @param {string[]} options
  * @param {Function} [then]
  */
-Fossil.prototype.remote = function (options, then) {
+ Fossil.prototype.remote = function (options, then) {
    return this._runTask(
       remoteTask(getTrailingOptions(arguments)),
+      trailingFunctionArgument(arguments),
+   );
+};
+
+/**
+ * Compute object ID from a file
+ */
+Fossil.prototype.hashObject = function (path, write) {
+   return this._runTask(
+      hashObjectTask(path, write === true),
       trailingFunctionArgument(arguments),
    );
 };

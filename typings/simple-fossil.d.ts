@@ -293,10 +293,6 @@ export interface SimpleFossil extends SimpleFossilBase {
     */
    getRemotes(callback?: types.SimpleFossilTaskCallback<types.RemoteWithoutRefs[]>): Response<types.RemoteWithoutRefs[]>;
 
-   getRemotes(verbose?: false, callback?: types.SimpleFossilTaskCallback<types.RemoteWithoutRefs[]>): Response<types.RemoteWithoutRefs[]>;
-
-   getRemotes(verbose: true, callback?: types.SimpleFossilTaskCallback<types.RemoteWithRefs[]>): Response<types.RemoteWithRefs[]>;
-
    /**
     * Compute object ID from a file
     */
@@ -310,12 +306,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    init(path: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.InitResult>): Response<resp.InitResult>;
 
    init(path: string, callback?: types.SimpleFossilTaskCallback<resp.InitResult>): Response<resp.InitResult>;
-
-   /**
-    * List remotes by running the `ls-remote` command with any number of arbitrary options
-    * in either array of object form.
-    */
-   listRemote(args?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
     * Show commit logs from `HEAD` to the first commit.
@@ -450,7 +440,7 @@ export interface SimpleFossil extends SimpleFossilBase {
    rebase(callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
-    * Call any `git remote` function with arguments passed as an array of strings.
+    * Call any `fossil remote` function with arguments passed as an array of strings.
     */
    remote(options: string[], callback?: types.SimpleFossilTaskCallback<void | string>): Response<void | string>;
 
@@ -459,7 +449,7 @@ export interface SimpleFossil extends SimpleFossilBase {
     *
     * - remoteName Name of the repository - eg "upstream"
     */
-   removeRemote(remoteName: string, callback?: types.SimpleFossilTaskCallback<void>): Response<void>;
+   deleteRemote(remoteName: string, callback?: types.SimpleFossilTaskCallback<void>): Response<void>;
 
    /**
     * Reset a repo. Called without arguments this is a soft reset for the whole repo,
