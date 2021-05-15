@@ -38,7 +38,7 @@ const io = {
   }
 }
 
-function outputToJson (text: string) {
+function formatOutput (text: string) {
   let json: any = {}
   const lines = text.trim().split('\n');
   for (let i = 0, l = lines.length; i < l; i++) {
@@ -47,6 +47,34 @@ function outputToJson (text: string) {
     const key = line.substr(0, limit);
     const value = line.substr(limit+1, line.length)
     json[key] = value.trim()
+  }
+  return json;
+}
+
+function formatOutputArtifact (text: string) {
+  let json: any = { files: [] }
+  const lines = text.trim().split('\n');
+  for (let i = 0, l = lines.length; i < l; i++) {
+    const line = lines[i];
+    const limit = line.indexOf(' ');
+    const left = line.substr(0, limit);
+    const value = line.substr(limit+1, line.length).trim()
+    let key = 'out';
+    switch(left) {
+      case 'C': key = 'comment'; break;
+      case 'D': key = 'date'; break;
+      case 'F': key = 'files'; break;
+      case 'P': key = 'parent'; break;
+      case 'R': key = 'revision'; break;
+      case 'U': key = 'user'; break;
+      // case 'Z': key = 'comment'; break;
+    }
+    if (key == 'out') continue;
+    if (key == 'files') {
+      json[key].push(value)
+      continue;
+    }
+    json[key] = value 
   }
   return json;
 }
@@ -93,10 +121,14 @@ async function boot () {
     await fossil.status().then(logError).catch(ignoreError)
     await fossil.commit('first commit').then(async (res) => {
       await fossil.raw(['info', res.revision]).then((res) => {
-        console.log(outputToJson(res))
+        console.log(formatOutput(res))
+      }).catch(logError)
+      await fossil.raw(['artifact', res.revision]).then((res) => {
+        console.log(formatOutputArtifact(res))
       }).catch(logError)
     }).catch(ignoreError)
     await fossil.status().then(logError).catch(ignoreError)
+    await fossil.branch().then(logError).catch(ignoreError)
   }
   catch (e) {
     logError(e) 

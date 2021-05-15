@@ -1,19 +1,8 @@
 import { DefaultLogFields } from '../src/lib/tasks/log';
 
-export interface BranchSummaryBranch {
-   current: boolean;
-   name: string;
-   commit: string;
-   label: string;
-}
-
 export interface BranchSummary {
-   detached: boolean;
    current: string;
    all: string[];
-   branches: {
-      [key: string]: BranchSummaryBranch;
-   };
 }
 
 /**
@@ -35,31 +24,6 @@ export interface BranchSingleDeleteFailure {
 }
 
 export type BranchSingleDeleteResult = BranchSingleDeleteFailure | BranchSingleDeleteSuccess;
-
-/**
- * Represents the status of having deleted a batch of branches
- */
-export interface BranchMultiDeleteResult {
-   /**
-    * All branches included in the response
-    */
-   all: BranchSingleDeleteResult[];
-
-   /**
-    * Branches mapped by their branch name
-    */
-   branches: { [branchName: string]: BranchSingleDeleteResult };
-
-   /**
-    * Array of responses that are in error
-    */
-   errors: BranchSingleDeleteResult[];
-
-   /**
-    * Flag showing whether all branches were deleted successfully
-    */
-   readonly success: boolean;
-}
 
 export interface CleanSummary {
    readonly dryRun: boolean;
