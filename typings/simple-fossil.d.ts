@@ -197,6 +197,14 @@ export interface SimpleFossil extends SimpleFossilBase {
    clone(repoPath: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
+    * Open a fossil repo file
+    */
+   open(repoPath: string, localPath: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback): Response<string>;
+
+   open(repoPath: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback): Response<string>;
+
+       
+   /**
     * Commits changes in the current working directory - when specific file paths are supplied, only changes on those
     * files will be committed.
     */
@@ -236,16 +244,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    deleteLocalBranch(branchName: string, forceDelete?: boolean, callback?: types.SimpleFossilTaskCallback<resp.BranchSingleDeleteResult>): Response<resp.BranchSingleDeleteResult>;
 
    deleteLocalBranch(branchName: string, callback?: types.SimpleFossilTaskCallback<resp.BranchSingleDeleteResult>): Response<resp.BranchSingleDeleteResult>;
-
-   /**
-    * Delete one or more local branches. Supply the branchName as a string to return a
-    * single `BranchDeletionSummary` or as an array of branch names to return an array of
-    * `BranchDeletionSummary` instances.
-    *
-    * - branchNames name of branch or array of branch names
-    * - forceDelete (optional, defaults to false) set to true to forcibly delete unmerged branches
-    */
-   deleteLocalBranches(branchNames: string[], forceDelete?: boolean, callback?: types.SimpleFossilTaskCallback<resp.BranchMultiDeleteResult>): Response<resp.BranchMultiDeleteResult>;
 
    /**
     * Get the diff of the current repo compared to the last commit with a set of options supplied as a string.
@@ -314,13 +312,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    init(path: string, callback?: types.SimpleFossilTaskCallback<resp.InitResult>): Response<resp.InitResult>;
 
    /**
-    * Open a fossil repo file
-    */
-   open(path: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback): Response<string>;
-
-   open(path: string, callback?: types.SimpleFossilTaskCallback): Response<string>;
-
-   /**
     * List remotes by running the `ls-remote` command with any number of arbitrary options
     * in either array of object form.
     */
@@ -376,14 +367,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    mergeFromTo<E extends FossilError>(from: string, to: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.MergeResult, E>): Response<resp.MergeResult>;
 
    mergeFromTo<E extends FossilError>(from: string, to: string, callback?: types.SimpleFossilTaskCallback<resp.MergeResult, E>): Response<resp.MergeResult>;
-
-   /**
-    * Mirror a git repo
-    *
-    * Equivalent to `fossil.clone(repoPath, localPath, ['--mirror'])`, `clone` allows
-    * for additional task options.
-    */
-   mirror(repoPath: string, localPath: string, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
     * Moves one or more files to a new destination.

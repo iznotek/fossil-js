@@ -228,9 +228,6 @@ For type details of the response for each of the tasks, please see the [TypeScri
 - `.clone(repoPath, [localPath, [options]])` clone a remote repo at `repoPath` to a local directory at `localPath`, optionally with a standard [options](#how-to-specify-options) object of additional arguments to include between `git clone` and the trailing `repo local` arguments
 - `.clone(repoPath, [options])` clone a remote repo at `repoPath` to a directory in the current working directory with the same name as the repo
 
-- `mirror(repoPath, [localPath, [options]])` behaves the same as the `.clone` interface with the [`--mirror` flag](https://git-scm.com/docs/git-clone#Documentation/git-clone.txt---mirror) enabled.
-
-
 ## git config
 
 - `.addConfig(key, value, append = false)` add a local configuration property, when `append` is set to `true` the

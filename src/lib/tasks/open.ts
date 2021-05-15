@@ -20,11 +20,14 @@ function hasWorkDirCommand(commands: string[]) {
    return commands.includes('--workdir');
 }
 
-export function openTask(path: string, workdir: string, customArgs: string[]): StringTask<OpenResult> {
-   const commands = ['open', path, ...customArgs];
-   if (!hasWorkDirCommand(commands)) {
+export function openTask(repo: string | undefined, directory: string | undefined, customArgs: string[]): StringTask<OpenResult> {
+   const commands = ['open', ...customArgs];
+   if (typeof repo === 'string') {
+      commands.push(repo);
+   }
+   if (!hasWorkDirCommand(commands) && typeof directory === 'string') {
       commands.push('--workdir')
-      commands.push(workdir);
+      commands.push(directory);
    }
 
    return {

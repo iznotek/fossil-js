@@ -19,7 +19,7 @@ const {applyPatchTask} = require('./lib/tasks/apply-patch')
 const {branchTask, branchLocalTask, deleteBranchesTask, deleteBranchTask} = require('./lib/tasks/branch');
 const {checkIgnoreTask} = require('./lib/tasks/check-ignore');
 const {checkIsRepoTask} = require('./lib/tasks/check-is-repo');
-const {cloneTask, cloneMirrorTask} = require('./lib/tasks/clone');
+const {cloneTask} = require('./lib/tasks/clone');
 const {addConfigTask, listConfigTask} = require('./lib/tasks/config');
 const {cleanWithOptionsTask, isCleanOptionsArray} = require('./lib/tasks/clean');
 const {commitTask} = require('./lib/tasks/commit');
@@ -122,18 +122,6 @@ Fossil.prototype.init = function (path, then) {
 };
 
 /**
- * Open a fossil repo file
- *
- * @param {Function} [then]
- */
- Fossil.prototype.open = function (path, then) {
-   return this._runTask(
-      openTask(path, this._executor.cwd, getTrailingOptions(arguments)),
-      trailingFunctionArgument(arguments),
-   );
-};
-
-/**
  * Check the status of the local repo
  */
 Fossil.prototype.status = function () {
@@ -189,11 +177,13 @@ Fossil.prototype.clone = function () {
 };
 
 /**
- * Mirror a fossil repo
+ * Open a fossil repo file
+ *
+ * @param {Function} [then]
  */
-Fossil.prototype.mirror = function () {
+ Fossil.prototype.open = function () {
    return this._runTask(
-      createCloneTask('mirror', cloneMirrorTask, ...arguments),
+      createCloneTask('open', openTask, ...arguments),
       trailingFunctionArgument(arguments),
    );
 };

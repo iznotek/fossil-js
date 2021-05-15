@@ -10,10 +10,10 @@ export class InitSummary implements InitResult {
    ) {}
 }
 
-const projectResponseRegex = /^project-id:(.*)/;
+const projectResponseRegex = /project-id:(.*)/;
 const serverResponseRegex = /server-id:(.*)/;
 const adminResponseRegex = /admin-user:(.*) \(/;
-const passwordResponseRegex = /initial password is "(.*)"/;
+const passwordResponseRegex = /password is "(.*)"/;
 
 export function parseInit(path: string, text: string) {
    const response = String(text).trim();

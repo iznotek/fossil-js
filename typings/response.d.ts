@@ -143,6 +143,11 @@ export interface InitResult {
  * The `InitResult` is returned when (re)initialising a fossil repo.
  */
  export interface OpenResult {
+   
+   /**
+    * The fossil init if opened from url
+    */
+    readonly init: InitResult;
 
    /**
     * The fossil project-name  

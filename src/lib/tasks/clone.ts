@@ -1,39 +1,41 @@
-import { straightThroughStringTask } from './task';
+import { OpenResult } from '../../../typings';
+import { parseOpen } from '../responses/OpenSummary';
 import { OptionFlags, Options, StringTask } from '../types';
-import { append } from '../utils';
 
 export type CloneOptions = Options &
    OptionFlags<
-      '--bare' |
-      '--dissociate' |
-      '--mirror' |
-      '--no-checkout' |
-      '--no-remote-submodules' |
-      '--no-shallow-submodules' |
-      '--no-single-branch' |
-      '--no-tags' |
-      '--remote-submodules' |
-      '--single-branch' |
-      '--shallow-submodules' |
-      '--verbose'
+      '--nested' |
+      '--nocompress' |
+      '--no-open' |
+      '--once' |
+      '--private' |
+      '--save-http-password' |
+      '--unversioned' |
+      '-u' |
+      '--verbose' |
+      '-v'
       > &
-   OptionFlags<'--depth' | '-j' | '--jobs', number> &
-   OptionFlags<'--branch' | '--origin' | '--recurse-submodules' | '--separate-git-dir' | '--shallow-exclude' | '--shallow-since' | '--template', string>
+   OptionFlags<'--workdir' | '--admin-user' | '-A' | '--httpauth' | '-B' | '--ssh-command' | '-c' | '--ssl-identity', string>
 
-export function cloneTask(repo: string | undefined, directory: string | undefined, customArgs: string[]): StringTask<string> {
+function hasWorkDirCommand(commands: string[]) {
+   return commands.includes('--workdir');
+}
+
+export function cloneTask(repo: string | undefined, directory: string | undefined, customArgs: string[]): StringTask<OpenResult> {
    const commands = ['clone', ...customArgs];
    if (typeof repo === 'string') {
       commands.push(repo);
    }
-   if (typeof directory === 'string') {
+   if (!hasWorkDirCommand(commands) && typeof directory === 'string') {
+      commands.push('--workdir');
       commands.push(directory);
    }
 
-   return straightThroughStringTask(commands);
-}
-
-export function cloneMirrorTask(repo: string | undefined, directory: string | undefined, customArgs: string[]): StringTask<string> {
-   append(customArgs,'--mirror');
-
-   return cloneTask(repo, directory, customArgs);
+   return {
+      commands,
+      format: 'utf-8',
+      parser(text: string): OpenResult {
+         return parseOpen(text);
+      }
+   }
 }

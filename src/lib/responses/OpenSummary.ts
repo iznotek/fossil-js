@@ -1,7 +1,9 @@
-import { OpenResult } from '../../../typings';
+import { OpenResult, InitResult } from '../../../typings';
+import { parseInit } from './InitSummary';
 
 export class OpenSummary implements OpenResult {
    constructor(
+      public readonly init: InitResult,
       public readonly projectName: string,
       public readonly repository: string,
       public readonly localRoot: string,
@@ -66,6 +68,7 @@ export function parseOpen(text: string) {
    }
 
    return new OpenSummary(
+      parseInit(repository || '', text),
       projectName || '', 
       repository || '', 
       localRoot || '', 
