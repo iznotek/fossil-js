@@ -9,6 +9,7 @@
     "test"
   ],
   "include": [
+    "examples/**/*.ts",
     "src/lib/**/*.ts",
     "typings/index.d.ts"
   ]

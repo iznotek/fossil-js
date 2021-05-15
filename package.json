@@ -46,14 +46,15 @@
     "typings/"
   ],
   "scripts": {
-    "clean": "git clean -fxd -e .idea -e node_modules",
+    "start": "nodemon",
     "tsc": "tsc",
     "build": "tsc --build",
     "build:clean": "yarn clean && yarn build",
     "build:release": "tsc -p tsconfig.release.json",
+    "clean": "git clean -fxd -e .idea -e node_modules",
     "test:consumer": "tsc -p test/consumer/tsconfig-standard.json && tsc -p test/consumer/tsconfig-promise.json",
     "test:jest": "jest --coverage",
-    "test": "yarn test:consumer && yarn test:jest",
+    "test": "DEBUG=simple-fossil && yarn test:consumer && yarn test:jest",
     "preversion": "yarn clean && yarn test && yarn build:release",
     "postversion": "npm publish && git push && git push --tags"
   }
