@@ -5,7 +5,7 @@ import { StringTask } from '../types';
 export function statusTask(customArgs: string[]): StringTask<StatusResult> {
    return {
       format: 'utf-8',
-      commands: ['status', '--changed', '--extra', ...customArgs],
+      commands: ['status', '--differ', ...customArgs],
       parser(text: string) {
          return parseStatusSummary(text);
       }

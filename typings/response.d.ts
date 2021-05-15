@@ -69,18 +69,7 @@ export interface CleanSummary {
 }
 
 export interface CommitResult {
-   author: null | {
-      email: string;
-      name: string;
-   };
-   branch: string;
-   commit: string;
-   root: boolean;
-   summary: {
-      changes: number;
-      insertions: number;
-      deletions: number;
-   };
+   revision: string
 }
 
 /**
@@ -321,7 +310,7 @@ export interface StatusResult {
 
    staged: string[];
    files: FileStatusResult[];
-   
+
    current: string | null;
 
    /**

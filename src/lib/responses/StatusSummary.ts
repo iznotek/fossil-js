@@ -88,23 +88,20 @@ export const parseStatusSummary = function (text: string): StatusResult {
 
 function splitLine(result: StatusResult, lineStr: string) {
    const trimmed = lineStr.trim();
-   switch (' ') {
-      case trimmed.charAt(2):
-         return data(trimmed.charAt(0), trimmed.charAt(1), trimmed.substr(3));
-      case trimmed.charAt(1):
-         return data(TagFileStatus.NONE, trimmed.charAt(0), trimmed.substr(2));
-      default:
-         return;
-   }
-
-   function data(index: string, workingDir: string, path: string) {
-      const raw = `${index}${workingDir}`;
-      const handler = parsers.get(raw);
-
-      if (handler) {
-         handler(result, path);
+   const space = trimmed.indexOf(' ');
+   const tag = trimmed.substr(0, space)
+   const body = trimmed.substr(space).trim()
+   if (tag.includes(':')) {
+      if (tag.includes('tags:')) {
+         result.current = body
       }
-         
-      result.files.push(new FileStatusSummary(path, index, workingDir));
+      return
    }
+
+   const handler = parsers.get(tag);
+   if (handler) {
+      handler(result, body);
+   }
+
+   result.files.push(new FileStatusSummary(body, tag, ''));
 }

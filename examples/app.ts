@@ -38,6 +38,19 @@ const io = {
   }
 }
 
+function outputToJson (text: string) {
+  let json: any = {}
+  const lines = text.trim().split('\n');
+  for (let i = 0, l = lines.length; i < l; i++) {
+    const line = lines[i];
+    const limit = line.indexOf(':');
+    const key = line.substr(0, limit);
+    const value = line.substr(limit+1, line.length)
+    json[key] = value.trim()
+  }
+  return json;
+}
+
 function logError (error: any) {
   console.log(error)
 }
@@ -61,7 +74,7 @@ async function boot () {
     binary: 'fossil',
     maxConcurrentProcesses: 6,
   };
-  debug.enable('off'); // off / *
+  debug.enable('simple-fossil,simple-fossil:output:*'); // off / *
   const fossil: SimpleFossil = simpleFossil(options);
 
  
@@ -74,6 +87,15 @@ async function boot () {
     // await fossil.status().then(logError).catch(logError)
     await fossil.init(dbFile).then(logError).catch(ignoreError)
     await fossil.open(dbFile).then(logError).catch(ignoreError)
+    await io.writeFile(join(repoDir,'new.txt'), 'something in');
+    await fossil.status().then(logError).catch(ignoreError)
+    await fossil.add('new.txt').then(logError).catch(ignoreError)
+    await fossil.status().then(logError).catch(ignoreError)
+    await fossil.commit('first commit').then(async (res) => {
+      await fossil.raw(['info', res.revision]).then((res) => {
+        console.log(outputToJson(res))
+      }).catch(logError)
+    }).catch(ignoreError)
     await fossil.status().then(logError).catch(ignoreError)
   }
   catch (e) {
