@@ -52,7 +52,7 @@ export class SimpleFossilApi implements SimpleFossilBase {
       );
    }
 
-   push(remote?: string, branch?: string, options?: TaskOptions, callback?: SimpleFossilTaskCallback<PushResult>): SimpleFossil & Promise<PushResult>;
+   push(remote?: string, options?: TaskOptions, callback?: SimpleFossilTaskCallback<PushResult>): SimpleFossil & Promise<PushResult>;
    push(options?: TaskOptions, callback?: SimpleFossilTaskCallback<PushResult>): SimpleFossil & Promise<PushResult>;
    push(callback?: SimpleFossilTaskCallback<PushResult>): SimpleFossil & Promise<PushResult>;
    push() {

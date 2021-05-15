@@ -95,19 +95,6 @@ export interface DiffResult {
    deletions: number;
 }
 
-export interface FetchResult {
-   raw: string;
-   remote: string | null;
-   branches: {
-      name: string;
-      tracking: string;
-   }[];
-   tags: {
-      name: string;
-      tracking: string;
-   }[];
-}
-
 /**
  * The `InitResult` is returned when (re)initialising a fossil repo.
  */

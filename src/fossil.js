@@ -16,14 +16,12 @@ const {
    trailingOptionsArgument
 } = require('./lib/utils');
 const {branchTask, branchLocalTask, deleteBranchesTask, deleteBranchTask} = require('./lib/tasks/branch');
-const {checkIgnoreTask} = require('./lib/tasks/check-ignore');
-const {checkIsRepoTask} = require('./lib/tasks/check-is-repo');
 const {cloneTask} = require('./lib/tasks/clone');
 const {addConfigTask, listConfigTask} = require('./lib/tasks/config');
 const {cleanWithOptionsTask, isCleanOptionsArray} = require('./lib/tasks/clean');
 const {commitTask} = require('./lib/tasks/commit');
 const {diffSummaryTask} = require('./lib/tasks/diff');
-const {fetchTask} = require('./lib/tasks/fetch');
+const {syncTask} = require('./lib/tasks/sync');
 const {hashObjectTask} = require('./lib/tasks/hash-object');
 const {initTask} = require('./lib/tasks/init');
 const {openTask} = require('./lib/tasks/open');
@@ -31,7 +29,6 @@ const {logTask, parseLogOptions} = require('./lib/tasks/log');
 const {mergeTask} = require('./lib/tasks/merge');
 const {moveTask} = require("./lib/tasks/move");
 const {pullTask} = require('./lib/tasks/pull');
-const {pushTask} = require('./lib/tasks/push');
 const {addRemoteTask, getRemotesTask, remoteTask, deleteRemoteTask} = require('./lib/tasks/remote');
 const {getResetMode, resetTask} = require('./lib/tasks/reset');
 const {stashListTask} = require('./lib/tasks/stash-list');
@@ -252,17 +249,6 @@ Fossil.prototype.pull = function (remote, options, then) {
 };
 
 /**
- * Pull the updated contents of the current repo
- */
- Fossil.prototype.push = function (remote, options, then) {
-   return this._runTask(
-      pushTask(filterType(remote, filterString), filterType(branch, filterString), getTrailingOptions(arguments)),
-      trailingFunctionArgument(arguments),
-   );
-};
-
-
-/**
  * Fetch the updated contents of the current repo.
  *
  * @example
@@ -272,9 +258,9 @@ Fossil.prototype.pull = function (remote, options, then) {
  * @param {string} [remote]
  * @param {string} [branch]
  */
-Fossil.prototype.fetch = function (remote, branch) {
+Fossil.prototype.sync = function (remote) {
    return this._runTask(
-      fetchTask(filterType(remote, filterString), filterType(branch, filterString), getTrailingOptions(arguments)),
+      syncTask(filterType(remote, filterString), filterType(branch, filterString), getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
    );
 };

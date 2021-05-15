@@ -100,28 +100,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    catFile(callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
-    * Check if a pathname or pathnames are excluded by .gitignore
-    *
-    */
-   checkIgnore(pathNames: string[], callback?: types.SimpleFossilTaskCallback<string[]>): Response<string[]>;
-
-   checkIgnore(path: string, callback?: types.SimpleFossilTaskCallback<string[]>): Response<string[]>;
-
-   /**
-    * Validates that the current working directory is a valid git repo file path.
-    *
-    * To make a more specific assertion of the repo, add the `action` argument:
-    *
-    * - `bare` to validate that the working directory is inside a bare repo.
-    * - `root` to validate that the working directory is the root of a repo.
-    * - `tree` (default value when omitted) to simply validate that the working
-    *    directory is the descendent of a repo
-    */
-   checkIsRepo(action?: types.CheckRepoActions, callback?: types.SimpleFossilTaskCallback<boolean>): Response<boolean>;
-
-   checkIsRepo(callback?: types.SimpleFossilTaskCallback<boolean>): Response<boolean>;
-
-   /**
     * Checkout a tag or revision, any number of additional arguments can be passed to the `git checkout` command
     * by supplying either a string or array of strings as the `what` parameter.
     */
@@ -270,15 +248,11 @@ export interface SimpleFossil extends SimpleFossilBase {
    /**
     * Updates the local working copy database with changes from the default remote repo and branch.
     */
-   fetch(remote: string, branch: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
+   sync(remote: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
 
-   fetch(remote: string, branch: string, callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
+   sync(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
 
-   fetch(remote: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
-
-   fetch(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
-
-   fetch(callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
+   sync(callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
 
    /**
     * Gets the currently available remotes, setting the optional verbose argument to true includes additional
