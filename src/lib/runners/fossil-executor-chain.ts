@@ -81,7 +81,7 @@ export class FossilExecutorChain implements SimpleFossilExecutor {
    private async attemptRemoteTask<R>(task: RunnableTask<R>, logger: OutputLogger) {
       const args = this._plugins.exec('spawn.args', [...task.commands], pluginContext(task, task.commands));
 
-      const raw = await this.gitResponse(
+      const raw = await this.fossilResponse(
          task,
          this.binary, args, this.outputHandler, logger.step('SPAWN'),
       );
@@ -148,7 +148,7 @@ export class FossilExecutorChain implements SimpleFossilExecutor {
       });
    }
 
-   private async gitResponse<R>(task: SimpleFossilTask<R>, command: string, args: string[], outputHandler: Maybe<outputHandler>, logger: OutputLogger): Promise<FossilExecutorResult> {
+   private async fossilResponse<R>(task: SimpleFossilTask<R>, command: string, args: string[], outputHandler: Maybe<outputHandler>, logger: OutputLogger): Promise<FossilExecutorResult> {
       const outputLogger = logger.sibling('output');
       const spawnOptions: SpawnOptions = {
          cwd: this.cwd,

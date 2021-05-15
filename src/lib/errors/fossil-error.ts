@@ -1,11 +1,11 @@
 import { SimpleFossilTask } from '../types';
 
 /**
- * The `FossilError` is thrown when the underlying `git` process throws a
+ * The `FossilError` is thrown when the underlying `fossil` process throws a
  * fatal exception (eg an `ENOENT` exception when attempting to use a
  * non-writable directory as the root for your repo), and acts as the
  * base class for more specific errors thrown by the parsing of the
- * git response or errors in the configuration of the task about to
+ * fossil response or errors in the configuration of the task about to
  * be run.
  *
  * When an exception is thrown, pending tasks in the same instance will
@@ -20,7 +20,7 @@ import { SimpleFossilTask } from '../types';
    return e.
  }
 
- const git = fossilP(repoWorkingDir);
+ const fossil = fossilP(repoWorkingDir);
  const pulled: PullResult | FossilError = await fossil.pull().catch(catchTask);
  const pushed: string | FossilError = await fossil.pushTags().catch(catchTask);
  ```
