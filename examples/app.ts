@@ -89,19 +89,21 @@ function ignoreError () {
 async function boot () {
   const dbDir = join(process.cwd(), '/fossil');
   const dbFile = join(dbDir, '/test.fossil');
-  const dbUrl = "https://fossil.2of4.net/vscode-fossil";
-  const repoDir = join(dbDir, '/repo');
-  const repoDir2 = join(dbDir, '/repo2');
+  const dbUrl = "https://fossil.2of4.net/mc_tools";
+  const repoNew= join(dbDir, '/new');
+  const repoOpen = join(dbDir, '/open');
+  const repoClone = join(dbDir, '/clone');
   try {
     await io.rmdir(dbDir);
-    await io.mkdir(repoDir);
-    await io.mkdir(repoDir2);
+    await io.mkdir(repoNew);
+    await io.mkdir(repoOpen);
+    await io.mkdir(repoClone);
   } catch (e) {
     logError(e) 
   }
 
   const options: Partial<SimpleFossilOptions> = {
-    baseDir: repoDir,
+    baseDir: repoNew,
     binary: 'fossil',
     maxConcurrentProcesses: 6,
   };
@@ -116,11 +118,11 @@ async function boot () {
 
   try {
     // await fossil.status().then(logError).catch(logError)
-    await fossil.init(dbFile).then(logError).catch(ignoreError)
-    await fossil.cwd(repoDir2).clone(dbUrl).then(logError).catch(ignoreError)
-    await fossil.cwd(repoDir).open(dbUrl).then(logError).catch(ignoreError)
-    await io.writeFile(join(repoDir,'new.txt'), 'something in');
-    await fossil.status().then(logError).catch(ignoreError)
+    await fossil.init(dbFile).open(dbFile).then(logError).catch(ignoreError)
+    await fossil.cwd(repoClone).clone(dbUrl).then(logError).catch(ignoreError)
+    await fossil.cwd(repoOpen).open(dbUrl).then(logError).catch(ignoreError)
+    await io.writeFile(join(repoNew,'new.txt'), 'something in');
+    await fossil.cwd(repoNew).status().then(logError).catch(ignoreError)
     await fossil.add('new.txt').then(logError).catch(ignoreError)
     await fossil.status().then(logError).catch(ignoreError)
     await fossil.commit('first commit').then(async (res) => {
