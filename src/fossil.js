@@ -15,7 +15,6 @@ const {
    trailingFunctionArgument,
    trailingOptionsArgument
 } = require('./lib/utils');
-const {applyPatchTask} = require('./lib/tasks/apply-patch')
 const {branchTask, branchLocalTask, deleteBranchesTask, deleteBranchTask} = require('./lib/tasks/branch');
 const {checkIgnoreTask} = require('./lib/tasks/check-ignore');
 const {checkIsRepoTask} = require('./lib/tasks/check-is-repo');
@@ -695,17 +694,6 @@ Fossil.prototype.diffSummary = function () {
       trailingFunctionArgument(arguments),
    );
 };
-
-Fossil.prototype.applyPatch = function (patches) {
-   const task = !filterStringOrStringArray(patches)
-      ? configurationErrorTask(`fossil.applyPatch requires one or more string patches as the first argument`)
-      : applyPatchTask(asArray(patches), getTrailingOptions([].slice.call(arguments, 1)));
-
-   return this._runTask(
-      task,
-      trailingFunctionArgument(arguments),
-   );
-}
 
 Fossil.prototype.revparse = function () {
    const commands = ['rev-parse', ...getTrailingOptions(arguments, true)];
