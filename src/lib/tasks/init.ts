@@ -14,6 +14,9 @@ export type InitOptions = Options &
 
 export function initTask(path: string, customArgs: string[]): StringTask<InitResult> {
    const commands = ['init', ...customArgs];
+   if (path) {
+      commands.splice(1, 0, path);
+   }
 
    return {
       commands,

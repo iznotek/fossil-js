@@ -161,9 +161,9 @@ export interface FetchResult {
 export interface InitResult {
 
    /**
-    * The path used when initialising
+    * The fossil repository path  
     */
-   readonly path: string;
+   readonly repository: string;
 
    /**
     * The fossil projectId  
@@ -184,6 +184,57 @@ export interface InitResult {
     * The fossil admin password  
     */
    readonly password: string;
+}
+
+/**
+ * The `InitResult` is returned when (re)initialising a fossil repo.
+ */
+ export interface OpenResult {
+
+   /**
+    * The fossil project-name  
+    */
+   readonly projectName: string;
+
+   /**
+    * The fossil repository path  
+    */
+   readonly repository: string;
+
+   /**
+    * The fossil local-root  
+    */
+   readonly localRoot: string;
+
+   /**
+    * The fossil config-db
+    */
+   readonly configDb: string;
+
+   /**
+    * The fossil project-code
+    */
+   readonly projectCode: string;
+
+   /**
+    * The fossil project-code
+    */
+   readonly checkout: string;
+
+   /**
+    * The fossil tags array
+    */
+   readonly tags: string;
+
+   /**
+    * The fossil comment
+    */
+   readonly comment: string;
+
+   /**
+    * The fossil comment
+    */
+   readonly checkIns: number;
 }
 
 /**
@@ -259,18 +310,19 @@ export interface FileStatusResult {
  * working directory.
  */
 export interface StatusResult {
-   not_added: string[];
-   conflicted: string[];
-   created: string[];
+   extra: string[];
+   added: string[];
    deleted: string[];
-   modified: string[];
-   renamed: StatusResultRenamed[];
+   edited: string[];
+   // renamed: StatusResultRenamed[];
+   renamed: string[];
+   merged: string[];
+   conflicted: string[];
+
    staged: string[];
    files: FileStatusResult[];
-   ahead: number;
-   behind: number;
+   
    current: string | null;
-   tracking: string | null;
 
    /**
     * Gets whether this represents a clean working branch.

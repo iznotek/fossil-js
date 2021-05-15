@@ -307,15 +307,18 @@ export interface SimpleFossil extends SimpleFossilBase {
    hashObject(path: string, write ?: boolean, callback?: types.SimpleFossilTaskCallback): Response<string>;
 
    /**
-    * Initialize a git repo
+    * Initialize a fossil repo file
     */
-   init(bare: boolean, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.InitResult>): Response<resp.InitResult>;
+   init(path: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.InitResult>): Response<resp.InitResult>;
 
-   init(bare: boolean, callback?: types.SimpleFossilTaskCallback<resp.InitResult>): Response<resp.InitResult>;
+   init(path: string, callback?: types.SimpleFossilTaskCallback<resp.InitResult>): Response<resp.InitResult>;
 
-   init(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.InitResult>): Response<resp.InitResult>;
+   /**
+    * Open a fossil repo file
+    */
+   open(path: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback): Response<string>;
 
-   init(callback?: types.SimpleFossilTaskCallback<resp.InitResult>): Response<resp.InitResult>;
+   open(path: string, callback?: types.SimpleFossilTaskCallback): Response<string>;
 
    /**
     * List remotes by running the `ls-remote` command with any number of arbitrary options

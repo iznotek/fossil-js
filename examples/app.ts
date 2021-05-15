@@ -47,9 +47,10 @@ function ignoreError () {
 
 async function boot () {
   const dbDir = join(process.cwd(), '/fossil');
+  const dbFile = join(dbDir, '/test.fossil');
   const repoDir = join(dbDir, '/repo');
   try {
-    await io.rmdir(repoDir);
+    await io.rmdir(dbDir);
     await io.mkdir(repoDir);
   } catch (e) {
     logError(e) 
@@ -60,19 +61,20 @@ async function boot () {
     binary: 'fossil',
     maxConcurrentProcesses: 6,
   };
-  debug.enable('simple-fossil:task:*');
+  debug.enable('off'); // off / *
   const fossil: SimpleFossil = simpleFossil(options);
 
  
   // begin
-  console.log(repoDir)
+  console.log('fossil-js dev app:')
+  console.log(options)
+  console.log()
 
   try {
-    await fossil.status().catch(ignoreError)
-    await fossil.init(['test.db']).catch(ignoreError)
-    await io.mkdir(repoDir + '/test');
-    // await fossil.open(['test.db']).catch(ignoreError)
-    await fossil.status().catch(ignoreError)
+    // await fossil.status().then(logError).catch(logError)
+    await fossil.init(dbFile).then(logError).catch(ignoreError)
+    await fossil.open(dbFile).then(logError).catch(ignoreError)
+    await fossil.status().then(logError).catch(ignoreError)
   }
   catch (e) {
     logError(e) 

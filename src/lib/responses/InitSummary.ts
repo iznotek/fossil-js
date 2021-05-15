@@ -2,7 +2,7 @@ import { InitResult } from '../../../typings';
 
 export class InitSummary implements InitResult {
    constructor(
-      public readonly path: string,
+      public readonly repository: string,
       public readonly projectId: string,
       public readonly serverId: string,
       public readonly admin: string,
@@ -21,18 +21,18 @@ export function parseInit(path: string, text: string) {
    let projectId, serverId, admin, password;
 
    if ((result = projectResponseRegex.exec(response))) { 
-      projectId = result[1];
+      projectId = result[1].trim();
 
       if ((result = serverResponseRegex.exec(response))) { 
-         serverId = result[1];
+         serverId = result[1].trim();
       }
 
       if ((result = adminResponseRegex.exec(response))) { 
-         admin = result[1];
+         admin = result[1].trim();
       }
 
       if ((result = passwordResponseRegex.exec(response))) { 
-         password = result[1];
+         password = result[1].trim();
       }
    }
 

@@ -27,6 +27,7 @@ const {diffSummaryTask} = require('./lib/tasks/diff');
 const {fetchTask} = require('./lib/tasks/fetch');
 const {hashObjectTask} = require('./lib/tasks/hash-object');
 const {initTask} = require('./lib/tasks/init');
+const {openTask} = require('./lib/tasks/open');
 const {logTask, parseLogOptions} = require('./lib/tasks/log');
 const {mergeTask} = require('./lib/tasks/merge');
 const {moveTask} = require("./lib/tasks/move");
@@ -109,14 +110,25 @@ Fossil.prototype.outputHandler = function (outputHandler) {
 };
 
 /**
- * Initialize a fossil repo
+ * Initialize a fossil repo file
  *
- * @param {Boolean} [bare=false]
  * @param {Function} [then]
  */
-Fossil.prototype.init = function (then) {
+Fossil.prototype.init = function (path, then) {
    return this._runTask(
-      initTask(this._executor.cwd, getTrailingOptions(arguments)),
+      initTask(path, getTrailingOptions(arguments)),
+      trailingFunctionArgument(arguments),
+   );
+};
+
+/**
+ * Open a fossil repo file
+ *
+ * @param {Function} [then]
+ */
+ Fossil.prototype.open = function (path, then) {
+   return this._runTask(
+      openTask(path, this._executor.cwd, getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
    );
 };
