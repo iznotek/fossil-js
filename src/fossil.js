@@ -32,7 +32,7 @@ const {logTask, parseLogOptions} = require('./lib/tasks/log');
 const {mergeTask} = require('./lib/tasks/merge');
 const {moveTask} = require("./lib/tasks/move");
 const {pullTask} = require('./lib/tasks/pull');
-const {pushTagsTask} = require('./lib/tasks/push');
+const {pushTask} = require('./lib/tasks/push');
 const {addRemoteTask, getRemotesTask, remoteTask, deleteRemoteTask} = require('./lib/tasks/remote');
 const {getResetMode, resetTask} = require('./lib/tasks/reset');
 const {stashListTask} = require('./lib/tasks/stash-list');
@@ -245,12 +245,23 @@ Fossil.prototype.commit = function (message, files, options, then) {
 /**
  * Pull the updated contents of the current repo
  */
-Fossil.prototype.pull = function (remote, branch, options, then) {
+Fossil.prototype.pull = function (remote, options, then) {
    return this._runTask(
       pullTask(filterType(remote, filterString), filterType(branch, filterString), getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
    );
 };
+
+/**
+ * Pull the updated contents of the current repo
+ */
+ Fossil.prototype.push = function (remote, options, then) {
+   return this._runTask(
+      pushTask(filterType(remote, filterString), filterType(branch, filterString), getTrailingOptions(arguments)),
+      trailingFunctionArgument(arguments),
+   );
+};
+
 
 /**
  * Fetch the updated contents of the current repo.
@@ -599,19 +610,6 @@ Fossil.prototype.updateServerInfo = function (then) {
       straightThroughStringTask(['update-server-info']),
       trailingFunctionArgument(arguments),
    );
-};
-
-/**
- * Pushes the current tag changes to a remote which can be either a URL or named remote. When not specified uses the
- * default configured remote spec.
- *
- * @param {string} [remote]
- * @param {Function} [then]
- */
-Fossil.prototype.pushTags = function (remote, then) {
-   const task = pushTagsTask({remote: filterType(remote, filterString)}, getTrailingOptions(arguments));
-
-   return this._runTask(task, trailingFunctionArgument(arguments));
 };
 
 /**

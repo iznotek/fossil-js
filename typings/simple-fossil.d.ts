@@ -28,7 +28,7 @@ export interface SimpleFossilBase {
     * Pushes the current committed changes to a remote, optionally specify the names of the remote and branch to use
     * when pushing. Supply multiple options as an array of strings in the first argument - see examples below.
     */
-   push(remote?: string, branch?: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.PushResult>): Response<resp.PushResult>;
+   push(remote?: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.PushResult>): Response<resp.PushResult>;
 
    push(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.PushResult>): Response<resp.PushResult>;
 
@@ -389,16 +389,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    pull(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.PullResult>): Response<resp.PullResult>;
 
    pull(callback?: types.SimpleFossilTaskCallback<resp.PullResult>): Response<resp.PullResult>;
-
-   /**
-    * Pushes the current tag changes to a remote which can be either a URL or named remote. When not specified uses the
-    * default configured remote spec.
-    */
-   pushTags(remote: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.PushResult>): Response<resp.PushResult>;
-
-   pushTags(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.PushResult>): Response<resp.PushResult>;
-
-   pushTags(callback?: types.SimpleFossilTaskCallback<resp.PushResult>): Response<resp.PushResult>;
 
    /**
     * Executes any command against the git binary.

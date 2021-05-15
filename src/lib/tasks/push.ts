@@ -21,7 +21,7 @@ export function pushTask(ref: PushRef = {}, customArgs: string[]): StringTask<Pu
 
    remove(commands, '-v');
    append(commands, '--verbose');
-   append(commands, '--porcelain');
+   append(commands, '--verify');
 
    return {
       commands,
