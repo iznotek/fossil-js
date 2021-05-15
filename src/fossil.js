@@ -37,7 +37,6 @@ const {addRemoteTask, getRemotesTask, listRemotesTask, remoteTask, removeRemoteT
 const {getResetMode, resetTask} = require('./lib/tasks/reset');
 const {stashListTask} = require('./lib/tasks/stash-list');
 const {statusTask} = require('./lib/tasks/status');
-const {addSubModuleTask, initSubModuleTask, subModuleTask, updateSubModuleTask} = require('./lib/tasks/sub-module');
 const {addAnnotatedTagTask, addTagTask, tagListTask} = require('./lib/tasks/tag');
 const {straightThroughBufferTask, straightThroughStringTask} = require('./lib/tasks/task');
 
@@ -473,33 +472,6 @@ Fossil.prototype.raw = function (commands) {
    return this._runTask(straightThroughStringTask(command), next);
 };
 
-Fossil.prototype.submoduleAdd = function (repo, path, then) {
-   return this._runTask(
-      addSubModuleTask(repo, path),
-      trailingFunctionArgument(arguments),
-   );
-};
-
-Fossil.prototype.submoduleUpdate = function (args, then) {
-   return this._runTask(
-      updateSubModuleTask(getTrailingOptions(arguments, true)),
-      trailingFunctionArgument(arguments),
-   );
-};
-
-Fossil.prototype.submoduleInit = function (args, then) {
-   return this._runTask(
-      initSubModuleTask(getTrailingOptions(arguments, true)),
-      trailingFunctionArgument(arguments),
-   );
-};
-
-Fossil.prototype.subModule = function (options, then) {
-   return this._runTask(
-      subModuleTask(getTrailingOptions(arguments)),
-      trailingFunctionArgument(arguments),
-   );
-};
 
 Fossil.prototype.listRemote = function () {
    return this._runTask(
