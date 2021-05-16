@@ -22,7 +22,6 @@ const {cleanWithOptionsTask, isCleanOptionsArray} = require('./lib/tasks/clean')
 const {commitTask} = require('./lib/tasks/commit');
 const {diffSummaryTask} = require('./lib/tasks/diff');
 const {syncTask} = require('./lib/tasks/sync');
-const {hashObjectTask} = require('./lib/tasks/hash-object');
 const {initTask} = require('./lib/tasks/init');
 const {openTask} = require('./lib/tasks/open');
 const {logTask, parseLogOptions} = require('./lib/tasks/log');
@@ -509,16 +508,6 @@ Fossil.prototype.getRemotes = function (then) {
  Fossil.prototype.remote = function (options, then) {
    return this._runTask(
       remoteTask(getTrailingOptions(arguments)),
-      trailingFunctionArgument(arguments),
-   );
-};
-
-/**
- * Compute object ID from a file
- */
-Fossil.prototype.hashObject = function (path, write) {
-   return this._runTask(
-      hashObjectTask(path, write === true),
       trailingFunctionArgument(arguments),
    );
 };

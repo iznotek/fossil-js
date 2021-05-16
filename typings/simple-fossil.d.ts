@@ -248,24 +248,17 @@ export interface SimpleFossil extends SimpleFossilBase {
    /**
     * Updates the local working copy database with changes from the default remote repo and branch.
     */
-   sync(remote: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
+   sync(remote: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
-   sync(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
+   sync(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
-   sync(callback?: types.SimpleFossilTaskCallback<resp.FetchResult>): Response<resp.FetchResult>;
+   sync(callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
     * Gets the currently available remotes, setting the optional verbose argument to true includes additional
     * detail on the remotes themselves.
     */
    getRemotes(callback?: types.SimpleFossilTaskCallback<types.RemoteWithoutRefs[]>): Response<types.RemoteWithoutRefs[]>;
-
-   /**
-    * Compute object ID from a file
-    */
-   hashObject(path: string, callback?: types.SimpleFossilTaskCallback): Response<string>;
-
-   hashObject(path: string, write ?: boolean, callback?: types.SimpleFossilTaskCallback): Response<string>;
 
    /**
     * Initialize a fossil repo file
