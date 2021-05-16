@@ -594,7 +594,7 @@ Fossil.prototype.updateServerInfo = function (then) {
  */
 Fossil.prototype.rm = function (files) {
    return this._runTask(
-      straightThroughStringTask(['rm', '-f', ...asArray(files)]),
+      straightThroughStringTask(['rm', '--hard', ...asArray(files)]),
       trailingFunctionArgument(arguments)
    );
 };
@@ -607,7 +607,7 @@ Fossil.prototype.rm = function (files) {
  */
 Fossil.prototype.rmKeepLocal = function (files) {
    return this._runTask(
-      straightThroughStringTask(['rm', '--cached', ...asArray(files)]),
+      straightThroughStringTask(['rm', '--soft', ...asArray(files)]),
       trailingFunctionArgument(arguments)
    );
 };
@@ -631,7 +631,7 @@ Fossil.prototype.binaryCatFile = function () {
 
 Fossil.prototype._catFile = function (format, args) {
    var handler = trailingFunctionArgument(args);
-   var command = ['cat-file'];
+   var command = ['cat'];
    var options = args[0];
 
    if (typeof options === 'string') {
