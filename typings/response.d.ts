@@ -276,21 +276,6 @@ export interface StatusResult {
 }
 
 /**
- * Response retrieved when using the `fossil.tags` method
- */
-export interface TagResult {
-   /**
-    * All tag names
-    */
-   all: string[];
-
-   /**
-    * The semver latest tag name or `undefined` when no tags are named in the response
-    */
-   latest: string | undefined;
-}
-
-/**
  * The ListLogLine represents a single entry in the `fossil.log`, the properties on the object
  * are mixed in depending on the names used in the format (see `DefaultLogFields`), but some
  * properties are dependent on the command used.
