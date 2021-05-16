@@ -391,14 +391,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    raw(a: string, b: string, c: string, d: string, e: string, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
-    * Rebases the current working copy. Options can be supplied either as an array of string parameters
-    * to be sent to the `git rebase` command, or a standard options object.
-    */
-   rebase(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   rebase(callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   /**
     * Call any `fossil remote` function with arguments passed as an array of strings.
     */
    remote(options: string[], callback?: types.SimpleFossilTaskCallback<void | string>): Response<void | string>;
@@ -418,18 +410,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    revert(commit: String, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<void>): Response<void>;
 
    revert(commit: String, callback?: types.SimpleFossilTaskCallback<void>): Response<void>;
-
-   /**
-    * Passes the supplied options to `git rev-parse` and returns the string response. Options can be either a
-    * string array or `Options` object of options compatible with the [rev-parse](https://git-scm.com/docs/git-rev-parse)
-    *
-    * Example uses of `rev-parse` include converting friendly commit references (ie: branch names) to SHA1 hashes
-    * and retrieving meta details about the current repo (eg: the root directory, and whether it was created as
-    * a bare repo).
-    */
-   revparse(option: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   revparse(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
     * Removes the named files from source control.
@@ -482,38 +462,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    status(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.StatusResult>): Response<resp.StatusResult>;
 
    status(callback?: types.SimpleFossilTaskCallback<resp.StatusResult>): Response<resp.StatusResult>;
-
-   /**
-    * Call any `git submodule` function with arguments passed as an array of strings.
-    */
-   subModule(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   /**
-    * Add a submodule
-    */
-   submoduleAdd(repo: string, path: string, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   /**
-    * Initialise submodules
-    */
-   submoduleInit(moduleName: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   submoduleInit(moduleName: string, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   submoduleInit(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   submoduleInit(callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   /**
-    * Update submodules
-    */
-   submoduleUpdate(moduleName: string, options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   submoduleUpdate(moduleName: string, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   submoduleUpdate(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   submoduleUpdate(callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
     * List all tags. When using git 2.7.0 or above, include an options object with `"--sort": "property-name"` to

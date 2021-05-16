@@ -662,14 +662,6 @@ Fossil.prototype.diffSummary = function () {
    );
 };
 
-Fossil.prototype.revparse = function () {
-   const commands = ['rev-parse', ...getTrailingOptions(arguments, true)];
-   return this._runTask(
-      straightThroughStringTask(commands, true),
-      trailingFunctionArgument(arguments),
-   );
-};
-
 /**
  * Sql direct on db
  *
