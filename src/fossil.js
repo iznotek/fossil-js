@@ -671,14 +671,14 @@ Fossil.prototype.revparse = function () {
 };
 
 /**
- * Show various types of objects, for example the file at a certain commit
+ * Sql direct on db
  *
  * @param {string[]} [options]
  * @param {Function} [then]
  */
-Fossil.prototype.show = function (options, then) {
+Fossil.prototype.sql = function (options, then) {
    return this._runTask(
-      straightThroughStringTask(['show', ...getTrailingOptions(arguments, 1)]),
+      straightThroughStringTask(['sql', ...getTrailingOptions(arguments, 1)]),
       trailingFunctionArgument(arguments)
    );
 };

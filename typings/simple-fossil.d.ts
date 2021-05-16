@@ -445,9 +445,7 @@ export interface SimpleFossil extends SimpleFossilBase {
    /**
     * Show various types of objects, for example the file at a certain commit
     */
-   show(option: string | types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   show(callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
+   sql(option: string | types.TaskOptions, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    /**
     * @deprecated
