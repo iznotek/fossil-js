@@ -29,7 +29,6 @@ const {mergeTask} = require('./lib/tasks/merge');
 const {moveTask} = require("./lib/tasks/move");
 const {pullTask} = require('./lib/tasks/pull');
 const {addRemoteTask, getRemotesTask, remoteTask, deleteRemoteTask} = require('./lib/tasks/remote');
-const {getResetMode, resetTask} = require('./lib/tasks/reset');
 const {stashListTask} = require('./lib/tasks/stash-list');
 const {statusTask} = require('./lib/tasks/status');
 const {addAnnotatedTagTask, addTagTask, tagListTask} = require('./lib/tasks/tag');
@@ -289,16 +288,6 @@ Fossil.prototype.silent = function (silence) {
 Fossil.prototype.tags = function (options, then) {
    return this._runTask(
       tagListTask(getTrailingOptions(arguments)),
-      trailingFunctionArgument(arguments),
-   );
-};
-
-/**
- * Reset a repo
- */
-Fossil.prototype.reset = function (mode) {
-   return this._runTask(
-      resetTask(getResetMode(mode), getTrailingOptions(arguments)),
       trailingFunctionArgument(arguments),
    );
 };

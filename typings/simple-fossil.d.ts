@@ -411,29 +411,6 @@ export interface SimpleFossil extends SimpleFossilBase {
    deleteRemote(remoteName: string, callback?: types.SimpleFossilTaskCallback<void>): Response<void>;
 
    /**
-    * Reset a repo. Called without arguments this is a soft reset for the whole repo,
-    * for explicitly setting the reset mode, supply the first argument as one of the
-    * supported reset modes.
-    *
-    * Trailing options argument can be either a string array, or an extension of the
-    * ResetOptions, use this argument for supplying arbitrary additional arguments,
-    * such as restricting the pathspec.
-    *
-    * ```typescript
-    // equivalent to each other
-    simpleFossil().reset(ResetMode.HARD, ['--', 'my-file.txt']);
-    simpleFossil().reset(['--hard', '--', 'my-file.txt']);
-    simpleFossil().reset(ResetMode.HARD, {'--': null, 'my-file.txt': null});
-    simpleFossil().reset({'--hard': null, '--': null, 'my-file.txt': null});
-    ```
-    */
-   reset(mode: types.ResetMode, options?: types.TaskOptions<types.ResetOptions>, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   reset(mode: types.ResetMode, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   reset(options?: types.TaskOptions<types.ResetOptions>, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
-
-   /**
     * Revert one or more commits in the local working copy
     *
     * - commit The commit to revert. Can be any hash, offset (eg: `HEAD~2`) or range (eg: `master~5..master~2`)
