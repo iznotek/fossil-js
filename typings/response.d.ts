@@ -37,29 +37,6 @@ export interface CommitResult {
 }
 
 /**
- * Represents the current fossil configuration, as defined by the output from `fossil log`
- */
-export interface ConfigListSummary {
-
-   /**
-    * All configuration settings, where local/user settings override user/global settings
-    * the overridden value will appear in this object.
-    */
-   readonly all: ConfigValues;
-
-   /**
-    * The file paths configuration was read from
-    */
-   files: string[];
-
-   /**
-    * The `ConfigValues` for each of the `files`, use this object to determine
-    * local repo, user and global settings.
-    */
-   values: { [fileName: string]: ConfigValues };
-}
-
-/**
  * Represents the map of configuration settings
  */
 export interface ConfigValues {

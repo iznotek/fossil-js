@@ -1,12 +1,10 @@
-import { ConfigListSummary } from '../../../typings';
 import { StringTask } from '../types';
-import { configListParser } from '../responses/ConfigList';
 
-export function addConfigTask(key: string, value: string, append = false): StringTask<string> {
-   const commands: string[] = ['config', '--local'];
+export function addConfigTask(key: string, value: string, global = false): StringTask<string> {
+   const commands: string[] = ['settings'];
 
-   if (append) {
-      commands.push('--add');
+   if (global) {
+      commands.push('--global');
    }
 
    commands.push(key, value);
@@ -20,12 +18,20 @@ export function addConfigTask(key: string, value: string, append = false): Strin
    }
 }
 
-export function listConfigTask(): StringTask<ConfigListSummary> {
+export function deleteConfigTask(key: string, global = false): StringTask<string> {
+   const commands: string[] = ['unset'];
+
+   if (global) {
+      commands.push('--global');
+   }
+
+   commands.push(key);
+
    return {
-      commands: ['config', '--list', '--show-origin', '--null'],
+      commands,
       format: 'utf-8',
-      parser(text: string): any {
-         return configListParser(text);
-      },
+      parser(text: string): string {
+         return text;
+      }
    }
 }

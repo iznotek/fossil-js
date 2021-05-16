@@ -17,7 +17,7 @@ const {
 } = require('./lib/utils');
 const {branchTask, branchLocalTask, deleteBranchesTask, deleteBranchTask} = require('./lib/tasks/branch');
 const {cloneTask} = require('./lib/tasks/clone');
-const {addConfigTask, listConfigTask} = require('./lib/tasks/config');
+const {addConfigTask, unsetConfigTask} = require('./lib/tasks/config');
 const {cleanWithOptionsTask, isCleanOptionsArray} = require('./lib/tasks/clean');
 const {commitTask} = require('./lib/tasks/commit');
 const {diffSummaryTask} = require('./lib/tasks/diff');
@@ -426,15 +426,18 @@ Fossil.prototype.branchLocal = function (then) {
  * @param {boolean} [append=false] optionally append the key/value pair (equivalent of passing `--add` option).
  * @param {Function} [then]
  */
-Fossil.prototype.addConfig = function (key, value, append, then) {
+Fossil.prototype.addConfig = function (key, value, global, then) {
    return this._runTask(
-      addConfigTask(key, value, typeof append === "boolean" ? append : false),
+      addConfigTask(key, value, typeof global === "boolean" ? global : false),
       trailingFunctionArgument(arguments),
    );
 };
 
-Fossil.prototype.listConfig = function () {
-   return this._runTask(listConfigTask(), trailingFunctionArgument(arguments));
+Fossil.prototype.deleteConfig = function (key, global, then) {
+   return this._runTask(
+      deleteConfigTask(key, typeof global === "boolean" ? global : false),
+      trailingFunctionArgument(arguments),
+   );
 };
 
 /**

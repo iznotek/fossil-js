@@ -44,13 +44,22 @@ export interface SimpleFossil extends SimpleFossilBase {
    addAnnotatedTag(tagName: string, tagMessage: string, callback?: types.SimpleFossilTaskCallback<{ name: string }>): Response<{ name: string }>;
 
    /**
-    * Add config to local git instance for the specified `key` (eg: user.name) and value (eg: 'your name').
+    * Add config to local fossil instance for the specified `key` (eg: user.name) and value (eg: 'your name').
     * Set `append` to true to append to rather than overwrite the key
     */
-   addConfig(key: string, value: string, append?: boolean, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
+   addConfig(key: string, value: string, global?: boolean, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
    addConfig(key: string, value: string, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 
+   /**
+    * Delete config to local fossil instance for the specified `key` (eg: user.name) and value (eg: 'your name').
+    * Set `append` to true to append to rather than overwrite the key
+    */
+   deleteConfig(key: string, global?: boolean, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
+
+   deleteConfig(key: string, callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
+
+       
    /**
     * Configuration values visible to git in the current working directory
     */
