@@ -533,5 +533,5 @@ export interface SimpleFossil extends SimpleFossilBase {
    /**
     * Updates repository server info
     */
-   updateServerInfo(callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
+   update(callback?: types.SimpleFossilTaskCallback<string>): Response<string>;
 }

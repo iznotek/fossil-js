@@ -567,13 +567,13 @@ Fossil.prototype.tag = function (options, then) {
 };
 
 /**
- * Updates repository server info
+ * Updates repository 
  *
  * @param {Function} [then]
  */
-Fossil.prototype.updateServerInfo = function (then) {
+Fossil.prototype.update = function (then) {
    return this._runTask(
-      straightThroughStringTask(['update-server-info']),
+      straightThroughStringTask(['update']),
       trailingFunctionArgument(arguments),
    );
 };
@@ -755,26 +755,6 @@ Fossil.prototype.clearQueue = function () {
    // TODO:
    // this._executor.clear();
    return this;
-};
-
-/**
- * Check if a pathname or pathnames are excluded by .gitignore
- *
- * @param {string|string[]} pathnames
- * @param {Function} [then]
- */
-Fossil.prototype.checkIgnore = function (pathnames, then) {
-   return this._runTask(
-      checkIgnoreTask(asArray((filterType(pathnames, filterStringOrStringArray, [])))),
-      trailingFunctionArgument(arguments),
-   );
-};
-
-Fossil.prototype.checkIsRepo = function (checkType, then) {
-   return this._runTask(
-      checkIsRepoTask(filterType(checkType, filterString)),
-      trailingFunctionArgument(arguments),
-   );
 };
 
 module.exports = Fossil;
