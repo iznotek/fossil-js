@@ -567,6 +567,55 @@ Fossil.prototype.tag = function (options, then) {
 };
 
 /**
+ * Get fossil revision.
+ *
+ * @param {string[]} options
+ * @param {Function} [then]
+ */
+Fossil.prototype.revision = function () {
+   const commands = ['time','-n','1','-F','%H','-t','ci', ...getTrailingOptions(arguments, true)];
+   return this._runTask(
+      straightThroughStringTask(commands, true),
+      trailingFunctionArgument(arguments),
+   );
+};
+
+// fossil timeline parents current -n 1 -v - commit details
+// fossil diff --checkin current - commit diff
+
+/**
+ * Call any `fossil time` function with arguments passed as an array of strings.
+ *
+ * @param {string[]} options
+ * @param {Function} [then]
+ */
+ Fossil.prototype.time = function (options, then) {
+   const command = getTrailingOptions(arguments);
+
+   if (command[0] !== 'time') {
+      command.unshift('time');
+   }
+
+   return this._runTask(
+      straightThroughStringTask(command),
+      trailingFunctionArgument(arguments)
+   );
+};
+
+/**
+ * Sql direct on db
+ *
+ * @param {string[]} [options]
+ * @param {Function} [then]
+ */
+ Fossil.prototype.sql = function (options, then) {
+   return this._runTask(
+      straightThroughStringTask(['sql', ...getTrailingOptions(arguments, 1)]),
+      trailingFunctionArgument(arguments)
+   );
+};
+
+/**
  * Updates repository 
  *
  * @param {Function} [then]
@@ -659,19 +708,6 @@ Fossil.prototype.diffSummary = function () {
    return this._runTask(
       diffSummaryTask(getTrailingOptions(arguments, 1)),
       trailingFunctionArgument(arguments),
-   );
-};
-
-/**
- * Sql direct on db
- *
- * @param {string[]} [options]
- * @param {Function} [then]
- */
-Fossil.prototype.sql = function (options, then) {
-   return this._runTask(
-      straightThroughStringTask(['sql', ...getTrailingOptions(arguments, 1)]),
-      trailingFunctionArgument(arguments)
    );
 };
 

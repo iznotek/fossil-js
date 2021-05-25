@@ -396,6 +396,11 @@ export interface SimpleFossil extends SimpleFossilBase {
    remote(options: string[], callback?: types.SimpleFossilTaskCallback<void | string>): Response<void | string>;
 
    /**
+    * Call any `fossil remote` function with arguments passed as an array of strings.
+    */
+   revision(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<void | string>): Response<void | string>;
+
+   /**
     * Removes an entry from the list of remotes.
     *
     * - remoteName Name of the repository - eg "upstream"
@@ -477,6 +482,12 @@ export interface SimpleFossil extends SimpleFossilBase {
    tags(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<resp.TagResult>): Response<resp.TagResult>;
 
    tags(callback?: types.SimpleFossilTaskCallback<resp.TagResult>): Response<resp.TagResult>;
+
+   /**
+    * Call any `fossil remote` function with arguments passed as an array of strings.
+    */
+   time(options?: types.TaskOptions, callback?: types.SimpleFossilTaskCallback<void | string>): Response<void | string>;
+
 
    /**
     * Updates repository server info

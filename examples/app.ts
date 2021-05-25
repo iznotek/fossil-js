@@ -136,6 +136,8 @@ async function boot () {
     }).catch(ignoreError)
     await fossil.status().then(logError).catch(ignoreError)
     await fossil.branch().then(logError).catch(ignoreError)
+    await fossil.revision().then(logError).catch(ignoreError)
+    await fossil.time(['-v']).then(logError).catch(ignoreError)
     
   }
   catch (e) {
