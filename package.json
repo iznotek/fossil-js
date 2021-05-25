@@ -1,12 +1,12 @@
 {
   "name": "simple-fossil",
   "description": "Simple Fossil SCM interface for node.js",
-  "version": "2.39.0",
-  "author": "Steve King <steve@mydev.co>",
+  "version": "0.1.0",
+  "author": "Leduc Pierre <pi@iznow.tech>",
   "contributors": [
     {
-      "name": "Steve King",
-      "email": "steve@mydev.co"
+      "name": "Leduc Pierre",
+      "email": "pi@iznow.tech"
     }
   ],
   "dependencies": {
@@ -34,7 +34,7 @@
     "vcs"
   ],
   "license": "MIT",
-  "repository": "git://github.com/steveukx/git-js.git",
+  "repository": "git://github.com/iznotek/fossil-js.git",
   "main": "./src/index.js",
   "types": "./typings/index.d.ts",
   "files": [
