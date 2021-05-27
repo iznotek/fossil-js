@@ -1,19 +1,9 @@
 import {
-   BranchMultiDeleteResult,
    BranchSingleDeleteFailure,
    BranchSingleDeleteResult,
    BranchSingleDeleteSuccess
 } from '../../../typings';
 
-export class BranchDeletionBatch implements BranchMultiDeleteResult {
-   all: BranchSingleDeleteResult[] = [];
-   branches: { [branchName: string]: BranchSingleDeleteResult } = {};
-   errors: BranchSingleDeleteResult[] = [];
-
-   get success(): boolean {
-      return !this.errors.length;
-   }
-}
 
 export function branchDeletionSuccess (branch: string, hash: string): BranchSingleDeleteSuccess {
    return {

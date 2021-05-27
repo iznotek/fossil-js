@@ -63,7 +63,7 @@ export interface SimpleFossil extends SimpleFossilBase {
    /**
     * Configuration values visible to git in the current working directory
     */
-   listConfig(callback?: types.SimpleFossilTaskCallback<resp.ConfigListSummary>): Response<resp.ConfigListSummary>;
+   // listConfig(callback?: types.SimpleFossilTaskCallback<resp.ConfigListSummary>): Response<resp.ConfigListSummary>;
 
    /**
     * Adds a remote to the list of remotes.
